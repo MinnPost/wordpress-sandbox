@@ -319,8 +319,8 @@ class Object_Sync_Sf_Salesforce_Push {
 	*
 	* @param string $object_type
 	*   Type of WordPress object.
-	* @param object $object
-	*   The object object.
+	* @param array $object
+	*   The WordPress data that needs to be sent to Salesforce.
 	* @param int $sf_sync_trigger
 	*   The trigger being responded to.
 	* @param bool $manual
@@ -690,6 +690,11 @@ class Object_Sync_Sf_Salesforce_Push {
 				// ex: run WordPress methods on an object if it exists, or do something in preparation for it if it doesn't
 				do_action( 'object_sync_for_salesforce_pre_push', $salesforce_id, $mapping, $object, $object_id, $params );
 
+				// hook to allow other plugins to change params on update actions only
+				// use hook to map fields between the WordPress and Salesforce objects
+				// returns $params.
+				$params = apply_filters( 'object_sync_for_salesforce_push_update_params_modify', $params, $salesforce_id, $mapping, $object );
+
 				if ( isset( $prematch_field_wordpress ) || isset( $key_field_wordpress ) || null !== $salesforce_id ) {
 
 					// if either prematch criteria exists, make the values queryable
@@ -865,6 +870,7 @@ class Object_Sync_Sf_Salesforce_Push {
 				return;
 			} // End if().
 		} else {
+			// $is_new is false here; we are updating an already mapped object
 
 			// right here we should set the pushing transient
 			set_transient( 'salesforce_pushing_' . $mapping_object['id'], 1, $seconds );
@@ -913,6 +919,11 @@ class Object_Sync_Sf_Salesforce_Push {
 				// hook to allow other plugins to do something right before Salesforce data is saved
 				// ex: run WordPress methods on an object if it exists, or do something in preparation for it if it doesn't
 				do_action( 'object_sync_for_salesforce_pre_push', $mapping_object['salesforce_id'], $mapping, $object, $object_id, $params );
+
+				// hook to allow other plugins to change params on update actions only
+				// use hook to map fields between the WordPress and Salesforce objects
+				// returns $params.
+				$params = apply_filters( 'object_sync_for_salesforce_push_update_params_modify', $params, $mapping_object['salesforce_id'], $mapping, $object );
 
 				$op = 'Update';
 				$result = $sfapi->object_update( $mapping['salesforce_object'], $mapping_object['salesforce_id'], $params );

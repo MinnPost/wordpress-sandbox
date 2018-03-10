@@ -6,12 +6,12 @@
         "source": {
             "type": "git",
             "url": "https://github.com/A5hleyRich/wp-background-processing",
-            "reference": "fbbc56f2480910d7959972ec9ec0819a13c6150a"
+            "reference": "1f070aab5058dbaf45d5435a343033ddd8a641b1"
         },
         "require": {
             "php": ">=5.2"
         },
-        "time": "2016-09-13T12:24:02+00:00",
+        "time": "2018-02-12T09:24:05+00:00",
         "type": "library",
         "installation-source": "source",
         "autoload": {
@@ -20,7 +20,7 @@
             ]
         },
         "license": [
-            "GPLv2+"
+            "GPL-2.0-only"
         ],
         "authors": [
             {
