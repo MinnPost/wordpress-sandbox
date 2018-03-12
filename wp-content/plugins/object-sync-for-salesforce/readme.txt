@@ -4,7 +4,7 @@ Donate link: https://www.minnpost.com/support/?campaign=7010G0000012fXGQAY
 Tags: salesforce, sync, crm
 Requires at least: 4.5
 Tested up to: 4.9
-Stable tag: 1.2.8
+Stable tag: 1.3.0
 License: GPLv2 or later
 License URI: http://www.gnu.org/licenses/gpl-2.0.html
 
@@ -154,6 +154,13 @@ This doesn't mean you can't use them together, but it does mean this plugin is n
 Object Sync for Salesforce does have abundant developer hooks, and WooCommerce has its own API, and it would be possible to build an add-on plugin to provide full support by integrating these (we would happily point to it for all users who install this plugin while they're running WooCommerce).
 
 == Changelog ==
+
+* 1.3.0 (2018-03-10)
+	* New: this release adds an interface for importing and exporting plugin data. It includes fieldmaps (which map object types to each other), object maps (individual objects mapped to each other) and plugin settings. Data is exported to a single JSON file that can be imported.
+	* Bug fix: this release supports a datetime change in MySQL versions newer than 5.7.4 in which default values can no longer be 0000-00-00. See this [StackOverflow page](https://stackoverflow.com/questions/25349126/how-can-i-set-the-default-value-of-a-field-as-0000-00-00-000000) for details.
+	* Bug fix: this release fixes an issue where admin notices for this plugin would sometimes be empty.
+	* Also fixed a ton of code formatting stuff, including translation spots.
+	* This release also fixes the previously broken Travis CI build's issues with older PHP versions.
 
 * 1.2.8 (2018-03-09)
 	* New: this release adds a new developer hook, `object_sync_for_salesforce_push_update_params_modify`, which allows the data being pushed to Salesforce to be modified in the event that an existing Salesforce object is being updated.
