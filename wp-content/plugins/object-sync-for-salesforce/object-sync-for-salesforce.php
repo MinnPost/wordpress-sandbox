@@ -2,7 +2,7 @@
 /*
 Plugin Name: Object Sync for Salesforce
 Description: WordPress plugin that implements mapping and syncing between Salesforce objects and WordPress objects
-Version: 1.3.1
+Version: 1.3.2
 Author: MinnPost
 Author URI: http://code.minnpost.com
 License: GPL2+
@@ -119,7 +119,7 @@ class Object_Sync_Salesforce {
 		global $wpdb;
 
 		$this->wpdb = $wpdb;
-		$this->version = '1.3.1';
+		$this->version = '1.3.2';
 		$this->login_credentials = $this->get_login_credentials();
 		$this->slug = 'object-sync-for-salesforce';
 
@@ -404,8 +404,8 @@ class Object_Sync_Salesforce {
 	* @return void
 	*/
 	public function admin_scripts_and_styles() {
-		wp_enqueue_script( $this->slug . '-admin', plugins_url( 'assets/js/object-sync-for-salesforce-admin.min.js', __FILE__ ), array( 'jquery' ), $this->version, true );
-		wp_enqueue_style( $this->slug . '-admin', plugins_url( 'assets/css/object-sync-for-salesforce-admin.min.css', __FILE__ ), array(), $this->version, 'all' );
+		wp_enqueue_script( $this->slug . '-admin', plugins_url( 'assets/js/object-sync-for-salesforce-admin.min.js', __FILE__ ), array( 'jquery' ), filemtime( plugin_dir_path( __FILE__ ) . 'assets/js/object-sync-for-salesforce-admin.js' ), true );
+		wp_enqueue_style( $this->slug . '-admin', plugins_url( 'assets/css/object-sync-for-salesforce-admin.min.css', __FILE__ ), array(), filemtime( plugin_dir_path( __FILE__ ) . 'assets/css/object-sync-for-salesforce-admin.css' ), 'all' );
 	}
 
 	/**
