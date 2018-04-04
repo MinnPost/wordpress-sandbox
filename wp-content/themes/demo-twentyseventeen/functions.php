@@ -106,6 +106,12 @@ function twentyseventeen_cmb2_settings() {
 		'id'               => '_reading_preferences',
 		'type'             => 'text',
 	) );
+	$user_settings->add_field( array(
+		'name'             => 'Salesforce Contact ID',
+		'desc'             => '',
+		'id'               => '_salesforce_contact_id',
+		'type'             => 'text',
+	) );
 
 	$post_settings = new_cmb2_box( array(
 		'id'            => 'Post',
