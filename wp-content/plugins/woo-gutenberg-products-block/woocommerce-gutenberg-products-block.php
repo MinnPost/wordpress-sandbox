@@ -3,7 +3,7 @@
  * Plugin Name: WooCommerce Gutenberg Products Block
  * Plugin URI: https://github.com/woocommerce/woocommerce-gutenberg-products-block
  * Description: WooCommerce Products block for the Gutenberg editor.
- * Version: 1.1.0
+ * Version: 1.1.1
  * Author: Automattic
  * Author URI: https://woocommerce.com
  * Text Domain:  woocommerce
@@ -14,7 +14,7 @@
 
 defined( 'ABSPATH' ) || die();
 
-define( 'WGPB_VERSION', '1.1.0' );
+define( 'WGPB_VERSION', '1.1.1' );
 
 /**
  * Load up the assets if Gutenberg is active.
@@ -43,6 +43,10 @@ function wgpb_register_products_block() {
  * Register extra scripts needed.
  */
 function wgpb_extra_gutenberg_scripts() {
+	if ( ! function_exists( 'wc_get_theme_support' ) ) {
+		return;
+	}
+
 	wp_enqueue_script(
 		'react-transition-group',
 		plugins_url( 'assets/js/vendor/react-transition-group.js', __FILE__ ),
