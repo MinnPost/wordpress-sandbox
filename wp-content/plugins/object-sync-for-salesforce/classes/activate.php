@@ -19,6 +19,7 @@ class Object_Sync_Sf_Activate {
 	protected $slug;
 	protected $option_prefix;
 	protected $schedulable_classes;
+	protected $queue;
 
 	private $installed_version;
 
@@ -30,14 +31,16 @@ class Object_Sync_Sf_Activate {
 	* @param string $slug
 	* @param string $option_prefix
 	* @param array $schedulable_classes
+	* @param object $queue
 	*
 	*/
-	public function __construct( $wpdb, $version, $slug, $option_prefix = '', $schedulable_classes = array() ) {
+	public function __construct( $wpdb, $version, $slug, $option_prefix = '', $schedulable_classes = array(), $queue = '' ) {
 		$this->wpdb                = $wpdb;
 		$this->version             = $version;
 		$this->slug                = $slug;
 		$this->option_prefix       = isset( $option_prefix ) ? $option_prefix : 'object_sync_for_salesforce_';
 		$this->schedulable_classes = $schedulable_classes;
+		$this->queue               = $queue;
 
 		$this->action_group_suffix = '_check_records';
 		$this->installed_version   = get_option( $this->option_prefix . 'db_version', '' );
@@ -58,8 +61,10 @@ class Object_Sync_Sf_Activate {
 		register_activation_hook( dirname( __DIR__ ) . '/' . $this->slug . '.php', array( $this, 'wordpress_salesforce_tables' ) );
 		register_activation_hook( dirname( __DIR__ ) . '/' . $this->slug . '.php', array( $this, 'add_roles_capabilities' ) );
 
+		// this should run when the user is in the admin area to make sure the database gets updated
+		add_action( 'admin_init', array( $this, 'wordpress_salesforce_update_db_check' ), 10 );
+
 		// when users upgrade the plugin, run these hooks
-		add_action( 'upgrader_process_complete', array( $this, 'wordpress_salesforce_update_db_check' ), 10, 2 );
 		add_action( 'upgrader_process_complete', array( $this, 'check_for_action_scheduler' ), 10, 2 );
 	}
 
@@ -164,16 +169,11 @@ class Object_Sync_Sf_Activate {
 	}
 
 	/**
-	* Check for database version on plugin upgrade
-	* When the plugin is upgraded, if the database version does not match the current version, perform these methods
-	*
-	* @param object $upgrader_object
-	* @param array $hook_extra
-	*
-	* See https://developer.wordpress.org/reference/hooks/upgrader_process_complete/
+	* Check for database version
+	* When the plugin is loaded in the admin, if the database version does not match the current version, perform these methods
 	*
 	*/
-	public function wordpress_salesforce_update_db_check( $upgrader_object, $hook_extra ) {
+	public function wordpress_salesforce_update_db_check() {
 		// user is running a version less than the current one
 		$previous_version = get_transient( $this->option_prefix . 'installed_version' );
 		if ( version_compare( $previous_version, $this->version, '<' ) ) {
@@ -207,6 +207,10 @@ class Object_Sync_Sf_Activate {
 			delete_option( $this->option_prefix . 'push_schedule_unit' );
 			delete_option( $this->option_prefix . 'salesforce_schedule_number' );
 			delete_option( $this->option_prefix . 'salesforce_schedule_unit' );
+			if ( '' === $this->queue ) {
+				delete_transient( $this->option_prefix . 'installed_version' );
+				return;
+			}
 			foreach ( $this->schedulable_classes as $key => $schedule ) {
 				$schedule_name     = $key;
 				$action_group_name = $schedule_name . $this->action_group_suffix;
