@@ -258,6 +258,13 @@ function twentyseventeen_cmb2_settings() {
 	) );
 
 	$app_settings->add_field( array(
+		'name'             => 'Lead ID',
+		'desc'             => '',
+		'id'               => '_lead_id',
+		'type'             => 'text',
+	) );
+
+	$app_settings->add_field( array(
 		'name'             => 'Company 2',
 		'desc'             => '',
 		'id'               => '_company2',
