@@ -939,7 +939,7 @@ class Object_Sync_Sf_WordPress {
 			// These methods should give us the user object if we are matching for one.
 			// if we are trying to match to a meta field, the method is an object
 			if ( class_exists( $method ) ) {
-				$args = array(
+				$args        = array(
 					'meta_query' => array(
 						array(
 							'key'   => $key,
@@ -1270,8 +1270,8 @@ class Object_Sync_Sf_WordPress {
 						'value' => $value,
 					),
 				);
-				$match_query = new $method( $args );
-				$posts       = $match_query->get_results();
+				$match_query        = new $method( $args );
+				$posts              = $match_query->get_results();
 			} else {
 				$posts = $method( $args );
 			}
@@ -1590,8 +1590,8 @@ class Object_Sync_Sf_WordPress {
 						'value' => $value,
 					),
 				);
-				$match_query = new $method( $args );
-				$posts       = $match_query->get_results();
+				$match_query        = new $method( $args );
+				$posts              = $match_query->get_results();
 			} else {
 				$posts = $method( $args );
 			}
@@ -1925,12 +1925,11 @@ class Object_Sync_Sf_WordPress {
 			// These methods should give us the term object if we are matching for one.
 			// if we are trying to match to a meta field, the method is an object
 			if ( class_exists( $method ) ) {
-				$args = array(
+				$args        = array(
 					'taxonomy'   => $taxonomy,
 					'meta_key'   => $key,
 					'meta_value' => $value,
 				);
-
 				$match_query = new $method( $args );
 				$terms       = $match_query->get_terms();
 				if ( ! empty( $terms ) ) {
@@ -2249,7 +2248,7 @@ class Object_Sync_Sf_WordPress {
 			// These methods should give us the comment object if we are matching for one.
 			// if we are trying to match to a meta field, the method is an object
 			if ( class_exists( $method ) ) {
-				$args = array(
+				$args        = array(
 					'meta_query' => array(
 						array(
 							'key'   => $key,
