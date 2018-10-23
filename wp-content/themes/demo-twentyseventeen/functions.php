@@ -112,6 +112,12 @@ function twentyseventeen_cmb2_settings() {
 		'id'               => '_salesforce_contact_id',
 		'type'             => 'text',
 	) );
+	$user_settings->add_field( array(
+		'name'             => 'Temporary Field',
+		'desc'             => '',
+		'id'               => '_temporary_field',
+		'type'             => 'text',
+	) );
 
 	$post_settings = new_cmb2_box( array(
 		'id'            => 'Post',
