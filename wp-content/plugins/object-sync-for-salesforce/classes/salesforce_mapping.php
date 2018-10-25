@@ -402,7 +402,7 @@ class Object_Sync_Sf_Mapping {
 	/**
 	 * Delete a fieldmap row between a WordPress and Salesforce object
 	 *
-	 * @param array $id The ID of a field mapping.
+	 * @param int $id The ID of a field mapping.
 	 * @return Boolean
 	 * @throws \Exception
 	 */
@@ -430,7 +430,7 @@ class Object_Sync_Sf_Mapping {
 		$data['created'] = current_time( 'mysql' );
 		// Check to see if we don't know the salesforce id and it is not a temporary id, or if this is pending.
 		// If it is using a temporary id, the map will get updated after it finishes running; it won't call this method unless there's an error, which we should log.
-		if ( substr( $data['salesforce_id'], 0, 7 ) !== 'tmp_sf_' || 'pending' === $data['action'] ) {
+		if ( substr( $data['salesforce_id'], 0, 7 ) !== 'tmp_sf_' || ( isset( $data['action'] ) && 'pending' === $data['action'] ) ) {
 			unset( $data['action'] );
 			$insert = $this->wpdb->insert( $this->object_map_table, $data );
 		} else {
@@ -472,7 +472,7 @@ class Object_Sync_Sf_Mapping {
 					esc_attr( $data['salesforce_id'] ),
 					absint( $id )
 				),
-				'',
+				print_r( $mapping, true ), // log whatever we have for the mapping object, so print the array
 				0,
 				0,
 				$status
@@ -570,18 +570,28 @@ class Object_Sync_Sf_Mapping {
 	/**
 	 * Delete an object map row between a WordPress and Salesforce object
 	 *
-	 * @param array $id The ID of the object map row.
+	 * @param int|array $id The ID or IDs of the object map row(s).
 	 * @throws \Exception
 	 */
 	public function delete_object_map( $id = '' ) {
-		$data   = array(
-			'id' => $id,
-		);
-		$delete = $this->wpdb->delete( $this->object_map_table, $data );
-		if ( 1 === $delete ) {
-			return true;
-		} else {
-			return false;
+		if ( is_string( $id ) || is_int( $id ) ) {
+			$data   = array(
+				'id' => $id,
+			);
+			$delete = $this->wpdb->delete( $this->object_map_table, $data );
+			if ( 1 === $delete ) {
+				return true;
+			} else {
+				return false;
+			}
+		} elseif ( is_array( $id ) ) {
+			$ids    = implode( ',', array_map( 'absint', $id ) );
+			$delete = $this->wpdb->query( "DELETE FROM $this->object_map_table WHERE ID IN ($ids)" );
+			if ( false !== $delete ) {
+				return true;
+			} else {
+				return false;
+			}
 		}
 	}
 
