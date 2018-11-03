@@ -59,7 +59,9 @@ abstract class ActionScheduler {
 
 	public static function autoload( $class ) {
 		$d = DIRECTORY_SEPARATOR;
-		if ( strpos( $class, 'ActionScheduler' ) === 0 ) {
+		if ( 'Deprecated' === substr( $class, -10 ) ) {
+			$dir = self::plugin_path('deprecated'.$d);
+		} elseif ( strpos( $class, 'ActionScheduler' ) === 0 ) {
 			$dir = self::plugin_path('classes'.$d);
 		} elseif ( strpos( $class, 'CronExpression' ) === 0 ) {
 			$dir = self::plugin_path('lib'.$d.'cron-expression'.$d);
@@ -67,8 +69,8 @@ abstract class ActionScheduler {
 			return;
 		}
 
-		if ( file_exists( $dir.$class.'.php' ) ) {
-			include( $dir.$class.'.php' );
+		if ( file_exists( "{$dir}{$class}.php" ) ) {
+			include( "{$dir}{$class}.php" );
 			return;
 		}
 	}
