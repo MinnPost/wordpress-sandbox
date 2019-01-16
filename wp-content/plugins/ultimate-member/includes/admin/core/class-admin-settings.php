@@ -1,8 +1,10 @@
 <?php
 namespace um\admin\core;
 
+
 // Exit if accessed directly
 if ( ! defined( 'ABSPATH' ) ) exit;
+
 
 if ( ! class_exists( 'um\admin\core\Admin_Settings' ) ) {
 
@@ -123,44 +125,43 @@ if ( ! class_exists( 'um\admin\core\Admin_Settings' ) ) {
 			}
 
 
-
 			$appearances_profile_menu_fields = array(
 				array(
-					'id'       		=> 'profile_menu',
-					'type'     		=> 'checkbox',
-					'label'    		=> __('Enable profile menu','ultimate-member'),
+					'id'    => 'profile_menu',
+					'type'  => 'checkbox',
+					'label' => __('Enable profile menu','ultimate-member'),
 				)
 			);
 
 			$tabs = UM()->profile()->tabs_primary();
 
-			foreach( $tabs as $id => $tab ) {
+			foreach ( $tabs as $id => $tab ) {
 
 				$appearances_profile_menu_fields = array_merge( $appearances_profile_menu_fields, array(
 					array(
-						'id'       		=> 'profile_tab_' . $id,
-						'type'     		=> 'checkbox',
-						'label'    		=> sprintf(__('%s Tab','ultimate-member'), $tab ),
-						'conditional'		=> array( 'profile_menu', '=', 1 ),
+						'id'            => 'profile_tab_' . $id,
+						'type'          => 'checkbox',
+						'label'         => sprintf( __( '%s Tab', 'ultimate-member' ), $tab ),
+						'conditional'   => array( 'profile_menu', '=', 1 ),
 					),
 					array(
-						'id'       		=> 'profile_tab_' . $id . '_privacy',
-						'type'     		=> 'select',
-						'label'    		=> sprintf( __( 'Who can see %s Tab?','ultimate-member' ), $tab ),
-						'tooltip' 	=> __( 'Select which users can view this tab.','ultimate-member' ),
-						'options' 		=> UM()->profile()->tabs_privacy(),
-						'conditional'		=> array( 'profile_tab_' . $id, '=', 1 ),
+						'id'            => 'profile_tab_' . $id . '_privacy',
+						'type'          => 'select',
+						'label'         => sprintf( __( 'Who can see %s Tab?', 'ultimate-member' ), $tab ),
+						'tooltip'       => __( 'Select which users can view this tab.', 'ultimate-member' ),
+						'options'       => UM()->profile()->tabs_privacy(),
+						'conditional'   => array( 'profile_tab_' . $id, '=', 1 ),
 						'size'          => 'small'
 					),
 					array(
-						'id'       		=> 'profile_tab_' . $id . '_roles',
-						'type'     		=> 'select',
+						'id'            => 'profile_tab_' . $id . '_roles',
+						'type'          => 'select',
 						'multi'         => true,
-						'label'    		=> __( 'Allowed roles','ultimate-member' ),
-						'tooltip' 	=> __( 'Select the the user roles allowed to view this tab.','ultimate-member' ),
-						'options' 		=> UM()->roles()->get_roles(),
-						'placeholder' 	=> __( 'Choose user roles...','ultimate-member' ),
-						'conditional'		=> array( 'profile_tab_' . $id . '_privacy', '=', 4 ),
+						'label'         => __( 'Allowed roles','ultimate-member' ),
+						'tooltip'       => __( 'Select the the user roles allowed to view this tab.','ultimate-member' ),
+						'options'       => UM()->roles()->get_roles(),
+						'placeholder'   => __( 'Choose user roles...','ultimate-member' ),
+						'conditional'   => array( 'profile_tab_' . $id . '_privacy', '=', 4 ),
 						'size'          => 'small'
 					)
 				) );
@@ -168,19 +169,19 @@ if ( ! class_exists( 'um\admin\core\Admin_Settings' ) ) {
 
 			$appearances_profile_menu_fields = array_merge( $appearances_profile_menu_fields, array(
 				array(
-					'id'       		=> 'profile_menu_default_tab',
-					'type'     		=> 'select',
-					'label'    		=> __( 'Profile menu default tab','ultimate-member' ),
-					'tooltip' 	=> __( 'This will be the default tab on user profile page','ultimate-member' ),
-					'options' 		=> UM()->profile()->tabs_enabled(),
-					'conditional'	=> array( 'profile_menu', '=', 1 ),
+					'id'            => 'profile_menu_default_tab',
+					'type'          => 'select',
+					'label'         => __( 'Profile menu default tab', 'ultimate-member' ),
+					'tooltip'       => __( 'This will be the default tab on user profile page', 'ultimate-member' ),
+					'options'       => UM()->profile()->tabs_enabled(),
+					'conditional'   => array( 'profile_menu', '=', 1 ),
 					'size'          => 'small'
 				),
 				array(
-					'id'       		=> 'profile_menu_icons',
-					'type'     		=> 'checkbox',
-					'label'    		=> __('Enable menu icons in desktop view','ultimate-member'),
-					'conditional'		=> array( 'profile_menu', '=', 1 ),
+					'id'            => 'profile_menu_icons',
+					'type'          => 'checkbox',
+					'label'         => __( 'Enable menu icons in desktop view', 'ultimate-member' ),
+					'conditional'   => array( 'profile_menu', '=', 1 ),
 				)
 			) );
 
@@ -190,15 +191,17 @@ if ( ! class_exists( 'um\admin\core\Admin_Settings' ) ) {
 			$exclude_taxonomies = UM()->excluded_taxonomies();
 
 			foreach ( $all_taxonomies as $key => $taxonomy ) {
-				if( in_array( $key , $exclude_taxonomies ) )
-					unset( $all_taxonomies[$key] );
+				if( in_array( $key , $exclude_taxonomies ) ) {
+					unset( $all_taxonomies[ $key ] );
+				}
 			}
 
 			$restricted_access_post_metabox_value = array();
 			if ( $restricted_access_post_metabox = UM()->options()->get( 'restricted_access_post_metabox' ) ) {
 				foreach ( $restricted_access_post_metabox as $key => $value ) {
-					if ( $value )
+					if ( $value ) {
 						$restricted_access_post_metabox_value[] = $key;
+					}
 				}
 			}
 
@@ -206,10 +209,105 @@ if ( ! class_exists( 'um\admin\core\Admin_Settings' ) ) {
 			$restricted_access_taxonomy_metabox_value = array();
 			if ( $restricted_access_taxonomy_metabox = UM()->options()->get( 'restricted_access_taxonomy_metabox' ) ) {
 				foreach ( $restricted_access_taxonomy_metabox as $key => $value ) {
-					if ( $value )
+					if ( $value ) {
 						$restricted_access_taxonomy_metabox_value[] = $key;
+					}
 				}
 			}
+
+			$access_fields = array(
+				array(
+					'id'       		=> 'accessible',
+					'type'     		=> 'select',
+					'label'   		=> __( 'Global Site Access','ultimate-member' ),
+					'tooltip' 	=> __('Globally control the access of your site, you can have seperate restrict options per post/page by editing the desired item.','ultimate-member'),
+					'options' 		=> array(
+						0 		=> 'Site accessible to Everyone',
+						2 		=> 'Site accessible to Logged In Users'
+					),
+					'size'          => 'medium'
+				),
+				array(
+					'id'       		=> 'access_redirect',
+					'type'     		=> 'text',
+					'label'   		=> __( 'Custom Redirect URL','ultimate-member' ),
+					'tooltip' 	=> __('A logged out user will be redirected to this url If he is not permitted to access the site','ultimate-member'),
+					'conditional'		=> array( 'accessible', '=', 2 ),
+				),
+				array(
+					'id'       		=> 'access_exclude_uris',
+					'type'     		=> 'multi_text',
+					'label'    		=> __( 'Exclude the following URLs','ultimate-member' ),
+					'tooltip' 	=> __( 'Here you can exclude URLs beside the redirect URI to be accessible to everyone','ultimate-member' ),
+					'add_text'		=> __('Add New URL','ultimate-member'),
+					'conditional'		=> array( 'accessible', '=', 2 ),
+					'show_default_number' => 1,
+				),
+				array(
+					'id'       		=> 'home_page_accessible',
+					'type'     		=> 'checkbox',
+					'label'   		=> __( 'Allow Homepage to be accessible','ultimate-member' ),
+					'conditional'		=> array( 'accessible', '=', 2 ),
+				),
+				array(
+					'id'       		=> 'category_page_accessible',
+					'type'     		=> 'checkbox',
+					'label'   		=> __( 'Allow Category pages to be accessible','ultimate-member' ),
+					'conditional'		=> array( 'accessible', '=', 2 ),
+				),
+				array(
+					'id'        => 'restricted_access_message',
+					'type'      => 'wp_editor',
+					'label'     => __( 'Restricted Access Message','ultimate-member' ),
+					'tooltip'   => __( 'This is the message shown to users that do not have permission to view the content','ultimate-member' ),
+				)
+			);
+			global $wp_version;
+			if ( version_compare( $wp_version, '5.0', '>=' ) ) {
+				$access_fields = array_merge( $access_fields, array( array(
+					'id'       		=> 'restricted_blocks',
+					'type'     		=> 'checkbox',
+					'label'   		=> __( 'Allow Gutenberg Blocks restriction options', 'ultimate-member' ),
+				),
+				array(
+					'id'            => 'restricted_block_message',
+					'type'          => 'textarea',
+					'label'         => __( 'Restricted Block Message', 'ultimate-member' ),
+					'tooltip'       => __( 'This is the message shown to users that do not have permission to view the block\'s content', 'ultimate-member' ),
+					'conditional'   => array( 'restricted_blocks', '=', 1 ),
+				) ) );
+			}
+			$access_fields = array_merge( $access_fields, array( array(
+				'id'       		=> 'restricted_access_post_metabox',
+				'type'     		=> 'hidden',
+				'value'         => '',
+			),
+				array(
+					'id'       		=> 'restricted_access_taxonomy_metabox',
+					'type'     		=> 'hidden',
+					'value'         => '',
+				),
+				array(
+					'id'       		=> 'restricted_access_post_metabox',
+					'type'     		=> 'multi_checkbox',
+					'label'   		=> __( 'Restricted Access to Posts','ultimate-member' ),
+					'tooltip'   => __( 'Restriction content of the current Posts','ultimate-member' ),
+					'options'       => $all_post_types,
+					'columns'       => 3,
+					'value' 		=> $restricted_access_post_metabox_value,
+					'default' 		=> UM()->options()->get_default( 'restricted_access_post_metabox' ),
+				),
+				array(
+					'id'       		=> 'restricted_access_taxonomy_metabox',
+					'type'     		=> 'multi_checkbox',
+					'label'   		=> __( 'Restricted Access to Taxonomies','ultimate-member' ),
+					'tooltip'   => __( 'Restriction content of the current Taxonomies','ultimate-member' ),
+					'options'       => $all_taxonomies,
+					'columns'       => 3,
+					'value' 		=> $restricted_access_taxonomy_metabox_value,
+					'default' 		=> UM()->options()->get_default( 'restricted_access_taxonomy_metabox' ),
+			) ) );
+
 
 			/**
 			 * UM hook
@@ -481,83 +579,7 @@ if ( ! class_exists( 'um\admin\core\Admin_Settings' ) ) {
 					'sections'    => array(
 						''      => array(
 							'title'     => __( 'Restriction Content', 'ultimate-member' ),
-							'fields'    => array(
-								array(
-									'id'       		=> 'accessible',
-									'type'     		=> 'select',
-									'label'   		=> __( 'Global Site Access','ultimate-member' ),
-									'tooltip' 	=> __('Globally control the access of your site, you can have seperate restrict options per post/page by editing the desired item.','ultimate-member'),
-									'options' 		=> array(
-										0 		=> 'Site accessible to Everyone',
-										2 		=> 'Site accessible to Logged In Users'
-									),
-									'size'          => 'medium'
-								),
-								array(
-									'id'       		=> 'access_redirect',
-									'type'     		=> 'text',
-									'label'   		=> __( 'Custom Redirect URL','ultimate-member' ),
-									'tooltip' 	=> __('A logged out user will be redirected to this url If he is not permitted to access the site','ultimate-member'),
-									'conditional'		=> array( 'accessible', '=', 2 ),
-								),
-								array(
-									'id'       		=> 'access_exclude_uris',
-									'type'     		=> 'multi_text',
-									'label'    		=> __( 'Exclude the following URLs','ultimate-member' ),
-									'tooltip' 	=> __( 'Here you can exclude URLs beside the redirect URI to be accessible to everyone','ultimate-member' ),
-									'add_text'		=> __('Add New URL','ultimate-member'),
-									'conditional'		=> array( 'accessible', '=', 2 ),
-									'show_default_number' => 1,
-								),
-								array(
-									'id'       		=> 'home_page_accessible',
-									'type'     		=> 'checkbox',
-									'label'   		=> __( 'Allow Homepage to be accessible','ultimate-member' ),
-									'conditional'		=> array( 'accessible', '=', 2 ),
-								),
-								array(
-									'id'       		=> 'category_page_accessible',
-									'type'     		=> 'checkbox',
-									'label'   		=> __( 'Allow Category pages to be accessible','ultimate-member' ),
-									'conditional'		=> array( 'accessible', '=', 2 ),
-								),
-								array(
-									'id'       		=> 'restricted_access_message',
-									'type'     		=> 'wp_editor',
-									'label'   		=> __( 'Restricted Access Message','ultimate-member' ),
-									'tooltip'   => __( 'This is the message shown to users that do not have permission to view the content','ultimate-member' ),
-								),
-								array(
-									'id'       		=> 'restricted_access_post_metabox',
-									'type'     		=> 'hidden',
-									'value'         => '',
-								),
-								array(
-									'id'       		=> 'restricted_access_taxonomy_metabox',
-									'type'     		=> 'hidden',
-									'value'         => '',
-								),
-								array(
-									'id'       		=> 'restricted_access_post_metabox',
-									'type'     		=> 'multi_checkbox',
-									'label'   		=> __( 'Restricted Access to Posts','ultimate-member' ),
-									'tooltip'   => __( 'Restriction content of the current Posts','ultimate-member' ),
-									'options'       => $all_post_types,
-									'columns'       => 3,
-									'value' 		=> $restricted_access_post_metabox_value,
-									'default' 		=> UM()->options()->get_default( 'restricted_access_post_metabox' ),
-								),
-								array(
-									'id'       		=> 'restricted_access_taxonomy_metabox',
-									'type'     		=> 'multi_checkbox',
-									'label'   		=> __( 'Restricted Access to Taxonomies','ultimate-member' ),
-									'tooltip'   => __( 'Restriction content of the current Taxonomies','ultimate-member' ),
-									'options'       => $all_taxonomies,
-									'columns'       => 3,
-									'value' 		=> $restricted_access_taxonomy_metabox_value,
-									'default' 		=> UM()->options()->get_default( 'restricted_access_taxonomy_metabox' ),
-								),
-							)
+							'fields'    => $access_fields
 						),
 						'other' => array(
 							'title'     => __( 'Other', 'ultimate-member' ),
