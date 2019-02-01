@@ -398,3 +398,12 @@ function twentyseventeen_cmb2_settings() {
 	) );
 
 }
+add_filter( 'object_sync_for_salesforce_pull_params_modify', 'change_pull_params', 10, 6 );
+function change_pull_params( $params, $mapping, $object, $sf_sync_trigger, $use_soap, $is_new ) {
+	$params['post_status'] = array( // wordpress field name
+		'value' => 'publish',
+		'method_modify' => 'wp_update_post',
+		'method_read' => 'get_posts'
+	);
+	return $params;
+}
