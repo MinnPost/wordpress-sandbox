@@ -95,6 +95,12 @@ function twentyseventeen_cmb2_settings() {
 		'type' => 'text',
 	) );
 	$user_settings->add_field( array(
+		'name' => 'Test Last Name',
+		'desc' => '',
+		'id'   => '_test_last_name',
+		'type' => 'text',
+	) );
+	$user_settings->add_field( array(
 		'name' => 'Stripe Customer ID',
 		'desc' => '',
 		'id'   => '_stripe_customer_id',
