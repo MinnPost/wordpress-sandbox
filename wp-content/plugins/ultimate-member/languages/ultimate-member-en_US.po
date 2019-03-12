@@ -1,8 +1,8 @@
 msgid ""
 msgstr ""
 "Project-Id-Version: Ultimate Member\n"
-"POT-Creation-Date: 2019-02-11 18:50+0200\n"
-"PO-Revision-Date: 2019-02-11 18:50+0200\n"
+"POT-Creation-Date: 2019-03-12 14:40+0200\n"
+"PO-Revision-Date: 2019-03-12 14:40+0200\n"
 "Last-Translator: \n"
 "Language-Team: \n"
 "Language: en_US\n"
@@ -226,7 +226,7 @@ msgstr ""
 #: includes/admin/templates/form/register_gdpr.php:23
 #: includes/core/class-builtin.php:1130 includes/core/class-builtin.php:1144
 #: includes/core/class-builtin.php:1145
-#: includes/core/um-actions-account.php:251
+#: includes/core/um-actions-account.php:256
 msgid "No"
 msgstr ""
 
@@ -6382,15 +6382,15 @@ msgstr ""
 msgid "You must enter a new password"
 msgstr ""
 
-#: includes/core/class-password.php:538 includes/core/um-actions-account.php:54
+#: includes/core/class-password.php:538 includes/core/um-actions-account.php:59
 msgid "Your password must contain at least 8 characters"
 msgstr ""
 
-#: includes/core/class-password.php:542 includes/core/um-actions-account.php:58
+#: includes/core/class-password.php:542 includes/core/um-actions-account.php:63
 msgid "Your password must contain less than 30 characters"
 msgstr ""
 
-#: includes/core/class-password.php:546 includes/core/um-actions-account.php:62
+#: includes/core/class-password.php:546 includes/core/um-actions-account.php:67
 #: includes/core/um-actions-form.php:476
 msgid ""
 "Your password must contain at least one lowercase letter, one capital letter "
@@ -6559,44 +6559,48 @@ msgstr ""
 msgid "Membership Inactive"
 msgstr ""
 
-#: includes/core/um-actions-account.php:22
+#: includes/core/um-actions-account.php:17
+msgid "Are you hacking? Please try again!"
+msgstr ""
+
+#: includes/core/um-actions-account.php:27
 msgid "You must enter your password"
 msgstr ""
 
-#: includes/core/um-actions-account.php:25
-#: includes/core/um-actions-account.php:42
+#: includes/core/um-actions-account.php:30
+#: includes/core/um-actions-account.php:47
 msgid "This is not your password"
 msgstr ""
 
-#: includes/core/um-actions-account.php:47
+#: includes/core/um-actions-account.php:52
 msgid "Your new password does not match"
 msgstr ""
 
-#: includes/core/um-actions-account.php:80
+#: includes/core/um-actions-account.php:85
 msgid "Your username is invalid"
 msgstr ""
 
-#: includes/core/um-actions-account.php:85
+#: includes/core/um-actions-account.php:90
 msgid "You must provide your first name"
 msgstr ""
 
-#: includes/core/um-actions-account.php:89
+#: includes/core/um-actions-account.php:94
 msgid "You must provide your last name"
 msgstr ""
 
-#: includes/core/um-actions-account.php:94
+#: includes/core/um-actions-account.php:99
 msgid "You must provide your e-mail"
 msgstr ""
 
-#: includes/core/um-actions-account.php:97
+#: includes/core/um-actions-account.php:102
 msgid "Please provide a valid e-mail"
 msgstr ""
 
-#: includes/core/um-actions-account.php:100
+#: includes/core/um-actions-account.php:105
 msgid "Email already linked to another account"
 msgstr ""
 
-#: includes/core/um-actions-account.php:396
+#: includes/core/um-actions-account.php:401
 msgid "Email me when"
 msgstr ""
 
