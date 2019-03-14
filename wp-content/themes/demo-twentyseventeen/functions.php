@@ -124,6 +124,12 @@ function twentyseventeen_cmb2_settings() {
 		'id'   => '_temporary_field',
 		'type' => 'text',
 	) );
+	$user_settings->add_field( array(
+		'name' => 'Consolidated Emails',
+		'desc' => '',
+		'id'   => '_consolidated_emails',
+		'type' => 'text',
+	) );
 
 	$post_settings = new_cmb2_box( array(
 		'id'           => 'Post',
