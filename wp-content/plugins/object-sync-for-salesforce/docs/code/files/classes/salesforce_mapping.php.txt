@@ -52,6 +52,8 @@ class Object_Sync_Sf_Mapping {
 	public $status_success;
 	public $status_error;
 
+	public $debug;
+
 	/**
 	 * Constructor which sets up links between the systems
 	 *
@@ -147,7 +149,7 @@ class Object_Sync_Sf_Mapping {
 	 * @param int   $id The ID of a desired mapping.
 	 * @param array $conditions Array of key=>value to match the mapping by.
 	 * @param bool  $reset Unused parameter.
-	 * @return Array $map a single mapping or $mappings, an array of mappings.
+	 * @return array $map a single mapping or $mappings, an array of mappings.
 	 * @throws \Exception
 	 */
 	public function get_fieldmaps( $id = null, $conditions = array(), $reset = false ) {
@@ -266,7 +268,7 @@ class Object_Sync_Sf_Mapping {
 	 * @param array $wordpress_fields The fields for the WordPress side of the mapping.
 	 * @param array $salesforce_fields The fields for the Salesforce side of the mapping.
 	 * @param int   $id The ID of the mapping.
-	 * @return $map
+	 * @return boolean
 	 * @throws \Exception
 	 */
 	public function update_fieldmap( $posted = array(), $wordpress_fields = array(), $salesforce_fields = array(), $id = '' ) {
@@ -295,7 +297,7 @@ class Object_Sync_Sf_Mapping {
 	 * @param array $posted It's $_POST.
 	 * @param array $wordpress_fields The fields for the WordPress side of the mapping.
 	 * @param array $salesforce_fields The fields for the Salesforce side of the mapping.
-	 * @return $data
+	 * @return array $data the fieldmap's data for the database
 	 */
 	private function setup_fieldmap_data( $posted = array(), $wordpress_fields = array(), $salesforce_fields = array() ) {
 		$data = array(
@@ -530,7 +532,7 @@ class Object_Sync_Sf_Mapping {
 	 * @deprecated since 1.8.0
 	 * @param array $conditions Limitations on the SQL query for object mapping rows.
 	 * @param bool  $reset Unused parameter.
-	 * @return $map or $mappings
+	 * @return array $map or $mappings
 	 * @throws \Exception
 	 */
 	public function get_object_maps( $conditions = array(), $reset = false ) {
@@ -573,7 +575,7 @@ class Object_Sync_Sf_Mapping {
 	 *
 	 * @param array $posted It's $_POST.
 	 * @param array $id The ID of the object map row.
-	 * @return $map
+	 * @return boolean
 	 * @throws \Exception
 	 */
 	public function update_object_map( $posted = array(), $id = '' ) {
@@ -599,7 +601,7 @@ class Object_Sync_Sf_Mapping {
 	 * Setup the data for the object map
 	 *
 	 * @param array $posted It's $_POST.
-	 * @return $data Filtered array with only the keys that are in the object map database table. Strips out things from WordPress form if they're present.
+	 * @return array $data Filtered array with only the keys that are in the object map database table. Strips out things from WordPress form if they're present.
 	 */
 	private function setup_object_map_data( $posted = array() ) {
 		$allowed_fields   = $this->wpdb->get_col( "DESC {$this->object_map_table}", 0 );
@@ -613,6 +615,7 @@ class Object_Sync_Sf_Mapping {
 	 * Delete an object map row between a WordPress and Salesforce object
 	 *
 	 * @param int|array $id The ID or IDs of the object map row(s).
+	 * @return boolean
 	 * @throws \Exception
 	 */
 	public function delete_object_map( $id = '' ) {
@@ -641,7 +644,7 @@ class Object_Sync_Sf_Mapping {
 	 * Generate a temporary ID to store while waiting for a push or pull to complete, before the record has been assigned a new ID
 	 *
 	 * @param string $direction Whether this is part of a push or pull action
-	 * @return $id is a temporary string that will be replaced if the modification is successful
+	 * @return string $id is a temporary string that will be replaced if the modification is successful
 	 */
 	public function generate_temporary_id( $direction ) {
 		if ( 'push' === $direction ) {
@@ -897,6 +900,14 @@ class Object_Sync_Sf_Mapping {
 							$format = get_option( 'date_format', 'U' );
 							if ( isset( $fieldmap['wordpress_field']['type'] ) && 'datetime' === $fieldmap['wordpress_field']['type'] ) {
 								$format = 'Y-m-d H:i:s';
+							}
+							if ( 'tribe_events' === $mapping['wordpress_object'] && class_exists( 'Tribe__Events__Main' ) ) {
+								$format = 'Y-m-d H:i:s';
+							}
+							if ( 'datetime' === $salesforce_field_type ) {
+								// Note: the Salesforce REST API appears to always return datetimes as GMT values. We should retrieve them that way, then format them to deal with them in WordPress appropriately.
+								// We should not do any converting unless it's a datetime, because if it's a date, Salesforce stores it as midnight. We don't want to convert that.
+								$object[ $salesforce_field ] = get_date_from_gmt( $object[ $salesforce_field ], 'Y-m-d\TH:i:s\Z' ); // convert from GMT to local date/time based on WordPress time zone setting.
 							}
 							$object[ $salesforce_field ] = date_i18n( $format, strtotime( $object[ $salesforce_field ] ) );
 							break;
