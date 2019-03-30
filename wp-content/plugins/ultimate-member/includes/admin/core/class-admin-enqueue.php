@@ -429,7 +429,6 @@ if ( ! class_exists( 'um\admin\core\Admin_Enqueue' ) ) {
 		 * Load Gutenberg blocks js
 		 */
 		function load_gutenberg_shortcode_blocks() {
-
 			if ( ! function_exists( 'register_block_type' ) ) {
 				// Gutenberg is not active.
 				return;
@@ -441,7 +440,12 @@ if ( ! class_exists( 'um\admin\core\Admin_Enqueue' ) ) {
 				return;
 			}
 
-			wp_register_script( 'um-blocks-shortcode-js', $this->js_url . 'um-admin-blocks-shortcode.js', array( 'wp-i18n', 'wp-blocks', 'wp-components' ), ultimatemember_version, true );
+			$enable_blocks = UM()->options()->get( 'enable_blocks' );
+			if ( empty( $enable_blocks ) ) {
+				return;
+			}
+
+			wp_register_script( 'um-blocks-shortcode-js', $this->js_url . 'um-admin-blocks-shortcode.js', array( 'wp-i18n', 'wp-blocks', 'wp-components', 'rich-text' ), ultimatemember_version, true );
 			wp_set_script_translations( 'um-blocks-shortcode-js', 'ultimate-member' );
 			wp_enqueue_script( 'um-blocks-shortcode-js' );
 
@@ -499,7 +503,12 @@ if ( ! class_exists( 'um\admin\core\Admin_Enqueue' ) ) {
 		 * @return array
 		 */
 		 function blocks_category( $categories, $post ) {
-			 return array_merge(
+			 $enable_blocks = UM()->options()->get( 'enable_blocks' );
+			 if ( empty( $enable_blocks ) ) {
+				 return $categories;
+			 }
+
+		 	return array_merge(
 				 $categories,
 				 array(
 					 array(
