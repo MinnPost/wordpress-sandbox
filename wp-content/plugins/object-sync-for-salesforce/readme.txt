@@ -3,9 +3,9 @@ Contributors: minnpost, inn_nerds, jonathanstegall, benlk, rclations, harmoney
 Donate link: https://www.minnpost.com/support/?campaign=7010G0000012fXGQAY
 Tags: salesforce, sync, crm
 Requires at least: 4.6
-Tested up to: 5.1
-Stable tag: 1.8.5
-Requires PHP: 5.5
+Tested up to: 5.2
+Stable tag: 1.8.6
+Requires PHP: 5.6.20
 License: GPLv2 or later
 License URI: http://www.gnu.org/licenses/gpl-2.0.html
 
@@ -27,7 +27,7 @@ This plugin also includes developer hooks that allow for additional plugins to m
 
 To install the plugin in WordPress, your PHP environment needs the following:
 
-1. At least version 5.5.
+1. At least version 5.6.20.
 2. SSL support (this is required to connect to Salesforce).
 3. A domain where WordPress is successfully running. For purposes of this documentation, we'll assume that you are using `https://<your site>`. You would use `https://www.example.com` instead, if your site was `www.example.com`.
 
@@ -197,12 +197,12 @@ Sometimes Salesforce returns a 401 error. This means the session ID or OAuth tok
 If the plugin allows you to authorize in Salesforce, but does not finish activating in WordPress, consider these possible issues:
 
 1. Insufficient app permissions in Salesforce. Make sure the app's permissions are at least "Perform requests on your behalf at any time" for OAuth Scope as well as the appropriate other scopes for your application. Many setups will also need to select "Access and manage your data (api)" as one of these scopes. If you change permissions, give Salesforce a few minutes before trying to connect again.
-2. The plugin may have been unable to create its required database tables.
+2. The plugin may have been unable to create its required database tables. If you think this may be the case, refer to [this document](https://github.com/MinnPost/object-sync-for-salesforce/blob/master/docs/troubleshooting-unable-to-create-database-tables.md) for the necessary SQL.
 3. Mismatched settings between the plugin and the expected values in Salesforce.
 
 ### Troubleshooting Fieldmaps
 
-If you are successfully authenticated with Salesforce, but you have a fieldmap that is not passing data, there are several ways to troubleshoot. Always check your PHP error logs first. More information may be available in [the plugin documentation](https://github.com/MinnPost/object-sync-for-salesforce/blob/master/docs/readme.md).
+If you are successfully authenticated with Salesforce, but you have a fieldmap that is not passing data, there are several ways to troubleshoot. Always check your PHP error logs first. More information may be available in the [troubleshooting](https://github.com/MinnPost/object-sync-for-salesforce/blob/master/docs/troubleshooting.md) section of the plugin's documentation.
 
 **Plugin configuration**
 
@@ -243,6 +243,13 @@ This plugin can be relatively complicated, and sometimes other plugins can effec
 - **Build other integrations in WordPress** this plugin focuses on the Salesforce REST API, as it covers the integration needs we have. Salesforce also has many other developer options: the SOAP API (we hope to incorporate this into Object Sync for Salesforce at some point), the Bulk API, and the Metadata API. Developers could extend this plugin to integrate with one of these. We would welcome any pull requests!
 
 == Changelog ==
+
+* 1.8.6 (2019-05-13)
+    * Feature: Add object type parameter to `push_update_params_modify` developer hook.
+    * Maintenance: Centralize documentation of SQL table structure.
+    * Maintenance: Replace the various calls to create/update metadata with just one for easier management.
+    * Maintenance: Update supported WordPress version to 5.2 and PHP version to 5.6.20 to match the new minimum for WordPress. 
+    * Developers: Update ActionScheduler to 2.2.5.
 
 * 1.8.5 (2019-03-30)
     * Bug fix: This fixes a possible issue in which the plugin would fail to realize that its database version was up to date.
