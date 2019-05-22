@@ -10,6 +10,23 @@
  */
 class MailChimp_Newsletter extends MailChimp_WooCommerce_Options
 {
+    /** @var null|static */
+    protected static $_instance = null;
+
+    /**
+     * @return MailChimp_Newsletter
+     */
+    public static function instance()
+    {
+        if (!empty(static::$_instance)) {
+            return static::$_instance;
+        }
+        $env = mailchimp_environment_variables();
+        static::$_instance = new MailChimp_Newsletter();
+        static::$_instance->setVersion($env->version);
+        return static::$_instance;
+    }
+
     /**
      * @param WC_Checkout $checkout
      */
@@ -23,7 +40,7 @@ class MailChimp_Newsletter extends MailChimp_WooCommerce_Options
             }
 
             // allow the user to specify the text in the newsletter label.
-            $label = $this->getOption('newsletter_label', 'Subscribe to our newsletter');
+            $label = $this->getOption('newsletter_label', __('Subscribe to our newsletter', 'mailchimp-woocommerce'));
 
             // if the user chose 'check' or nothing at all, we default to true.
             $default_checked = $default_setting === 'check';
