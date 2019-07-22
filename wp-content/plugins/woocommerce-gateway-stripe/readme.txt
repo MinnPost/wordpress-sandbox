@@ -4,7 +4,7 @@ Tags: credit card, stripe, apple pay, payment request, google pay, sepa, sofort,
 Requires at least: 4.4
 Tested up to: 5.2.1
 Requires PHP: 5.6
-Stable tag: 4.2.0
+Stable tag: 4.2.3
 License: GPLv3
 License URI: https://www.gnu.org/licenses/gpl-3.0.html
 Attributions: thorsten-stripe
@@ -113,16 +113,15 @@ If you get stuck, you can ask for help in the Plugin Forum.
 
 == Changelog ==
 
-= 4.2.0 - 2019-05-29 =
-* Update - Enable Payment Request buttons for Puerto Rico based stores.
-* Update - Add support for Strong Customer Authentication (SCA) for user-initiated payments.
-* Remove - Stripe Modal Checkout.
-* Remove - 3D Secure settings are no longer available in the gateway settings. Use Stripe Radar instead.
-* Fix - Display error messages only next to the chosen saved card.
+= 4.2.3 - 2019-07-18 =
+* Fix - Ignore "payment failed" webhooks if they come after another payment has already succeeded for that order.
+* Fix - Correctly transition an order to "On Hold" if the payment was put under review by Stripe Radar, and back to "Processing" when the review is approved.
+* Tweak - Make the publishable key fields be plain text instead of "password".
+* Fix - Fix successful retries of 3ds failing.
 
 [See changelog for all versions](https://raw.githubusercontent.com/woocommerce/woocommerce-gateway-stripe/master/changelog.txt).
 
 == Upgrade Notice ==
 
-= 4.1 =
-4.1 is a minor release. Please do a full site backup and test on a staging site before deploying to a live/production server.
+= 4.2 =
+4.2 is a minor release. Please do a full site backup and test on a staging site before deploying to a live/production server.
