@@ -20,14 +20,14 @@ if ( ! class_exists( 'UM' ) ) {
 	 * @method UM_Notifications_API Notifications_API()
 	 * @method UM_Online Online()
 	 * @method UM_Profile_Completeness_API Profile_Completeness_API()
-	 * @method UM_reCAPTCHA_API reCAPTCHA_API()
+	 * @method UM_reCAPTCHA reCAPTCHA()
 	 * @method UM_Reviews_API Reviews_API()
 	 * @method UM_Activity_API Activity_API()
 	 * @method UM_Social_Login_API Social_Login_API()
 	 * @method UM_User_Tags_API User_Tags_API()
 	 * @method UM_Verified_Users_API Verified_Users_API()
 	 * @method UM_WooCommerce_API WooCommerce_API()
-	 * @method UM_Terms_Conditions_API Terms_Conditions_API()
+	 * @method UM_Terms_Conditions Terms_Conditions()
 	 * @method UM_Private_Content_API Private_Content_API()
 	 * @method UM_User_Location_API User_Location_API()
 	 * @method UM_Photos_API Photos_API()
@@ -1221,20 +1221,6 @@ if ( ! class_exists( 'UM' ) ) {
 			}
 
 			return $this->classes['datetime'];
-		}
-
-
-		/**
-		 * @since 2.0
-		 *
-		 * @return um\core\Chart
-		 */
-		function chart() {
-			if ( empty( $this->classes['chart'] ) ) {
-				$this->classes['chart'] = new um\core\Chart();
-			}
-
-			return $this->classes['chart'];
 		}
 
 

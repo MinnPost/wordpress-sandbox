@@ -122,6 +122,12 @@ $premium['user-bookmarks'] = array(
 	'desc' => 'Allow users to bookmark content from your website',
 );
 
+$premium['unsplash'] = array(
+	'url' => 'https://ultimatemember.com/extensions/unsplash/',
+	'name' => 'Unsplash',
+	'desc' => 'Allow users to select a profile cover photo from <a href="https://unsplash.com/" target="_blank">Unsplash</a> from their profile',
+);
+
 $free['forumwp'] = array(
 	'url' => 'https://ultimatemember.com/extensions/forumwp/',
 	'name' => 'ForumWP',
@@ -182,11 +188,11 @@ $free['terms-conditions'] = array(
 				foreach ( $premium as $key => $info ) { ?>
 
 					<div class="plugin-card">
-						<a href="<?php echo esc_attr( $info['url'] ); ?>" class="plugin-image">
-							<img src="<?php echo esc_attr( um_url . 'assets/img/extensions/' . $key . '.png'  ); ?>" alt="<?php echo esc_attr( $info['name'] ) ?>" />
+						<a href="<?php echo esc_url( $info['url'] ); ?>" class="plugin-image">
+							<img src="<?php echo esc_url( um_url . 'assets/img/extensions/' . $key . '.png'  ); ?>" alt="<?php echo esc_attr( $info['name'] ) ?>" />
 						</a>
 						<div class="plugin-card-top">
-							<h3><a href="<?php echo esc_attr( $info['url'] ); ?>"><?php echo $info['name']; ?></a></h3>
+							<h3><a href="<?php echo esc_url( $info['url'] ); ?>"><?php echo $info['name']; ?></a></h3>
 
 							<div class="desc column-description">
 								<?php echo $info['desc']; ?>
@@ -195,12 +201,12 @@ $free['terms-conditions'] = array(
 							<div class="action-links">
 								<ul class="plugin-action-buttons">
 									<li>
-										<a class="install-now button" href="<?php echo $info['url']; ?>">
+										<a class="install-now button" href="<?php echo esc_url( $info['url'] ); ?>">
 											<?php _e( 'Get this Add on', 'ultimate-member' ) ?>
 										</a>
 									</li>
 									<li>
-										<a href="<?php echo $info['url']; ?>">
+										<a href="<?php echo esc_url( $info['url'] ); ?>">
 											<?php _e( 'More Details', 'ultimate-member' ) ?>
 										</a>
 									</li>
@@ -216,11 +222,11 @@ $free['terms-conditions'] = array(
 				foreach ( $free as $key => $info ) { ?>
 
 					<div class="plugin-card">
-						<a href="<?php echo $info['url']; ?>" class="plugin-image">
-							<img src="<?php echo esc_attr( um_url . 'assets/img/extensions/' . $key . '.png'  ); ?>" alt="<?php echo esc_attr( $info['name'] ) ?>" />
+						<a href="<?php echo esc_url( $info['url'] ); ?>" class="plugin-image">
+							<img src="<?php echo esc_url( um_url . 'assets/img/extensions/' . $key . '.png'  ); ?>" alt="<?php echo esc_attr( $info['name'] ) ?>" />
 						</a>
 						<div class="plugin-card-top">
-							<h3><a href="<?php echo $info['url']; ?>"><?php echo $info['name']; ?></a></h3>
+							<h3><a href="<?php echo esc_url( $info['url'] ); ?>"><?php echo $info['name']; ?></a></h3>
 
 							<div class="desc column-description">
 								<?php echo $info['desc']; ?>
@@ -229,7 +235,7 @@ $free['terms-conditions'] = array(
 							<div class="action-links">
 								<ul class="plugin-action-buttons">
 									<li>
-										<a class="install-now button" href="<?php echo $info['url']; ?>">
+										<a class="install-now button" href="<?php echo esc_url( $info['url'] ); ?>">
 											<?php _e( 'Get this Add on', 'ultimate-member' ) ?>
 										</a>
 									</li>

@@ -4,7 +4,7 @@
 
 namespace Composer\Autoload;
 
-class ComposerStaticInite58475742c7836da432d03f1c8e41b6c
+class ComposerStaticInit1d34b882376a6776c2d50eb2e89c117c
 {
     public static $prefixLengthsPsr4 = array (
         'T' => 
@@ -53,7 +53,11 @@ class ComposerStaticInite58475742c7836da432d03f1c8e41b6c
         'Tribe\\PUE\\Update_Prevention' => __DIR__ . '/../..' . '/src/Tribe/PUE/Update_Prevention.php',
         'Tribe\\Service_Providers\\PUE' => __DIR__ . '/../..' . '/src/Tribe/Service_Providers/PUE.php',
         'Tribe\\Traits\\Cache_User' => __DIR__ . '/../..' . '/src/Tribe/Traits/Cache_User.php',
+        'Tribe\\Utils\\Collection_Interface' => __DIR__ . '/../..' . '/src/Tribe/Utils/Collection_Interface.php',
+        'Tribe\\Utils\\Collection_Trait' => __DIR__ . '/../..' . '/src/Tribe/Utils/Collection_Trait.php',
         'Tribe\\Utils\\Element_Classes' => __DIR__ . '/../..' . '/src/Tribe/Utils/Element_Classes.php',
+        'Tribe\\Utils\\Lazy_Collection' => __DIR__ . '/../..' . '/src/Tribe/Utils/Lazy_Collection.php',
+        'Tribe\\Utils\\Post_Thumbnail' => __DIR__ . '/../..' . '/src/Tribe/Utils/Post_Thumbnail.php',
         'tad_DI52_Container' => __DIR__ . '/..' . '/lucatume/di52/src/tad/DI52/Container.php',
         'tad_DI52_ContainerInterface' => __DIR__ . '/..' . '/lucatume/di52/src/tad/DI52/ContainerInterface.php',
         'tad_DI52_ProtectedValue' => __DIR__ . '/..' . '/lucatume/di52/src/tad/DI52/ProtectedValue.php',
@@ -66,10 +70,10 @@ class ComposerStaticInite58475742c7836da432d03f1c8e41b6c
     public static function getInitializer(ClassLoader $loader)
     {
         return \Closure::bind(function () use ($loader) {
-            $loader->prefixLengthsPsr4 = ComposerStaticInite58475742c7836da432d03f1c8e41b6c::$prefixLengthsPsr4;
-            $loader->prefixDirsPsr4 = ComposerStaticInite58475742c7836da432d03f1c8e41b6c::$prefixDirsPsr4;
-            $loader->prefixesPsr0 = ComposerStaticInite58475742c7836da432d03f1c8e41b6c::$prefixesPsr0;
-            $loader->classMap = ComposerStaticInite58475742c7836da432d03f1c8e41b6c::$classMap;
+            $loader->prefixLengthsPsr4 = ComposerStaticInit1d34b882376a6776c2d50eb2e89c117c::$prefixLengthsPsr4;
+            $loader->prefixDirsPsr4 = ComposerStaticInit1d34b882376a6776c2d50eb2e89c117c::$prefixDirsPsr4;
+            $loader->prefixesPsr0 = ComposerStaticInit1d34b882376a6776c2d50eb2e89c117c::$prefixesPsr0;
+            $loader->classMap = ComposerStaticInit1d34b882376a6776c2d50eb2e89c117c::$classMap;
 
         }, null, ClassLoader::class);
     }

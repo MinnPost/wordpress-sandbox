@@ -6,7 +6,7 @@ Donate link:
 Tags: community, member, membership, user-profile, user-registration
 Requires at least: 4.9
 Tested up to: 5.2
-Stable tag: 2.0.55
+Stable tag: 2.0.56
 License: GNU Version 2 or Any Later Version
 License URI: http://www.gnu.org/licenses/gpl-3.0.txt
 
@@ -41,7 +41,10 @@ Read about all of the plugin's features at [Ultimate Member](https://ultimatemem
 
 Ultimate Member has a range of extensions that allow you to extend the power of the plugin. You can purchase all of these extensions at a significant discount with our [All Access Pass](https://ultimatemember.com/pricing/) or you can purchase extensions individually.
 
+* [Unsplash](https://ultimatemember.com/extensions/unsplash/) - Allow users to select a profile cover photo from [Unsplash](https://unsplash.com/) from their profile
 * [User Bookmarks](https://ultimatemember.com/extensions/user-bookmarks/) - Allow users to bookmark content from your website
+* [User Photos](https://ultimatemember.com/extensions/user-photos/) - Allow users to upload photos to their profile
+* [Groups](https://ultimatemember.com/extensions/groups/) - Allow users to create and join groups around shared topics, interests etc.
 * [Private Content](https://ultimatemember.com/extensions/private-content/) - Display private content to logged in users that only they can access
 * [Instagram](https://ultimatemember.com/extensions/instagram/) - Allow users to show their Instagram photos on their profile
 * [User Tags](https://ultimatemember.com/extensions/user-tags/) - Lets you add a user tag system to your website
@@ -59,8 +62,6 @@ Ultimate Member has a range of extensions that allow you to extend the power of 
 * [Notices](https://ultimatemember.com/extensions/notices/) - Alert users to important information using conditional notices
 * [Profile Completeness](https://ultimatemember.com/extensions/profile-completeness/) - Encourage or force users to complete their profiles with the profile completeness extension
 * [Friends](https://ultimatemember.com/extensions/friends/) - Allows users to become friends by sending & accepting/rejecting friend requests
-* [User Photos](https://ultimatemember.com/extensions/user-photos/) - Allow users to upload photos to their profile
-* [Groups](https://ultimatemember.com/extensions/groups/) - Allow users to create and join groups around shared topics, interests etc.
 
 = Free Extensions =
 
@@ -138,6 +139,29 @@ The plugin works with popular caching plugins by automatically excluding Ultimat
 == Changelog ==
 
 = Important: UM2.0+ is a significant update to the code base from 1.3.88. Please make sure you take a full-site backup with restore point before updating the plugin =
+
+= 2.0.56: August 21, 2019 =
+
+* Enhancements:
+  - Added security fixes (XSS)
+  - Added hooks for 3rd party integrations
+  - Updated Datepicker & Timepicker library from 5.6 to 6.2 version
+
+* Bugfixes:
+  - Fixed validation of forms conditional fields at the backend (for the nesting fields)
+  - Fixed edit profile mode when profile menu is disabled
+  - Fixed RTL styles and layouts
+  - Fixed user profile description validation
+  - Fixed JS errors on some installs
+  - Fixed ability approve users by Administrator with special capabilities
+  - Fixed multiselects' retrieval of options from callback function
+  - Fixed save process and conditional logic for Appearances -> Profile Menu settings section
+  - Fixed uninstall process
+  - Fixed is_selected method for some cases
+  - Fixed form settings fields for default button labels in wp-admin metaboxes
+  - Fixed generate metakeys for the form's custom fields
+  - Fixed issue when UM Roles localized as object on Add/Edit User screen
+  - Fixed PHP notices
 
 = 2.0.55: August 16, 2019 =
 
