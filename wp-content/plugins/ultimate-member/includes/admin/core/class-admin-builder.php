@@ -54,6 +54,11 @@ if ( ! class_exists( 'um\admin\core\Admin_Builder' ) ) {
 				$validate = $field_attr['validate'];
 				foreach ( $validate as $post_input => $arr ) {
 
+					$skip = apply_filters( 'um_admin_builder_skip_field_validation', false, $post_input, $array );
+					if ( $skip ) {
+						continue;
+					}
+
 					$mode = $arr['mode'];
 
 					switch ( $mode ) {
@@ -531,21 +536,21 @@ if ( ! class_exists( 'um\admin\core\Admin_Builder' ) ) {
 															<i class="um-icon-plus"></i>
 														<?php } else if ( isset($keyarray['icon']) && !empty( $keyarray['icon'] ) ) { ?>
 															<i class="<?php echo $keyarray['icon']; ?>"></i>
-														<?php } ?><?php echo $title; ?></div>
+														<?php } ?><?php echo ! empty( $keyarray['title'] ) ? $keyarray['title'] : __( '(no title)', 'ultimate-member' ); ?></div>
 													<?php $field_name = isset( UM()->builtin()->core_fields[$type]['name'] ) ? UM()->builtin()->core_fields[$type]['name'] : ''; ?>
 													<div class="um-admin-drag-fld-type um-field-type-<?php echo $type; ?>"><?php echo $field_name; ?></div>
 													<div class="um-admin-drag-fld-icons um-field-type-<?php echo $type; ?>">
 
-														<a href="javascript:void(0);" class="um-admin-tipsy-n" title="Edit" data-modal="UM_edit_field" data-modal-size="normal" data-dynamic-content="um_admin_edit_field_popup" data-arg1="<?php echo $type; ?>" data-arg2="<?php echo $this->form_id; ?>" data-arg3="<?php echo $key; ?>"><i class="um-faicon-pencil"></i></a>
+														<a href="javascript:void(0);" class="um-admin-tipsy-n" title="<?php esc_attr_e( 'Edit', 'ultimate-member' ) ?>" data-modal="UM_edit_field" data-modal-size="normal" data-dynamic-content="um_admin_edit_field_popup" data-arg1="<?php echo $type; ?>" data-arg2="<?php echo $this->form_id; ?>" data-arg3="<?php echo $key; ?>"><i class="um-faicon-pencil"></i></a>
 
-														<a href="javascript:void(0);" class="um-admin-tipsy-n um_admin_duplicate_field" title="Duplicate" data-silent_action="um_admin_duplicate_field" data-arg1="<?php echo $key; ?>" data-arg2="<?php echo $this->form_id; ?>"><i class="um-faicon-files-o"></i></a>
+														<a href="javascript:void(0);" class="um-admin-tipsy-n um_admin_duplicate_field" title="<?php esc_attr_e( 'Duplicate', 'ultimate-member' ) ?>" data-silent_action="um_admin_duplicate_field" data-arg1="<?php echo $key; ?>" data-arg2="<?php echo $this->form_id; ?>"><i class="um-faicon-files-o"></i></a>
 
 														<?php if ( $type == 'group' ) { ?>
 
-															<a href="javascript:void(0);" class="um-admin-tipsy-n" title="Delete Group" data-remove_element="um-admin-drag-fld.um-field-type-group" data-silent_action="um_admin_remove_field" data-arg1="<?php echo $key; ?>" data-arg2="<?php echo $this->form_id; ?>"><i class="um-faicon-trash-o"></i></a>
+															<a href="javascript:void(0);" class="um-admin-tipsy-n" title="<?php esc_attr_e( 'Delete Group', 'ultimate-member' ) ?>" data-remove_element="um-admin-drag-fld.um-field-type-group" data-silent_action="um_admin_remove_field" data-arg1="<?php echo $key; ?>" data-arg2="<?php echo $this->form_id; ?>"><i class="um-faicon-trash-o"></i></a>
 														<?php } else { ?>
 
-															<a href="javascript:void(0);" class="um-admin-tipsy-n" title="Delete" data-silent_action="um_admin_remove_field" data-arg1="<?php echo $key; ?>" data-arg2="<?php echo $this->form_id; ?>"><i class="um-faicon-trash-o"></i></a>
+															<a href="javascript:void(0);" class="um-admin-tipsy-n" title="<?php esc_attr_e( 'Delete', 'ultimate-member' ) ?>" data-silent_action="um_admin_remove_field" data-arg1="<?php echo $key; ?>" data-arg2="<?php echo $this->form_id; ?>"><i class="um-faicon-trash-o"></i></a>
 
 														<?php } ?>
 
@@ -864,7 +869,6 @@ if ( ! class_exists( 'um\admin\core\Admin_Builder' ) ) {
 
 						<?php if ( UM()->builtin()->predefined_fields ) {
 							foreach ( UM()->builtin()->predefined_fields as $field_key => $array ) {
-
 								if ( ! isset( $array['account_only'] ) && ! isset( $array['private_use'] ) ) { ?>
 
 									<a href="javascript:void(0);" class="button" <?php disabled( in_array( $field_key, $form_fields, true ) ) ?> data-silent_action="um_admin_add_field_from_predefined" data-arg1="<?php echo esc_attr( $field_key ); ?>" data-arg2="<?php echo esc_attr( $arg2 ); ?>"><?php echo um_trim_string( stripslashes( $array['title'] ), 20 ); ?></a>
@@ -877,14 +881,17 @@ if ( ! class_exists( 'um\admin\core\Admin_Builder' ) ) {
 
 					</div>
 
-					<h4><?php _e('Custom Fields','ultimate-member'); ?></h4>
+					<h4><?php _e( 'Custom Fields', 'ultimate-member' ); ?></h4>
 					<div class="um-admin-btns">
 
 						<?php
 						if ( UM()->builtin()->custom_fields ) {
-							foreach ( UM()->builtin()->custom_fields as $field_key => $array ) { ?>
+							foreach ( UM()->builtin()->custom_fields as $field_key => $array ) {
+								if ( empty( $array['title'] ) || empty( $array['type'] ) ) {
+									continue;
+								} ?>
 
-								<a href="javascript:void(0);" class="button with-icon" <?php disabled( in_array( $field_key, $form_fields, true ) ) ?> data-silent_action="um_admin_add_field_from_list" data-arg1="<?php echo esc_attr( $field_key ); ?>" data-arg2="<?php echo esc_attr( $arg2 ); ?>"><?php echo um_trim_string( stripslashes( $array['title'] ), 20 ); ?> <small>(<?php echo ucfirst( $array['type']); ?>)</small><span class="remove"></span></a>
+								<a href="javascript:void(0);" class="button with-icon" <?php disabled( in_array( $field_key, $form_fields, true ) ) ?> data-silent_action="um_admin_add_field_from_list" data-arg1="<?php echo esc_attr( $field_key ); ?>" data-arg2="<?php echo esc_attr( $arg2 ); ?>"><?php echo um_trim_string( stripslashes( $array['title'] ), 20 ); ?> <small>(<?php echo ucfirst( $array['type'] ); ?>)</small><span class="remove"></span></a>
 
 							<?php }
 						} else {
@@ -1038,13 +1045,15 @@ if ( ! class_exists( 'um\admin\core\Admin_Builder' ) ) {
 
 				case 'um_admin_preview_form':
 
+					UM()->user()->preview = true;
+
 					$mode = UM()->query()->get_attr('mode', $arg1 );
 
 					if ( $mode == 'profile' ) {
 						UM()->fields()->editing = true;
 					}
 
-					$output = do_shortcode('[ultimatemember form_id='.$arg1.']');
+					$output = do_shortcode('[ultimatemember form_id="' . $arg1 . '" /]');
 
 					break;
 

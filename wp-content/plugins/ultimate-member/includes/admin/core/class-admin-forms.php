@@ -412,6 +412,54 @@ if ( ! class_exists( 'um\admin\core\Admin_Forms' ) ) {
 
 
 		/**
+		 * Render text field
+		 *
+		 * @param $field_data
+		 *
+		 * @return bool|string
+		 */
+		function render_number( $field_data ) {
+
+			if ( empty( $field_data['id'] ) ) {
+				return false;
+			}
+
+			$id = ( ! empty( $this->form_data['prefix_id'] ) ? $this->form_data['prefix_id'] : '' ) . '_' . $field_data['id'];
+			$id_attr = ' id="' . esc_attr( $id ) . '" ';
+
+			$class = ! empty( $field_data['class'] ) ? $field_data['class'] : '';
+			$class .= ! empty( $field_data['size'] ) ? 'um-' . $field_data['size'] . '-field' : 'um-long-field';
+			$class_attr = ' class="um-forms-field ' . esc_attr( $class ) . '" ';
+
+			$data = array(
+				'field_id' => $field_data['id']
+			);
+
+			if ( ! empty( $field_data['attr'] ) && is_array( $field_data['attr'] ) ){
+				$data = array_merge( $data, $field_data['attr'] );
+			}
+
+			$data_attr = '';
+			foreach ( $data as $key => $value ) {
+				$data_attr .= ' data-' . $key . '="' . esc_attr( $value ) . '" ';
+			}
+
+			$placeholder_attr = ! empty( $field_data['placeholder'] ) ? ' placeholder="' . esc_attr( $field_data['placeholder'] ) . '"' : '';
+
+			$name = $field_data['id'];
+			$name = ! empty( $this->form_data['prefix_id'] ) ? $this->form_data['prefix_id'] . '[' . $name . ']' : $name;
+			$name_attr = ' name="' . $name . '" ';
+
+			$value = $this->get_field_value( $field_data );
+			$value_attr = ' value="' . esc_attr( $value ) . '" ';
+
+			$html = "<input type=\"number\" $id_attr $class_attr $name_attr $data_attr $value_attr $placeholder_attr />";
+
+			return $html;
+		}
+
+
+		/**
 		 * @param $field_data
 		 *
 		 * @return bool|string
@@ -908,8 +956,24 @@ if ( ! class_exists( 'um\admin\core\Admin_Forms' ) ) {
 					$for_attr = ' for="' . esc_attr( $id . '_' . $k ) . '" ';
 					$name_attr = ' name="' . $name . '[' . $k . ']" ';
 
+					$data = array(
+						'field_id' => $field_data['id'] . '_' . $k,
+					);
+
+					if ( ! empty( $field_data['data'] ) ) {
+						$data = array_merge( $data, $field_data['data'] );
+					}
+
+					$data_attr = '';
+					foreach ( $data as $key => $value ) {
+						if ( $value == 'checkbox_key' ) {
+							$value = $k;
+						}
+						$data_attr .= ' data-' . $key . '="' . esc_attr( $value ) . '" ';
+					}
+
 					$html .= "<label $for_attr>
-						<input type=\"checkbox\" " . checked( in_array( $k, $values ), true, false ) . "$id_attr $name_attr value=\"1\" $class_attr>
+						<input type=\"checkbox\" " . checked( in_array( $k, $values ), true, false ) . "$id_attr $name_attr $data_attr value=\"1\" $class_attr>
 						<span>$title</span>
 					</label>";
 				}
@@ -1153,6 +1217,88 @@ if ( ! class_exists( 'um\admin\core\Admin_Forms' ) ) {
 			return $field_data['value'];
 		}
 
+
+		function render_md_default_filters( $field_data ) {
+			if ( empty( $field_data['id'] ) ) {
+				return false;
+			}
+			global $post;
+
+			$id = ( ! empty( $this->form_data['prefix_id'] ) ? $this->form_data['prefix_id'] : '' ) . '_' . $field_data['id'];
+
+			$class = ! empty( $field_data['class'] ) ? $field_data['class'] : '';
+			$class .= ! empty( $field_data['size'] ) ? $field_data['size'] : 'um-long-field';
+			$class_attr = ' class="um-forms-field ' . $class . '" ';
+
+			$data = array(
+				'field_id'          => $field_data['id'],
+				'id_attr'           => $id,
+				'member_directory'  => $post->ID
+			);
+
+			$data_attr = '';
+			foreach ( $data as $key => $value ) {
+				$data_attr .= ' data-' . $key . '="' . esc_attr( $value ) . '" ';
+			}
+
+			$name = $field_data['id'];
+			$name = ! empty( $this->form_data['prefix_id'] ) ? $this->form_data['prefix_id'] . '[' . $name . ']' : $name;
+			$name = "{$name}[]";
+			$name_attr = ' name="' . $name . '" ';
+
+			$values = $this->get_field_value( $field_data );
+			if ( is_array( $values ) ) {
+				$filters = array_keys( $values );
+			}
+
+			$options = '';
+			foreach ( $field_data['options'] as $key => $option ) {
+				$options .= '<option value="' . $key . '">' . $option . '</option>';
+			}
+
+			$html = "<input type=\"hidden\" name=\"um-gmt-offset\" /><select class=\"um-hidden-md-default-filters\" $data_attr>$options</select>";
+			$html .= "<ul class=\"um-md-default-filters-list\" $data_attr>";
+
+			if ( ! empty( $filters ) && is_array( $filters ) ) {
+				foreach ( $filters as $k => $value ) {
+
+					if ( ! in_array( $value, array_keys( $field_data['options'] ) ) ) {
+						continue ;
+					}
+
+					$id_attr = ' id="' . esc_attr( $id . '-' . $k ) . '" ';
+
+					$options = '';
+					foreach ( $field_data['options'] as $key => $option ) {
+						$options .= '<option value="' . $key . '" ' . selected( $key == $value, true, false ) . '>' . $option . '</option>';
+					}
+
+					$html .= "<li class=\"um-md-default-filters-option-line\"><span class=\"um-field-wrapper\">
+						<select $id_attr $name_attr $class_attr $data_attr>$options</select></span>
+						<span class=\"um-field-control\"><a href=\"javascript:void(0);\" class=\"um-select-delete\">" . __( 'Remove', 'ultimate-member' ) . "</a></span><span class=\"um-field-wrapper2 um\">" . UM()->member_directory()->show_filter( $value, array( 'form_id' => $post->ID ), $values[ $value ] ) . "</span></li>";
+				}
+			} elseif ( ! empty( $field_data['show_default_number'] ) && is_numeric( $field_data['show_default_number'] ) && $field_data['show_default_number'] > 0 ) {
+				$i = 0;
+				while ( $i < $field_data['show_default_number'] ) {
+					$id_attr = ' id="' . $id . '-' . $i . '" ';
+
+					$options = '';
+					foreach ( $field_data['options'] as $key => $option ) {
+						$options .= '<option value="' . $key . '">' . $option . '</option>';
+					}
+
+					$html .= "<li class=\"um-md-default-filters-option-line\"><span class=\"um-field-wrapper\">
+						<select $id_attr $name_attr $class_attr $data_attr>$options</select></span>
+						<span class=\"um-field-control\"><a href=\"javascript:void(0);\" class=\"um-select-delete\">" . __( 'Remove', 'ultimate-member' ) . "</a></span></li>";
+
+					$i++;
+				}
+			}
+
+			$html .= "</ul><a href=\"javascript:void(0);\" class=\"button button-primary um-md-default-filters-add-option\" data-name=\"$name\">{$field_data['add_text']}</a>";
+
+			return $html;
+		}
 
 		/**
 		 * Get field value

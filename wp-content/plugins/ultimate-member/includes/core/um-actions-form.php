@@ -366,11 +366,18 @@ function um_submit_form_errors_hook_( $args ) {
 	$um_profile_photo = um_profile('profile_photo');
 
 	if ( get_post_meta( $form_id, '_um_profile_photo_required', true ) && ( empty( $args['profile_photo'] ) && empty( $um_profile_photo ) ) ) {
-		UM()->form()->add_error('profile_photo', sprintf(__('%s is required.','ultimate-member'), 'Profile Photo' ) );
+		UM()->form()->add_error('profile_photo', __( 'Profile Photo is required.', 'ultimate-member' ) );
 	}
 
 	if ( ! empty( $fields ) ) {
 		foreach ( $fields as $key => $array ) {
+
+			if ( $mode == 'profile' ) {
+				$restricted_fields = UM()->fields()->get_restricted_fields_for_edit();
+				if ( is_array( $restricted_fields ) && in_array( $key, $restricted_fields ) ) {
+					continue;
+				}
+			}
 
 			if ( isset( $array['public']  ) && -2 == $array['public'] && ! empty( $array['roles'] ) && is_user_logged_in() ) {
 				$current_user_roles = um_user( 'roles' );
@@ -413,7 +420,7 @@ function um_submit_form_errors_hook_( $args ) {
 			}
 
 			if ( isset( $array['type'] ) && $array['type'] == 'checkbox' && isset( $array['required'] ) && $array['required'] == 1 && !isset( $args[$key] ) ) {
-				UM()->form()->add_error($key, sprintf(__('%s is required.','ultimate-member'), $array['title'] ) );
+				UM()->form()->add_error($key, sprintf( __( '%s is required.', 'ultimate-member' ), $array['title'] ) );
 			}
 
 			if ( isset( $array['type'] ) && $array['type'] == 'radio' && isset( $array['required'] ) && $array['required'] == 1 && !isset( $args[$key] ) && !in_array($key, array('role_radio','role_select') ) ) {
@@ -453,17 +460,17 @@ function um_submit_form_errors_hook_( $args ) {
 			 */
 			do_action( 'um_add_error_on_form_submit_validation', $array, $key, $args );
 
-			if ( isset( $args[ $key ] ) ) {
-
-				if ( isset( $array['required'] ) && $array['required'] == 1 ) {
-					if ( ! isset( $args[$key] ) || $args[$key] == '' || $args[$key] == 'empty_file') {
-						if( empty( $array['label'] ) ) {
-							UM()->form()->add_error($key, __('This field is required','ultimate-member') );
-						} else {
-							UM()->form()->add_error($key, sprintf( __('%s is required','ultimate-member'), $array['label'] ) );
-						}
+			if ( ! empty( $array['required'] ) ) {
+				if ( ! isset( $args[ $key ] ) || $args[ $key ] == '' || $args[ $key ] == 'empty_file' ) {
+					if ( empty( $array['label'] ) ) {
+						UM()->form()->add_error( $key, __( 'This field is required', 'ultimate-member' ) );
+					} else {
+						UM()->form()->add_error( $key, sprintf( __( '%s is required', 'ultimate-member' ), $array['label'] ) );
 					}
 				}
+			}
+
+			if ( isset( $args[ $key ] ) ) {
 
 				if ( isset( $array['max_words'] ) && $array['max_words'] > 0 ) {
 					if ( str_word_count( $args[$key], 0, "éèàôù" ) > $array['max_words'] ) {
@@ -482,10 +489,10 @@ function um_submit_form_errors_hook_( $args ) {
 						UM()->form()->add_error($key, sprintf(__('Your %s must contain less than %s characters','ultimate-member'), $array['label'], $array['max_chars']) );
 					}
 				}
-                     
-				$profile_show_html_bio = UM()->options()->get('profile_show_html_bio');
-					
-				if ( $profile_show_html_bio == 1 && $key !== "description" ) {
+
+				$profile_show_html_bio = UM()->options()->get( 'profile_show_html_bio' );
+
+				if ( $profile_show_html_bio == 1 && $key !== 'description' ) {
 					if ( isset( $array['html'] ) && $array['html'] == 0 ) {
 						if ( wp_strip_all_tags( $args[$key] ) != trim( $args[ $key ] ) ) {
 							UM()->form()->add_error( $key, __( 'You can not use HTML tags here', 'ultimate-member' ) );
@@ -732,10 +739,12 @@ function um_submit_form_errors_hook_( $args ) {
 
 							if ( $args[ $key ] != '' ) {
 
-								if( ! ctype_alpha( str_replace(' ', '', $args[$key] ) ) ){
-									UM()->form()->add_error( $key , __('You must provide alphabetic letters','ultimate-member') );
+								if ( ! preg_match( '/^\p{L}+$/u', str_replace( ' ', '', $args[ $key ] ) ) ) {
+									UM()->form()->add_error( $key, __( 'You must provide alphabetic letters', 'ultimate-member' ) );
 								}
+								
 							}
+
 							break;
 
 						case 'lowercase':

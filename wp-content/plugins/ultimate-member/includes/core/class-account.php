@@ -30,7 +30,7 @@ if ( ! class_exists( 'um\core\Account' ) ) {
 		/**
 		 * @var array
 		 */
-		var $register_fields = array();
+		var $displayed_fields = array();
 
 
 		/**
@@ -54,6 +54,8 @@ if ( ! class_exists( 'um\core\Account' ) ) {
 		 * Init AllTabs for user account
 		 *
 		 * @param $args
+		 *
+		 * @throws \Exception
 		 */
 		function init_tabs( $args ) {
 
@@ -84,7 +86,9 @@ if ( ! class_exists( 'um\core\Account' ) ) {
 
 
 		/**
-		 * @return mixed|void
+		 * Get all Account tabs
+		 *
+		 * @return array
 		 */
 		function get_tabs() {
 			$tabs = array();
@@ -151,7 +155,9 @@ if ( ! class_exists( 'um\core\Account' ) ) {
 		 * Account Shortcode
 		 *
 		 * @param array $args
-		 * @return string
+		 *
+		 * @return false|string
+		 * @throws \Exception
 		 */
 		function ultimatemember_account( $args = array() ) {
 			um_fetch_user( get_current_user_id() );
@@ -198,32 +204,34 @@ if ( ! class_exists( 'um\core\Account' ) ) {
 				$this->current_tab = $args['tab'];
 
 				if ( ! empty( $this->tabs[ $args['tab'] ] ) ) { ?>
-					<div class="um-form">
-						<form method="post" action="">
-							<?php
-							/**
-							 * UM hook
-							 *
-							 * @type action
-							 * @title um_account_page_hidden_fields
-							 * @description Make some action before account tab loading
-							 * @input_vars
-							 * [{"var":"$args","type":"array","desc":"Account Page Arguments"}]
-							 * @change_log
-							 * ["Since: 2.0"]
-							 * @usage add_action( 'um_before_template_part', 'function_name', 10, 1 );
-							 * @example
-							 * <?php
-							 * add_action( 'um_account_page_hidden_fields', 'my_account_page_hidden_fields', 10, 1 );
-							 * function my_account_page_hidden_fields( $args ) {
-							 *     // your code here
-							 * }
-							 * ?>
-							 */
-							do_action( 'um_account_page_hidden_fields', $args );
+					<div class="um um-custom-shortcode-tab">
+						<div class="um-form">
+							<form method="post" action="">
+								<?php
+								/**
+								 * UM hook
+								 *
+								 * @type action
+								 * @title um_account_page_hidden_fields
+								 * @description Make some action before account tab loading
+								 * @input_vars
+								 * [{"var":"$args","type":"array","desc":"Account Page Arguments"}]
+								 * @change_log
+								 * ["Since: 2.0"]
+								 * @usage add_action( 'um_before_template_part', 'function_name', 10, 1 );
+								 * @example
+								 * <?php
+								 * add_action( 'um_account_page_hidden_fields', 'my_account_page_hidden_fields', 10, 1 );
+								 * function my_account_page_hidden_fields( $args ) {
+								 *     // your code here
+								 * }
+								 * ?>
+								 */
+								do_action( 'um_account_page_hidden_fields', $args );
 
-							$this->render_account_tab( $args['tab'], $this->tabs[ $args['tab'] ], $args );  ?>
-						</form>
+								$this->render_account_tab( $args['tab'], $this->tabs[ $args['tab'] ], $args );  ?>
+							</form>
+						</div>
 					</div>
 				<?php }
 
@@ -304,7 +312,17 @@ if ( ! class_exists( 'um\core\Account' ) ) {
 
 			$output = ob_get_clean();
 
+			$this->account_fields_hash();
+
 			return $output;
+		}
+
+
+		/**
+		 *  Update account fields to secure the account submission
+		 */
+		function account_fields_hash() {
+			update_user_meta( um_user( 'ID' ), 'um_account_secure_fields', UM()->account()->displayed_fields );
 		}
 
 
@@ -478,35 +496,70 @@ if ( ! class_exists( 'um\core\Account' ) ) {
 
 
 		/**
-		 * @param array $fields
-		 * @param $id
+		 * Init displayed fields for security check
 		 *
-		 * @return array
+		 * @param $fields
+		 * @param $tab_key
 		 */
-		function account_secure_fields( $fields, $id ) {
+		function init_displayed_fields( $fields, $tab_key ) {
+			if ( ! $this->is_secure_enabled() ) {
+				return;
+			}
+
+			if ( ! isset( $this->displayed_fields[ $tab_key ] ) ) {
+				$this->displayed_fields[ $tab_key ] = array_keys( $fields );
+			} else {
+				$this->displayed_fields[ $tab_key ] = array_merge( $this->displayed_fields[ $tab_key ], array_keys( $fields ) );
+				$this->displayed_fields[ $tab_key ] = array_unique( $this->displayed_fields[ $tab_key ] );
+			}
+		}
+
+
+		/**
+		 * @param $field_key
+		 * @param $tab_key
+		 */
+		function add_displayed_field( $field_key, $tab_key ) {
+			if ( ! $this->is_secure_enabled() ) {
+				return;
+			}
+
+			if ( ! isset( $this->displayed_fields[ $tab_key ] ) ) {
+				$this->displayed_fields[ $tab_key ] = array( $field_key );
+			} else {
+				$this->displayed_fields[ $tab_key ][] = $field_key;
+			}
+		}
+
+
+		/**
+		 * @return bool
+		 */
+		function is_secure_enabled() {
 			/**
 			 * UM hook
 			 *
 			 * @type filter
-			 * @title um_account_secure_fields
-			 * @description Change Account secure fields
+			 * @title um_account_secure_fields__enabled
+			 * @description Active account secure fields
 			 * @input_vars
-			 * [{"var":"$fields","type":"array","desc":"Account Fields"},
-			 * {"var":"$id","type":"int","desc":"User ID"}]
+			 * [{"var":"$enabled","type":"string","desc":"Enable secure account fields"}]
 			 * @change_log
 			 * ["Since: 2.0"]
-			 * @usage add_filter( 'um_account_secure_fields', 'function_name', 10, 2 );
+			 * @usage
+			 * <?php add_filter( 'um_account_secure_fields__enabled', 'function_name', 10, 1 ); ?>
 			 * @example
 			 * <?php
-			 * add_filter( 'um_account_secure_fields', 'my_account_secure_fields', 10, 2 );
-			 * function my_account_secure_fields( $fields, $id ) {
+			 * add_filter( 'um_account_secure_fields__enabled', 'my_account_secure_fields', 10, 1 );
+			 * function my_account_secure_fields( $enabled ) {
 			 *     // your code here
-			 *     return $fields;
+			 *     return $enabled;
 			 * }
 			 * ?>
 			 */
-			$fields = apply_filters( 'um_account_secure_fields', $fields, $id );
-			return $fields;
+			$secure = apply_filters( 'um_account_secure_fields__enabled', true );
+
+			return $secure;
 		}
 
 
@@ -525,8 +578,8 @@ if ( ! class_exists( 'um\core\Account' ) ) {
 			UM()->fields()->set_mode = 'account';
 			UM()->fields()->editing = true;
 
-			if ( ! empty( $this->tab_output[$id]['content'] ) && ! empty( $this->tab_output[$id]['hash'] ) &&
-			     $this->tab_output[$id]['hash'] == md5( json_encode( $shortcode_args ) ) ) {
+			if ( ! empty( $this->tab_output[ $id ]['content'] ) && ! empty( $this->tab_output[ $id ]['hash'] ) &&
+			     $this->tab_output[ $id ]['hash'] == md5( json_encode( $shortcode_args ) ) ) {
 				return $this->tab_output[ $id ]['content'];
 			}
 
@@ -559,8 +612,9 @@ if ( ! class_exists( 'um\core\Account' ) ) {
 					$args = apply_filters( 'um_account_tab_privacy_fields', $args, $shortcode_args );
 
 					$fields = UM()->builtin()->get_specific_fields( $args );
-					$fields = $this->account_secure_fields( $fields, $id );
 					$fields = $this->filter_fields_by_attrs( $fields, $shortcode_args );
+
+					$this->init_displayed_fields( $fields, $id );
 
 					foreach ( $fields as $key => $data ) {
 						$output .= UM()->fields()->edit_field( $key, $data );
@@ -595,8 +649,9 @@ if ( ! class_exists( 'um\core\Account' ) ) {
 					$args = apply_filters( 'um_account_tab_delete_fields', $args, $shortcode_args );
 
 					$fields = UM()->builtin()->get_specific_fields( $args );
-					$fields = $this->account_secure_fields( $fields, $id );
 					$fields = $this->filter_fields_by_attrs( $fields, $shortcode_args );
+
+					$this->init_displayed_fields( $fields, $id );
 
 					foreach ( $fields as $key => $data ) {
 						$output .= UM()->fields()->edit_field( $key, $data );
@@ -644,8 +699,9 @@ if ( ! class_exists( 'um\core\Account' ) ) {
 					$args = apply_filters( 'um_account_tab_general_fields', $args, $shortcode_args );
 
 					$fields = UM()->builtin()->get_specific_fields( $args );
-					$fields = $this->account_secure_fields( $fields, $id );
 					$fields = $this->filter_fields_by_attrs( $fields, $shortcode_args );
+
+					$this->init_displayed_fields( $fields, $id );
 
 					foreach ( $fields as $key => $data ) {
 						$output .= UM()->fields()->edit_field( $key, $data );
@@ -681,8 +737,9 @@ if ( ! class_exists( 'um\core\Account' ) ) {
 					$args = apply_filters( 'um_account_tab_password_fields', $args, $shortcode_args );
 
 					$fields = UM()->builtin()->get_specific_fields( $args );
-					$fields = $this->account_secure_fields( $fields, $id );
 					$fields = $this->filter_fields_by_attrs( $fields, $shortcode_args );
+
+					$this->init_displayed_fields( $fields, $id );
 
 					foreach ( $fields as $key => $data ) {
 						$output .= UM()->fields()->edit_field( $key, $data );

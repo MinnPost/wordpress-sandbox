@@ -34,6 +34,7 @@ function UM_domenus() {
 		if ( position === 'lc' && jQuery('html').attr('dir') === 'rtl' ){
 			position = 'rc';
 		}
+
 		if ( jQuery(window).width() <= 1200 && element === 'div.um-profile-edit' ) {
 			if ( jQuery('html').attr('dir') === 'rtl' ){
 				position = 'rc';
@@ -53,10 +54,8 @@ function UM_domenus() {
 
 		if ( top_ ) {
 			top_p = jQuery(element).find('img').height() + 4 + top_;
-			left_gap = 4;
 		} else {
 			top_p = jQuery(element).find('img').height() + 4;
-			left_gap = 0;
 		}
 
 		if ( top_p == 4 && element === 'div.um-cover' ) {
@@ -105,16 +104,16 @@ function UM_domenus() {
 
 		} else if ( position === 'bc' ) {
 
-			if ( jQuery('html').attr('dir') === 'rtl' ){
-				rtl_gap = 10;
-			} else {
-				rtl_gap = 0
+			var top_o = 0;
+			var top_offset = menu.data('top-offset');
+			if ( typeof top_offset !== 'undefined' ) {
+				top_o = top_offset*1;
 			}
 
 			menu.css({
-				'top' : top_p,
+				'top' : top_p + top_o,
 				'width': 200,
-				'left': left_p + left_gap + rtl_gap,
+				'left': left_p,
 				'right' : 'auto',
 				'text-align' : 'center'
 			});
@@ -204,22 +203,9 @@ function um_responsive(){
 
 	});
 
-	jQuery('.um-members').each(function(){
-		UM_Member_Grid( jQuery(this) );
-	});
-
 	UM_domenus();
-
 }
 
-function UM_Member_Grid( container ) {
-	container.masonry({
-		itemSelector: '.um-member',
-		columnWidth: '.um-member',
-		gutter: '.um-gutter-sizer'
-	});
-
-}
 
 function initImageUpload_UM( trigger ) {
 
@@ -677,7 +663,7 @@ function um_modal_responsive() {
 
 }
 
-function um_remove_modal(){
+function um_remove_modal() {
 	jQuery('img.cropper-hidden').cropper('destroy');
 
 	jQuery('body,html,textarea').css("overflow", "auto");

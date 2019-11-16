@@ -1494,7 +1494,6 @@ if ( ! class_exists( 'um\core\User' ) ) {
 		 */
 		function get_admin_actions() {
 			$items = array();
-			$actions = array();
 
 			/**
 			 * UM hook
@@ -1517,9 +1516,9 @@ if ( ! class_exists( 'um\core\User' ) ) {
 			 * }
 			 * ?>
 			 */
-			$actions = apply_filters( 'um_admin_user_actions_hook', $actions );
-			if ( ! isset( $actions ) || empty( $actions ) ) {
-				return false;
+			$actions = apply_filters( 'um_admin_user_actions_hook', array(), um_profile_id() );
+			if ( empty( $actions ) ) {
+				return $items;
 			}
 
 			foreach ( $actions as $id => $arr ) {
@@ -1641,14 +1640,11 @@ if ( ! class_exists( 'um\core\User' ) ) {
 		 * Update files
 		 *
 		 * @param $changes
+		 *
+		 * @deprecated 2.1.0
 		 */
 		function update_files( $changes ) {
-
-			foreach ( $changes as $key => $uri ) {
-				$src = um_is_temp_upload( $uri );
-				UM()->files()->new_user_upload( $this->id, $src, $key );
-			}
-
+			um_deprecated_function( 'update_files', '2.1.0', '' );
 		}
 
 

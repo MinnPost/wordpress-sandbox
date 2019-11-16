@@ -23,7 +23,7 @@ function um_admin_new_modal( id, ajax, size ) {
 	jQuery('#' + id).show();
 	jQuery('.um-admin-modal').show();
 	
-	jQuery('.um-admin-modal-head').append('<a href="#" data-action="UM_remove_modal" class="um-admin-modal-close"><i class="um-faicon-times"></i></a>');
+	jQuery('.um-admin-modal-head').append('<a href="javascript:void(0);" data-action="UM_remove_modal" class="um-admin-modal-close"><i class="um-faicon-times"></i></a>');
 
 	if ( ajax == true ) {
 		um_admin_modal_size( size );
@@ -97,6 +97,8 @@ function um_admin_modal_ajaxcall( act_id, arg1, arg2, arg3 ) {
 		in_column = jQuery('.um-col-demon-settings').data('in_column');
 		in_group = jQuery('.um-col-demon-settings').data('in_group');
 	}
+
+	var form_mode = jQuery('input[type=hidden][id=form__um_mode]').val();
 	
 	jQuery.ajax({
 		url: wp.ajax.settings.url,
@@ -111,7 +113,8 @@ function um_admin_modal_ajaxcall( act_id, arg1, arg2, arg3 ) {
 			in_sub_row: in_sub_row,
 			in_column: in_column,
 			in_group: in_group,
-			nonce: um_admin_scripts.nonce
+			nonce: um_admin_scripts.nonce,
+			form_mode: form_mode
 		},
 		complete: function(){
 			um_admin_modal_loaded();
@@ -125,7 +128,6 @@ function um_admin_modal_ajaxcall( act_id, arg1, arg2, arg3 ) {
 			um_admin_live_update_scripts();
 
 			jQuery( "#_custom_dropdown_options_source" ).trigger('blur');
-
 
 			if ( jQuery('.um-admin-editor:visible').length > 0 ) {
 
@@ -151,6 +153,19 @@ function um_admin_modal_ajaxcall( act_id, arg1, arg2, arg3 ) {
 function um_admin_modal_responsive() {
 	var required_margin = jQuery('.um-admin-modal:visible').innerHeight() / 2 + 'px';
 	jQuery('.um-admin-modal:visible').css({'margin-top': '-' + required_margin });
+
+	if ( jQuery('#UM_preview_form .um-s1').length ) {
+		jQuery("#UM_preview_form .um-s1").select2({
+			allowClear: true
+		});
+	}
+
+	if ( jQuery('#UM_preview_form .um-s2').length ) {
+		jQuery("#UM_preview_form .um-s2").select2({
+			allowClear: false,
+			minimumResultsForSearch: 10
+		});
+	}
 }
 
 function um_admin_remove_modal() {
