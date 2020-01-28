@@ -523,7 +523,7 @@ if ( ! class_exists( 'um\admin\core\Admin_Forms' ) ) {
 			$value = $this->get_field_value( $field_data );
 			$value_attr = ' value="' . $value . '" ';
 
-			$html = '<a href="javascript:void(0);" class="button" data-modal="UM_fonticons" data-modal-size="normal" data-dynamic-content="um_admin_fonticon_selector" data-arg1="" data-arg2="" data-back="">' . __( 'Choose Icon', 'ultimate-member' ) . '</a>
+			$html = '<span class="um_admin_fonticon_wrapper"><a href="javascript:void(0);" class="button" data-modal="UM_fonticons" data-modal-size="normal" data-dynamic-content="um_admin_fonticon_selector" data-arg1="" data-arg2="" data-back="">' . __( 'Choose Icon', 'ultimate-member' ) . '</a>
 				<span class="um-admin-icon-value">';
 
 			if ( ! empty( $value ) ) {
@@ -540,7 +540,7 @@ if ( ! class_exists( 'um\admin\core\Admin_Forms' ) ) {
 				$html .= '<span class="um-admin-icon-clear"><i class="um-icon-android-cancel"></i></span>';
 			}
 
-			$html .= '</span>';
+			$html .= '</span></span>';
 
 			return $html;
 		}
@@ -768,6 +768,60 @@ if ( ! class_exists( 'um\admin\core\Admin_Forms' ) ) {
 			$html = "<input type=\"hidden\" $id_attr_hidden $name_attr value=\"0\" />
 			<input type=\"checkbox\" $id_attr $class_attr $name_attr $data_attr " . checked( $value, true, false ) . " value=\"1\" />";
 
+
+			return $html;
+		}
+
+
+		/**
+		 * @param $field_data
+		 *
+		 * @return bool|string
+		 */
+		function render_same_page_update( $field_data ) {
+
+			if ( empty( $field_data['id'] ) ) {
+				return false;
+			}
+
+			$id = ( ! empty( $this->form_data['prefix_id'] ) ? $this->form_data['prefix_id'] : '' ) . '_' . $field_data['id'];
+			$id_attr = ' id="' . esc_attr( $id ) . '" ';
+			$id_attr_hidden = ' id="' . esc_attr( $id ) . '_hidden" ';
+
+			$class = ! empty( $field_data['class'] ) ? $field_data['class'] : '';
+			$class .= ! empty( $field_data['size'] ) ? $field_data['size'] : 'um-long-field';
+			$class_attr = ' class="um-forms-field ' . esc_attr( $class ) . '" ';
+
+			$data = array(
+				'field_id' => $field_data['id']
+			);
+
+			if ( ! empty( $field_data['data'] ) ) {
+				$data = array_merge( $data, $field_data['data'] );
+			}
+
+			$data_attr = '';
+			foreach ( $data as $key => $value ) {
+				$data_attr .= ' data-' . $key . '="' . esc_attr( $value ) . '" ';
+			}
+
+			if ( ! empty( $field_data['upgrade_cb'] ) ) {
+				$data_attr .= ' data-log-object="' . esc_attr( $field_data['upgrade_cb'] ) . '" ';
+			}
+
+			$name = $field_data['id'];
+			$name = ! empty( $this->form_data['prefix_id'] ) ? $this->form_data['prefix_id'] . '[' . $name . ']' : $name;
+			$name_attr = ' name="' . $name . '" ';
+
+			$value = $this->get_field_value( $field_data );
+
+			$html = "<input type=\"hidden\" $id_attr_hidden $name_attr value=\"0\" />
+			<input type=\"checkbox\" $id_attr $class_attr $name_attr $data_attr " . checked( $value, true, false ) . " value=\"1\" />";
+
+			if ( ! empty( $field_data['upgrade_cb'] ) ) {
+				$html .= '<div class="um-same-page-update-wrapper um-same-page-update-' . esc_attr( $field_data['upgrade_cb'] ) . '"><div class="um-same-page-update-description">' . $field_data['upgrade_description'] . '</div><input type="button" data-upgrade_cb="' . $field_data['upgrade_cb'] . '" class="button button-primary um-admin-form-same-page-update" value="' . esc_attr__( 'Run', 'ultimate-member' ) . '"/>
+					<div class="upgrade_log"></div></div>';
+			}
 
 			return $html;
 		}
@@ -1291,7 +1345,7 @@ if ( ! class_exists( 'um\admin\core\Admin_Forms' ) ) {
 
 					$html .= "<li class=\"um-md-default-filters-option-line\"><span class=\"um-field-wrapper\">
 						<select $id_attr $name_attr $class_attr $data_attr>$options</select></span>
-						<span class=\"um-field-control\"><a href=\"javascript:void(0);\" class=\"um-select-delete\">" . __( 'Remove', 'ultimate-member' ) . "</a></span><span class=\"um-field-wrapper2 um\">" . UM()->member_directory()->show_filter( $value, array( 'form_id' => $post->ID ), $values[ $value ] ) . "</span></li>";
+						<span class=\"um-field-control\"><a href=\"javascript:void(0);\" class=\"um-select-delete\">" . __( 'Remove', 'ultimate-member' ) . "</a></span><span class=\"um-field-wrapper2 um\">" . UM()->member_directory()->show_filter( $value, array( 'form_id' => $post->ID ), $values[ $value ], true ) . "</span></li>";
 				}
 			} elseif ( ! empty( $field_data['show_default_number'] ) && is_numeric( $field_data['show_default_number'] ) && $field_data['show_default_number'] > 0 ) {
 				$i = 0;
@@ -1312,6 +1366,122 @@ if ( ! class_exists( 'um\admin\core\Admin_Forms' ) ) {
 			}
 
 			$html .= "</ul><a href=\"javascript:void(0);\" class=\"button button-primary um-md-default-filters-add-option\" data-name=\"$name\">{$field_data['add_text']}</a>";
+
+			return $html;
+		}
+
+
+		function render_md_sorting_fields( $field_data ) {
+			if ( empty( $field_data['id'] ) ) {
+				return false;
+			}
+
+			$id = ( ! empty( $this->form_data['prefix_id'] ) ? $this->form_data['prefix_id'] : '' ) . '_' . $field_data['id'];
+
+			$sorting = ! empty( $field_data['sorting'] ) ? $field_data['sorting'] : false;
+
+			$class = ! empty( $field_data['class'] ) ? $field_data['class'] : '';
+			$class .= ! empty( $field_data['size'] ) ? $field_data['size'] : 'um-long-field';
+			$class .= ! empty( $sorting ) ? 'um-sorting-enabled' : '';
+			$class_attr = ' class="um-forms-field ' . $class . '" ';
+
+			$data = array(
+				'field_id' => $field_data['id'],
+				'id_attr' => $id
+			);
+
+			$data_attr = '';
+			foreach ( $data as $key => $value ) {
+				$data_attr .= ' data-' . $key . '="' . esc_attr( $value ) . '" ';
+			}
+
+			$name = $field_data['id'];
+			$name = ! empty( $this->form_data['prefix_id'] ) ? $this->form_data['prefix_id'] . '[' . $name . ']' : $name;
+			$name = "{$name}[]";
+			$name_attr = ' name="' . $name . '" ';
+
+			$values = $this->get_field_value( $field_data );
+
+			$options = '';
+			foreach ( $field_data['options'] as $key => $option ) {
+				$options .= '<option value="' . $key . '">' . $option . '</option>';
+			}
+
+			$html = "<select class=\"um-hidden-multi-selects\" $data_attr>$options</select>";
+			$html .= "<ul class=\"um-multi-selects-list" . ( ! empty( $sorting ) ? ' um-sortable-multi-selects' : '' ) . "\" $data_attr>";
+
+			if ( $sorting && is_array( $values ) ) {
+				ksort( $values );
+			}
+
+			if ( ! empty( $values ) && is_array( $values ) ) {
+				foreach ( $values as $k => $value ) {
+
+					$other_key = '';
+					$other_label = '';
+					if ( is_array( $value ) ) {
+						$keys = array_keys( $value );
+						$other_key = $keys[0];
+
+						$labels = array_values( $value );
+						$other_label = $labels[0];
+					} else {
+						if ( ! in_array( $value, array_keys( $field_data['options'] ) ) ) {
+							continue;
+						}
+					}
+
+					$id_attr = ' id="' . esc_attr( $id . '-' . $k ) . '" ';
+
+					$options = '';
+					foreach ( $field_data['options'] as $key => $option ) {
+						if ( is_array( $value ) ) {
+							$selected = selected( $key == 'other', true, false );
+						} else {
+							$selected = selected( $key == $value, true, false );
+						}
+
+						$options .= '<option value="' . $key . '" ' . $selected . '>' . $option . '</option>';
+					}
+
+					$html .= '<li class="um-multi-selects-option-line' . ( ! empty( $sorting ) ? ' um-admin-drag-fld' : '' ) . '">';
+					if ( $sorting ) {
+						$html .= '<span class="um-field-icon"><i class="um-faicon-sort"></i></span>';
+					}
+					$html .= "<span class=\"um-field-wrapper\">
+						<select $id_attr $name_attr $class_attr $data_attr>$options</select></span>
+						<span class=\"um-field-control\"><a href=\"javascript:void(0);\" class=\"um-select-delete\">" . __( 'Remove', 'ultimate-member' ) . "</a></span>
+						<span class=\"um-field-wrapper um-custom-order-fields\"><label>" . __( 'Meta key', 'ultimate-member' ) . ":&nbsp;<input type=\"text\" name=\"um_metadata[_um_sorting_fields][other_data][" . $k . "][meta_key]\" value=\"" . esc_attr( $other_key ) . "\" /></label></span>
+						<span class=\"um-field-wrapper um-custom-order-fields\"><label>" . __( 'Label', 'ultimate-member' ) . ":&nbsp;<input type=\"text\" name=\"um_metadata[_um_sorting_fields][other_data][" . $k . "][label]\" value=\"" . esc_attr( $other_label ) . "\" /></label></span>
+						</li>";
+				}
+			} elseif ( ! empty( $field_data['show_default_number'] ) && is_numeric( $field_data['show_default_number'] ) && $field_data['show_default_number'] > 0 ) {
+				$i = 0;
+				while ( $i < $field_data['show_default_number'] ) {
+					$id_attr = ' id="' . $id . '-' . $i . '" ';
+
+					$options = '';
+					foreach ( $field_data['options'] as $key => $option ) {
+						$options .= '<option value="' . $key . '">' . $option . '</option>';
+					}
+
+					$html .= '<li class="um-multi-selects-option-line' . ( ! empty( $sorting ) ? ' um-admin-drag-fld' : '' ) . '">';
+					if ( $sorting ) {
+						$html .= '<span class="um-field-icon"><i class="um-faicon-sort"></i></span>';
+					}
+
+					$html .= "<span class=\"um-field-wrapper\">
+						<select $id_attr $name_attr $class_attr $data_attr>$options</select></span>
+						<span class=\"um-field-control\"><a href=\"javascript:void(0);\" class=\"um-select-delete\">" . __( 'Remove', 'ultimate-member' ) . "</a></span>
+						<span class=\"um-field-wrapper um-custom-order-fields\"><label>" . __( 'Meta key', 'ultimate-member' ) . ":&nbsp;<input type=\"text\" name=\"um_metadata[_um_sorting_fields][other_data][" . $i . "][meta_key]\" value=\"\" /></label></span>
+						<span class=\"um-field-wrapper um-custom-order-fields\"><label>" . __( 'Label', 'ultimate-member' ) . ":&nbsp;<input type=\"text\" name=\"um_metadata[_um_sorting_fields][other_data][" . $i . "][label]\" value=\"\" /></label></span>
+						</li>";
+
+					$i++;
+				}
+			}
+
+			$html .= "</ul><a href=\"javascript:void(0);\" class=\"button button-primary um-multi-selects-add-option\" data-name=\"$name\">{$field_data['add_text']}</a>";
 
 			return $html;
 		}

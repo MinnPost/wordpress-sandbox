@@ -2,12 +2,207 @@ jQuery(document).ready( function() {
 
 
 	/**
+	 * Same page upgrade field
+	 */
+	jQuery( document.body ).on( 'click', '.um-forms-field[data-log-object]', function() {
+		var obj = jQuery( this ).data( 'log-object' );
+		if ( jQuery( this ).is( ':checked' ) ) {
+			jQuery( this ).siblings( '.um-same-page-update-' + obj ).show();
+		} else {
+			jQuery( this ).siblings( '.um-same-page-update-' + obj ).hide();
+		}
+	});
+
+
+
+	jQuery( document.body ).on( 'click', '.um-admin-form-same-page-update', function() {
+		var field_key = jQuery(this).data('upgrade_cb');
+		jQuery(this).prop( 'disabled', true );
+
+		um_add_same_page_log( field_key, wp.i18n.__( 'Upgrade Process Started...', 'ultimate-member' ) );
+
+		if ( field_key === 'sync_metatable' ) {
+			var metadata_pages = 0;
+			var metadata_per_page = 500;
+			var current_page;
+
+			jQuery.ajax({
+				url: wp.ajax.settings.url,
+				type: 'POST',
+				dataType: 'json',
+				data: {
+					action: 'um_same_page_update',
+					cb_func: 'um_usermeta_fields',
+					nonce: um_admin_scripts.nonce
+				},
+				success: function( response ) {
+					get_metadata();
+				},
+				error: function() {
+					um_same_page_something_wrong( field_key );
+				}
+			});
+
+
+			/**
+			 *
+			 * @returns {boolean}
+			 */
+			function get_metadata() {
+				current_page = 1;
+
+				um_add_same_page_log( field_key, wp.i18n.__( 'Getting metadata', 'ultimate-member' ) );
+				jQuery.ajax({
+					url: wp.ajax.settings.url,
+					type: 'POST',
+					dataType: 'json',
+					data: {
+						action: 'um_same_page_update',
+						cb_func: 'um_get_metadata',
+						nonce: um_admin_scripts.nonce
+					},
+					success: function( response ) {
+						if ( typeof response.data.count != 'undefined' ) {
+							um_add_same_page_log( field_key, wp.i18n.__( 'There are ', 'ultimate-member' ) + response.data.count + wp.i18n.__( ' metadata rows...', 'ultimate-member' ) );
+							um_add_same_page_log( field_key, wp.i18n.__( 'Start metadata upgrading...', 'ultimate-member' ) );
+
+							metadata_pages = Math.ceil( response.data.count / metadata_per_page );
+
+							update_metadata_per_page();
+						} else {
+							um_same_page_wrong_ajax( field_key );
+						}
+					},
+					error: function() {
+						um_same_page_something_wrong( field_key );
+					}
+				});
+
+				return false;
+			}
+
+
+			function update_metadata_per_page() {
+				if ( current_page <= metadata_pages ) {
+					jQuery.ajax({
+						url: wp.ajax.settings.url,
+						type: 'POST',
+						dataType: 'json',
+						data: {
+							action: 'um_same_page_update',
+							cb_func: 'um_update_metadata_per_page',
+							page: current_page,
+							nonce: um_admin_scripts.nonce
+						},
+						success: function( response ) {
+							if ( typeof response.data != 'undefined' ) {
+								um_add_same_page_log( field_key, response.data.message );
+								current_page++;
+								update_metadata_per_page();
+							} else {
+								um_same_page_wrong_ajax( field_key );
+							}
+						},
+						error: function() {
+							um_same_page_something_wrong( field_key );
+						}
+					});
+				} else {
+					window.location = um_forms_data.successfully_redirect;
+				}
+			}
+		}
+	});
+
+
+
+	/**
+	 *
+	 * @param field_key
+	 * @param line
+	 */
+	function um_add_same_page_log( field_key, line ) {
+		var log_field = jQuery( '.um-same-page-update-' + field_key ).find( '.upgrade_log' );
+		var previous_html = log_field.html();
+		log_field.html( previous_html + line + "<br />" );
+	}
+
+
+	function um_same_page_wrong_ajax( field_key ) {
+		um_add_same_page_log( field_key, wp.i18n.__( 'Wrong AJAX response...', 'ultimate-member' ) );
+		um_add_same_page_log( field_key, wp.i18n.__( 'Your upgrade was crashed, please contact with support', 'ultimate-member' ) );
+	}
+
+
+	function um_same_page_something_wrong( field_key ) {
+		um_add_same_page_log( field_key, wp.i18n.__( 'Something went wrong with AJAX request...', 'ultimate-member' ) );
+		um_add_same_page_log( field_key, wp.i18n.__( 'Your upgrade was crashed, please contact with support', 'ultimate-member' ) );
+	}
+
+
+
+	/**
 	 * Multi-selects sort
 	 */
 	jQuery('.um-multi-selects-list.um-sortable-multi-selects').sortable({
 		items:                  '.um-admin-drag-fld',
 		connectWith:            '.um-admin-drag-col,.um-admin-drag-group',
 		forcePlaceholderSize:   true
+	});
+
+	jQuery('.um-multi-selects-list[data-field_id="_um_sorting_fields"] li').each( function() {
+		var if_other = jQuery(this).find( '.um-field-wrapper:not(.um-custom-order-fields) select' ).val();
+		if ( if_other === 'other' ) {
+			jQuery(this).find( '.um-field-wrapper.um-custom-order-fields' ).show();
+		} else {
+			jQuery(this).find( '.um-field-wrapper.um-custom-order-fields' ).hide();
+		}
+	});
+
+	jQuery( '.um-forms-line[data-field_type="md_sorting_fields"] .um-multi-selects-add-option' ).click( function() {
+		var list = jQuery(this).siblings('ul.um-multi-selects-list');
+
+		var sortable = list.hasClass( 'um-sortable-multi-selects' );
+
+		var field_id = list.data('field_id');
+		var k = 0;
+		if ( list.find( 'li:last select.um-forms-field' ).length > 0 ) {
+			k = list.find( 'li:last select.um-forms-field' ).attr('id').split("-");
+			k = k[1]*1 + 1;
+		}
+
+		var selector_html = jQuery( '<div>' ).append( list.siblings('.um-hidden-multi-selects').clone() ).html();
+
+		var html = '<li class="um-multi-selects-option-line' + ( sortable ? ' um-admin-drag-fld' : '' ) + '">';
+		if ( sortable ) {
+			html += '<span class="um-field-icon"><i class="um-faicon-sort"></i></span>';
+		}
+
+		html += '<span class="um-field-wrapper">' + selector_html + '</span>' +
+			'<span class="um-field-control">' +
+			'<a href="javascript:void(0);" class="um-select-delete">' + wp.i18n.__( 'Remove', 'ultimate-member' ) + '</a>' +
+			'</span>' +
+			'<span class="um-field-wrapper um-custom-order-fields"><label>' + wp.i18n.__( 'Meta key', 'ultimate-member' ) + ':&nbsp;<input type="text" name="meta_key" /></label></span>' +
+			'<span class="um-field-wrapper um-custom-order-fields"><label>' + wp.i18n.__( 'Label', 'ultimate-member' ) + ':&nbsp;<input type="text" name="label" /></label></span>' +
+			'</li>';
+		list.append( html );
+
+		list.find('li:last .um-hidden-multi-selects').attr('name', jQuery(this).data('name') ).
+		addClass('um-forms-field um-long-field').removeClass('um-hidden-multi-selects').attr('id', list.data('id_attr') + '-' + k).trigger('change');
+
+		jQuery( '#' + list.data('id_attr') + '-' + k ).parents('li').find('.um-field-wrapper.um-custom-order-fields input[name="meta_key"]').attr('name', 'um_metadata[_um_sorting_fields][other_data][' + k + '][meta_key]');
+		jQuery( '#' + list.data('id_attr') + '-' + k ).parents('li').find('.um-field-wrapper.um-custom-order-fields input[name="label"]').attr('name', 'um_metadata[_um_sorting_fields][other_data][' + k + '][label]');
+	});
+
+
+	jQuery( document.body ).on( 'change', '.um-multi-selects-list[data-field_id="_um_sorting_fields"] .um-field-wrapper:not(.um-custom-order-fields) select', function() {
+		var if_other = jQuery(this).val();
+
+		if ( if_other === 'other' ) {
+			jQuery(this).parents('li').find( '.um-field-wrapper.um-custom-order-fields' ).show();
+		} else {
+			jQuery(this).parents('li').find( '.um-field-wrapper.um-custom-order-fields' ).hide();
+		}
 	});
 
 
@@ -26,6 +221,10 @@ jQuery(document).ready( function() {
 	});
 
 	jQuery( '.um-multi-selects-add-option' ).click( function() {
+		if ( jQuery(this).parents( '.um-forms-line[data-field_type="md_sorting_fields"]' ).length ) {
+			return;
+		}
+
 		var list = jQuery(this).siblings('ul.um-multi-selects-list');
 
 		var sortable = list.hasClass( 'um-sortable-multi-selects' );
@@ -266,18 +465,33 @@ jQuery(document).ready( function() {
 	});
 
 	function um_set_range_label( slider, ui ) {
-		var placeholder = slider.siblings( '.um-slider-range' ).data( 'placeholder' );
+		console.log( slider );
+		var placeholder = '';
+		var placeholder_s = slider.siblings( '.um-slider-range' ).data( 'placeholder-s' );
+		var placeholder_p = slider.siblings( '.um-slider-range' ).data( 'placeholder-p' );
 
-		if( ui ) {
-			placeholder = placeholder.replace( '\{min_range\}', ui.values[ 0 ] )
-				.replace( '\{max_range\}', ui.values[ 1 ] )
-				.replace( '\{field_label\}', slider.siblings( '.um-slider-range' )
-					.data('label') );
+		if ( ui ) {
+			if ( ui.values[ 0 ] === ui.values[ 1 ] ) {
+				placeholder = placeholder_s.replace( '\{value\}', ui.values[ 0 ] )
+					.replace( '\{field_label\}', slider.siblings( '.um-slider-range' )
+						.data('label') );
+			} else {
+				placeholder = placeholder_p.replace( '\{min_range\}', ui.values[ 0 ] )
+					.replace( '\{max_range\}', ui.values[ 1 ] )
+					.replace( '\{field_label\}', slider.siblings( '.um-slider-range' )
+						.data('label') );
+			}
 		} else {
-			placeholder = placeholder.replace( '\{min_range\}', slider.slider( "values", 0 ) )
-				.replace( '\{max_range\}', slider.slider( "values", 1 ) )
-				.replace( '\{field_label\}', slider.siblings( '.um-slider-range' )
-					.data('label') );
+			if ( slider.slider( "values", 0 ) === slider.slider( "values", 1 ) ) {
+				placeholder = placeholder_s.replace( '\{value\}', slider.slider( "values", 0 ) )
+					.replace( '\{field_label\}', slider.siblings( '.um-slider-range' )
+						.data('label') );
+			} else {
+				placeholder = placeholder_p.replace( '\{min_range\}', slider.slider( "values", 0 ) )
+					.replace( '\{max_range\}', slider.slider( "values", 1 ) )
+					.replace( '\{field_label\}', slider.siblings( '.um-slider-range' )
+						.data('label') );
+			}
 		}
 		slider.siblings( '.um-slider-range' ).html( placeholder );
 

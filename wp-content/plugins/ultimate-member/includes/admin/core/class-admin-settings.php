@@ -33,6 +33,9 @@ if ( ! class_exists( 'um\admin\core\Admin_Settings' ) ) {
 		var $need_change_permalinks;
 
 
+		var $gravatar_changed = false;
+
+
 		/**
 		 * Admin_Settings constructor.
 		 */
@@ -77,6 +80,143 @@ if ( ! class_exists( 'um\admin\core\Admin_Settings' ) ) {
 			add_filter( 'um_change_settings_before_save', array( $this, 'remove_empty_values' ), 10, 1 );
 
 			add_action( 'admin_init', array( &$this, 'um_download_install_info' ) );
+		}
+
+
+
+		function same_page_update_ajax() {
+			UM()->admin()->check_ajax_nonce();
+
+			if ( empty( $_POST['cb_func'] ) ) {
+				wp_send_json_error( __( 'Wrong callback', 'ultimate-member' ) );
+			}
+
+			if ( 'um_usermeta_fields' == $_POST['cb_func'] ) {
+				//first install metatable
+				global $wpdb;
+
+				$metakeys = array();
+				foreach ( UM()->builtin()->all_user_fields as $all_user_field ) {
+					if ( $all_user_field['type'] == 'user_location' ) {
+						$metakeys[] = $all_user_field['metakey'] . '_lat';
+						$metakeys[] = $all_user_field['metakey'] . '_lng';
+						$metakeys[] = $all_user_field['metakey'] . '_url';
+					} else {
+						$metakeys[] = $all_user_field['metakey'];
+					}
+				}
+
+				if ( is_multisite() ) {
+
+					$sites = get_sites( array( 'fields' => 'ids' ) );
+					foreach ( $sites as $blog_id ) {
+						$metakeys[] = $wpdb->get_blog_prefix( $blog_id ) . 'capabilities';
+					}
+
+				} else {
+					$blog_id = get_current_blog_id();
+					$metakeys[] = $wpdb->get_blog_prefix( $blog_id ) . 'capabilities';
+				}
+
+				//member directory data
+				$metakeys[] = 'um_member_directory_data';
+				$metakeys[] = '_um_verified';
+				$metakeys[] = '_money_spent';
+				$metakeys[] = '_completed';
+				$metakeys[] = '_reviews_avg';
+
+				$sortby_custom_keys = $wpdb->get_col( "SELECT DISTINCT meta_value FROM {$wpdb->postmeta} WHERE meta_key='_um_sortby_custom'" );
+				if ( empty( $sortby_custom_keys ) ) {
+					$sortby_custom_keys = array();
+				}
+
+				$sortby_custom_keys2 = $wpdb->get_col( "SELECT meta_value FROM {$wpdb->postmeta} WHERE meta_key='_um_sorting_fields'" );
+				if ( ! empty( $sortby_custom_keys2 ) ) {
+					foreach ( $sortby_custom_keys2 as $custom_val ) {
+						$custom_val = maybe_unserialize( $custom_val );
+
+						foreach ( $custom_val as $sort_value ) {
+							if ( is_array( $sort_value ) ) {
+								$field_keys = array_keys( $sort_value );
+								$sortby_custom_keys[] = $field_keys[0];
+							}
+						}
+					}
+				}
+
+				if ( ! empty( $sortby_custom_keys ) ) {
+					$sortby_custom_keys = array_unique( $sortby_custom_keys );
+					$metakeys = array_merge( $metakeys, $sortby_custom_keys );
+				}
+
+				$skip_fields = UM()->builtin()->get_fields_without_metakey();
+				$skip_fields = array_merge( $skip_fields, UM()->member_directory()->core_search_fields );
+
+				$real_usermeta = $wpdb->get_col( "SELECT DISTINCT meta_key FROM {$wpdb->usermeta}" );
+				$real_usermeta = ! empty( $real_usermeta ) ? $real_usermeta : array();
+				$real_usermeta = array_merge( $real_usermeta, array( 'um_member_directory_data' ) );
+
+				if ( ! empty( $sortby_custom_keys ) ) {
+					$real_usermeta = array_merge( $real_usermeta, $sortby_custom_keys );
+				}
+
+				$wp_usermeta_option = array_intersect( array_diff( $metakeys, $skip_fields ), $real_usermeta );
+
+				update_option( 'um_usermeta_fields', array_values( $wp_usermeta_option ) );
+
+				update_option( 'um_member_directory_update_meta', time() );
+
+				UM()->options()->update( 'member_directory_own_table', true );
+
+				wp_send_json_success();
+			} elseif ( 'um_get_metadata' == $_POST['cb_func'] ) {
+				global $wpdb;
+
+				$wp_usermeta_option = get_option( 'um_usermeta_fields', array() );
+
+				$count = $wpdb->get_var(
+					"SELECT COUNT(*) 
+					FROM {$wpdb->usermeta} 
+					WHERE meta_key IN ('" . implode( "','", $wp_usermeta_option ) . "')"
+				);
+
+				wp_send_json_success( array( 'count' => $count ) );
+			} elseif ( 'um_update_metadata_per_page' == $_POST['cb_func'] ) {
+
+				if ( empty( $_POST['page'] ) ) {
+					wp_send_json_error( __( 'Wrong data', 'ultimate-member' ) );
+				}
+
+				$per_page = 500;
+				$wp_usermeta_option = get_option( 'um_usermeta_fields', array() );
+
+				global $wpdb;
+				$metadata = $wpdb->get_results( $wpdb->prepare(
+					"SELECT * 
+					FROM {$wpdb->usermeta} 
+					WHERE meta_key IN ('" . implode( "','", $wp_usermeta_option ) . "')
+					LIMIT %d, %d",
+					( $_POST['page'] - 1 ) * $per_page,
+					$per_page
+				), ARRAY_A );
+
+				$values = array();
+				foreach ( $metadata as $metarow ) {
+					$values[] = $wpdb->prepare('(%d, %s, %s)', $metarow['user_id'], $metarow['meta_key'], $metarow['meta_value'] );
+				}
+
+				if ( ! empty( $values ) ) {
+				$wpdb->query(
+					"INSERT INTO 
+    				{$wpdb->prefix}um_metadata(user_id, um_key, um_value)
+					VALUES " . implode( ',', $values ) );
+				}
+
+				$from = ( $_POST['page'] * $per_page ) - $per_page + 1;
+				$to = $_POST['page'] * $per_page;
+
+				wp_send_json_success( array( 'message' => sprintf( __( 'Metadata from %s to %s was upgraded successfully...', 'ultimate-member' ), $from, $to ) ) );
+			}
 		}
 
 
@@ -351,6 +491,22 @@ if ( ! class_exists( 'um\admin\core\Admin_Settings' ) ) {
 					'default'   => UM()->options()->get_default( 'restricted_access_taxonomy_metabox' ),
 			) ) );
 
+			$latest_update = get_option( 'um_member_directory_update_meta', false );
+			$latest_truncate = get_option( 'um_member_directory_truncated', false );
+
+			$same_page_update = array(
+				'id'        => 'member_directory_own_table',
+				'type'      => 'same_page_update',
+				'label'     => __( 'Enable custom table for usermeta', 'ultimate-member' ),
+				'tooltip'   => __( 'Check this box if you would like to enable the use of a custom table for user metadata. Improved performance for member directory searches.', 'ultimate-member' ),
+			);
+
+			if ( empty( $latest_update ) || ( ! empty( $latest_truncate ) && $latest_truncate > $latest_update ) ) {
+				$same_page_update['upgrade_cb'] = 'sync_metatable';
+				$same_page_update['upgrade_description'] = '<p>' . __( 'We recommend creating a backup of your site before running the update process. Do not exit the page before the update process has complete.', 'ultimate-member' ) . '</p>
+<p>' . __( 'After clicking the <strong>"Run"</strong> button, the update process will start. All information will be displayed in the field below.', 'ultimate-member' ) . '</p>
+<p>' . __( 'If the update was successful, you will see a corresponding message. Otherwise, contact technical support if the update failed.', 'ultimate-member' ) . '</p>';
+			}
 
 			/**
 			 * UM hook
@@ -399,79 +555,79 @@ if ( ! class_exists( 'um\admin\core\Admin_Settings' ) ) {
 									'placeholder'   => __( 'Select...', 'ultimate-member' ),
 								),
 								array(
-									'id'       		=> 'display_name',
-									'type'     		=> 'select',
+									'id'            => 'display_name',
+									'type'          => 'select',
 									'size'          => 'medium',
-									'label'    		=> __( 'User Display Name','ultimate-member' ),
-									'tooltip' 	=> __( 'This is the name that will be displayed for users on the front end of your site. Default setting uses first/last name as display name if it exists','ultimate-member' ),
-									'options' 		=> array(
-										'default'			=> __('Default WP Display Name','ultimate-member'),
-										'nickname'			=> __('Nickname','ultimate-member'),
-										'username' 			=> __('Username','ultimate-member'),
-										'full_name' 		=> __('First name & last name','ultimate-member'),
-										'sur_name' 			=> __('Last name & first name','ultimate-member'),
-										'initial_name'		=> __('First name & first initial of last name','ultimate-member'),
-										'initial_name_f'	=> __('First initial of first name & last name','ultimate-member'),
-										'first_name'		=> __('First name only','ultimate-member'),
-										'field' 			=> __('Custom field(s)','ultimate-member'),
+									'label'         => __( 'User Display Name', 'ultimate-member' ),
+									'tooltip'       => __( 'This is the name that will be displayed for users on the front end of your site. Default setting uses first/last name as display name if it exists', 'ultimate-member' ),
+									'options'       => array(
+										'default'			=> __( 'Default WP Display Name', 'ultimate-member' ),
+										'nickname'			=> __( 'Nickname', 'ultimate-member' ),
+										'username' 			=> __( 'Username', 'ultimate-member' ),
+										'full_name' 		=> __( 'First name & last name', 'ultimate-member' ),
+										'sur_name' 			=> __( 'Last name & first name', 'ultimate-member' ),
+										'initial_name'		=> __( 'First name & first initial of last name', 'ultimate-member' ),
+										'initial_name_f'	=> __( 'First initial of first name & last name', 'ultimate-member' ),
+										'first_name'		=> __( 'First name only', 'ultimate-member' ),
+										'field' 			=> __( 'Custom field(s)', 'ultimate-member' ),
 									),
-									'placeholder' 	=> __('Select...'),
+									'placeholder'   => __( 'Select...', 'ultimate-member' ),
 								),
 								array(
-									'id'       		=> 'display_name_field',
-									'type'     		=> 'text',
-									'label'   		=> __( 'Display Name Custom Field(s)','ultimate-member' ),
-									'tooltip' 	=> __('Specify the custom field meta key or custom fields seperated by comma that you want to use to display users name on the frontend of your site','ultimate-member'),
+									'id'            => 'display_name_field',
+									'type'          => 'text',
+									'label'         => __( 'Display Name Custom Field(s)', 'ultimate-member' ),
+									'tooltip'       => __( 'Specify the custom field meta key or custom fields seperated by comma that you want to use to display users name on the frontend of your site', 'ultimate-member' ),
 									'conditional'   => array( 'display_name', '=', 'field' ),
 								),
 								array(
-									'id'       		=> 'author_redirect',
-									'type'     		=> 'checkbox',
-									'label'   		=> __( 'Automatically redirect author page to their profile?','ultimate-member'),
-									'tooltip' 	=> __('If enabled, author pages will automatically redirect to the user\'s profile page','ultimate-member'),
+									'id'        => 'author_redirect',
+									'type'      => 'checkbox',
+									'label'     => __( 'Automatically redirect author page to their profile?', 'ultimate-member' ),
+									'tooltip'   => __( 'If enabled, author pages will automatically redirect to the user\'s profile page', 'ultimate-member' ),
 								),
 								array(
-									'id'       		=> 'members_page',
-									'type'     		=> 'checkbox',
-									'label'   		=> __( 'Enable Members Directory','ultimate-member' ),
-									'tooltip' 	=> __('Control whether to enable or disable member directories on this site','ultimate-member'),
+									'id'        => 'members_page',
+									'type'      => 'checkbox',
+									'label'     => __( 'Enable Members Directory', 'ultimate-member' ),
+									'tooltip'   => __( 'Control whether to enable or disable member directories on this site', 'ultimate-member' ),
 								),
 								array(
-									'id'       		=> 'use_gravatars',
-									'type'     		=> 'checkbox',
-									'label'   		=> __( 'Use Gravatars?','ultimate-member' ),
-									'tooltip' 	=> __('Do you want to use gravatars instead of the default plugin profile photo (If the user did not upload a custom profile photo / avatar)','ultimate-member'),
+									'id'        => 'use_gravatars',
+									'type'      => 'checkbox',
+									'label'     => __( 'Use Gravatars?', 'ultimate-member' ),
+									'tooltip'   => __( 'Do you want to use gravatars instead of the default plugin profile photo (If the user did not upload a custom profile photo / avatar)', 'ultimate-member' ),
 								),
 								array(
-									'id'       		=> 'use_um_gravatar_default_builtin_image',
-									'type'     		=> 'select',
-									'label'    		=> __( 'Use Gravatar builtin image','ultimate-member' ),
-									'tooltip' 	=> __( 'Gravatar has a number of built in options which you can also use as defaults','ultimate-member' ),
-									'options' 		=> array(
-										'default'		=> __('Default','ultimate-member'),
-										'404'			=> __('404 ( File Not Found response )','ultimate-member'),
-										'mm'			=> __('Mystery Man','ultimate-member'),
-										'identicon'		=> __('Identicon','ultimate-member'),
-										'monsterid'		=> __('Monsterid','ultimate-member'),
-										'wavatar'		=> __('Wavatar','ultimate-member'),
-										'retro'			=> __('Retro','ultimate-member'),
-										'blank'			=> __('Blank ( a transparent PNG image )','ultimate-member'),
+									'id'            => 'use_um_gravatar_default_builtin_image',
+									'type'          => 'select',
+									'label'         => __( 'Use Gravatar builtin image', 'ultimate-member' ),
+									'tooltip'       => __( 'Gravatar has a number of built in options which you can also use as defaults', 'ultimate-member' ),
+									'options'       => array(
+										'default'   => __( 'Default', 'ultimate-member' ),
+										'404'       => __( '404 ( File Not Found response )', 'ultimate-member' ),
+										'mm'        => __( 'Mystery Man', 'ultimate-member' ),
+										'identicon' => __( 'Identicon', 'ultimate-member' ),
+										'monsterid' => __( 'Monsterid', 'ultimate-member' ),
+										'wavatar'   => __( 'Wavatar', 'ultimate-member' ),
+										'retro'     => __( 'Retro', 'ultimate-member' ),
+										'blank'     => __( 'Blank ( a transparent PNG image )', 'ultimate-member' ),
 									),
-									'conditional'		=> array( 'use_gravatars', '=', 1 ),
+									'conditional'   => array( 'use_gravatars', '=', 1 ),
 									'size'          => 'medium'
 								),
 								array(
-									'id'       		=> 'use_um_gravatar_default_image',
-									'type'     		=> 'checkbox',
-									'label'   		=> __( 'Use Default plugin avatar as Gravatar\'s Default avatar','ultimate-member' ),
-									'tooltip' 	=> __('Do you want to use the plugin default avatar instead of the gravatar default photo (If the user did not upload a custom profile photo / avatar)','ultimate-member'),
-									'conditional'		=> array( 'use_um_gravatar_default_builtin_image', '=', 'default' ),
+									'id'            => 'use_um_gravatar_default_image',
+									'type'          => 'checkbox',
+									'label'         => __( 'Use Default plugin avatar as Gravatar\'s Default avatar', 'ultimate-member' ),
+									'tooltip'       => __( 'Do you want to use the plugin default avatar instead of the gravatar default photo (If the user did not upload a custom profile photo / avatar)', 'ultimate-member' ),
+									'conditional'   => array( 'use_um_gravatar_default_builtin_image', '=', 'default' ),
 								),
 								array(
-									'id'       		=> 'reset_require_strongpass',
-									'type'     		=> 'checkbox',
-									'label'   		=> __( 'Require a strong password? (when user resets password only)','ultimate-member' ),
-									'tooltip' 	=> __('Enable or disable a strong password rules on password reset and change procedure','ultimate-member'),
+									'id'        => 'reset_require_strongpass',
+									'type'      => 'checkbox',
+									'label'     => __( 'Require a strong password? (when user resets password only)', 'ultimate-member' ),
+									'tooltip'   => __( 'Enable or disable a strong password rules on password reset and change procedure', 'ultimate-member' ),
 								)
 							)
 						),
@@ -544,17 +700,29 @@ if ( ! class_exists( 'um\admin\core\Admin_Settings' ) ) {
 									'tooltip'   => __( 'Password is required to save account data.', 'ultimate-member' ),
 								),
 								array(
-									'id'       		=> 'account_hide_in_directory',
-									'type'     		=> 'checkbox',
-									'label'   		=> __( 'Allow users to hide their profiles from directory','ultimate-member' ),
-									'tooltip' 	=> __('Whether to allow users changing their profile visibility from member directory in account page.','ultimate-member'),
+									'id'        => 'account_require_strongpass',
+									'type'      => 'checkbox',
+									'label'     => __( 'Require a strong password?','ultimate-member' ),
+									'tooltip'   => __( 'Enable or disable a strong password rules on account page / change password tab', 'ultimate-member' ),
 								),
 								array(
-									'id'       		=> 'account_require_strongpass',
-									'type'     		=> 'checkbox',
-									'label'   		=> __( 'Require a strong password?','ultimate-member' ),
-									'tooltip' 	=> __('Enable or disable a strong password rules on account page / change password tab','ultimate-member'),
-								)
+									'id'        => 'account_hide_in_directory',
+									'type'      => 'checkbox',
+									'label'     => __( 'Allow users to hide their profiles from directory', 'ultimate-member' ),
+									'tooltip'   => __( 'Whether to allow users changing their profile visibility from member directory in account page.', 'ultimate-member' ),
+								),
+								array(
+									'id'          => 'account_hide_in_directory_default',
+									'type'        => 'select',
+									'label'       => __( 'Hide profiles from directory by default', 'ultimate-member' ),
+									'tooltip'     => __( 'Set default value for the "Hide my profile from directory" option', 'ultimate-member' ),
+									'options'     => array(
+										'No'  => __( 'No', 'ultimate-member' ),
+										'Yes' => __( 'Yes', 'ultimate-member' )
+									),
+									'size'        => 'small',
+									'conditional' => array( 'account_hide_in_directory', '=', '1' ),
+								),
 							)
 						),
 						'uploads'   => array(
@@ -1143,6 +1311,7 @@ if ( ! class_exists( 'um\admin\core\Admin_Settings' ) ) {
 								'2.0'   => __( '2.0 version', 'ultimate-member' ),
 							),
 						),
+						$same_page_update,
 						array(
 							'id'        => 'uninstall_on_delete',
 							'type'      => 'checkbox',
@@ -1655,6 +1824,15 @@ if ( ! class_exists( 'um\admin\core\Admin_Settings' ) ) {
 					$this->need_change_permalinks = true;
 				}
 			}
+
+			// set variable if gravatar settings were changed
+			// update for um_member_directory_data metakey
+			if ( isset( $_POST['um_options']['use_gravatars'] ) ) {
+				$use_gravatar = UM()->options()->get( 'use_gravatars' );
+				if ( ( empty( $use_gravatar ) && ! empty( $_POST['um_options']['use_gravatars'] ) ) || ( ! empty( $use_gravatar ) && empty( $_POST['um_options']['use_gravatars'] ) ) ) {
+					$this->gravatar_changed = true;
+				}
+			}
 		}
 
 
@@ -1663,6 +1841,7 @@ if ( ! class_exists( 'um\admin\core\Admin_Settings' ) ) {
 		 */
 		function on_settings_save() {
 			if ( ! empty( $_POST['um_options'] ) ) {
+
 				if ( ! empty( $_POST['um_options']['pages_settings'] ) ) {
 					$post_ids = new \WP_Query( array(
 						'post_type' => 'page',
@@ -1703,6 +1882,95 @@ if ( ! class_exists( 'um\admin\core\Admin_Settings' ) ) {
 							}
 						}
 					}
+
+
+					// update for um_member_directory_data metakey
+					if ( isset( $_POST['um_options']['use_gravatars'] ) ) {
+						if ( $this->gravatar_changed ) {
+							global $wpdb;
+
+							if ( ! empty( $_POST['um_options']['use_gravatars'] ) ) {
+
+								$results = $wpdb->get_col(
+									"SELECT u.ID FROM {$wpdb->users} AS u 
+									LEFT JOIN {$wpdb->usermeta} AS um ON ( um.user_id = u.ID AND um.meta_key = 'synced_gravatar_hashed_id' )
+									LEFT JOIN {$wpdb->usermeta} AS um2 ON ( um2.user_id = u.ID AND um2.meta_key = 'um_member_directory_data' )
+									WHERE um.meta_value != '' AND um.meta_value IS NOT NULL AND
+										um2.meta_value LIKE '%s:13:\"profile_photo\";b:0;%'"
+								);
+
+							} else {
+
+								$results = $wpdb->get_col(
+									"SELECT u.ID FROM {$wpdb->users} AS u 
+									LEFT JOIN {$wpdb->usermeta} AS um ON ( um.user_id = u.ID AND ( um.meta_key = 'synced_profile_photo' || um.meta_key = 'profile_photo' ) )
+									LEFT JOIN {$wpdb->usermeta} AS um2 ON ( um2.user_id = u.ID AND um2.meta_key = 'um_member_directory_data' )
+									WHERE ( um.meta_value IS NULL OR um.meta_value = '' ) AND
+										um2.meta_value LIKE '%s:13:\"profile_photo\";b:1;%'"
+								);
+
+							}
+
+							if ( ! empty( $results ) ) {
+								foreach ( $results as $user_id ) {
+									$md_data = get_user_meta( $user_id, 'um_member_directory_data', true );
+									if ( ! empty( $md_data ) ) {
+										$md_data['profile_photo'] = ! empty( $_POST['um_options']['use_gravatars'] );
+										update_user_meta( $user_id, 'um_member_directory_data', $md_data );
+									}
+								}
+							}
+						}
+					}
+
+				} elseif ( isset( $_POST['um_options']['member_directory_own_table'] ) ) {
+					if ( empty( $_POST['um_options']['member_directory_own_table'] ) ) {
+						global $wpdb;
+
+						$results = $wpdb->get_row( "SELECT * FROM {$wpdb->prefix}um_metadata LIMIT 1", ARRAY_A );
+
+						if ( ! empty( $results ) ) {
+							$wpdb->query("TRUNCATE TABLE {$wpdb->prefix}um_metadata" );
+						}
+
+						update_option( 'um_member_directory_truncated', time() );
+					}
+				} elseif ( isset( $_POST['um_options']['account_hide_in_directory_default'] ) ) {
+
+					global $wpdb;
+
+					if ( $_POST['um_options']['account_hide_in_directory_default'] == 'No' ) {
+
+						$results = $wpdb->get_col(
+							"SELECT u.ID FROM {$wpdb->users} AS u 
+							LEFT JOIN {$wpdb->usermeta} AS um ON ( um.user_id = u.ID AND um.meta_key = 'hide_in_members' )
+							LEFT JOIN {$wpdb->usermeta} AS um2 ON ( um2.user_id = u.ID AND um2.meta_key = 'um_member_directory_data' )
+							WHERE um.meta_value IS NULL AND
+								um2.meta_value LIKE '%s:15:\"hide_in_members\";b:1;%'"
+						);
+
+					} else {
+
+						$results = $wpdb->get_col(
+							"SELECT u.ID FROM {$wpdb->users} AS u 
+							LEFT JOIN {$wpdb->usermeta} AS um ON ( um.user_id = u.ID AND um.meta_key = 'hide_in_members' )
+							LEFT JOIN {$wpdb->usermeta} AS um2 ON ( um2.user_id = u.ID AND um2.meta_key = 'um_member_directory_data' )
+							WHERE um.meta_value IS NULL AND
+								um2.meta_value LIKE '%s:15:\"hide_in_members\";b:0;%'"
+						);
+
+					}
+
+					if ( ! empty( $results ) ) {
+						foreach ( $results as $user_id ) {
+							$md_data = get_user_meta( $user_id, 'um_member_directory_data', true );
+							if ( ! empty( $md_data ) ) {
+								$md_data['hide_in_members'] = ( $_POST['um_options']['account_hide_in_directory_default'] == 'No' ) ? false : true;
+								update_user_meta( $user_id, 'um_member_directory_data', $md_data );
+							}
+						}
+					}
+
 				}
 			}
 		}

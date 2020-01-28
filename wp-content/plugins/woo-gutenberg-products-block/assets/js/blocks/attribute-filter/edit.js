@@ -180,7 +180,7 @@ const Edit = ( { attributes, setAttributes, debouncedSpeak } ) => {
 		>
 			<p>
 				{ __(
-					"Attributes are needed for filtering your products. You haven't created any products yet.",
+					"Attributes are needed for filtering your products. You haven't created any attributes yet.",
 					'woo-gutenberg-products-block'
 				) }
 			</p>
@@ -218,6 +218,10 @@ const Edit = ( { attributes, setAttributes, debouncedSpeak } ) => {
 
 	const onChange = useCallback(
 		( selected ) => {
+			if ( ! selected || ! selected.length ) {
+				return;
+			}
+
 			const selectedId = selected[ 0 ].id;
 			const productAttribute = find( ATTRIBUTES, [
 				'attribute_id',

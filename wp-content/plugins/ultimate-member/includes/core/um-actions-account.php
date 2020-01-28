@@ -267,9 +267,18 @@ function um_submit_account_details( $args ) {
 		$changes[ $k ] = $v;
 	}
 
-	if ( isset( $changes['hide_in_members'] ) && ( $changes['hide_in_members'] == __( 'No', 'ultimate-member' ) || $changes['hide_in_members'] == 'No' ) ) {
-		delete_user_meta( $user_id, 'hide_in_members' );
-		unset( $changes['hide_in_members'] );
+	if ( isset( $changes['hide_in_members'] ) ) {
+		if ( UM()->member_directory()->get_hide_in_members_default() ) {
+			if ( $changes['hide_in_members'] == __( 'Yes', 'ultimate-member' ) || $changes['hide_in_members'] == 'Yes' || array_intersect( array( 'Yes', __( 'Yes', 'ultimate-member' ) ), $changes['hide_in_members'] ) ) {
+				delete_user_meta( $user_id, 'hide_in_members' );
+				unset( $changes['hide_in_members'] );
+			}
+		} else {
+			if ( $changes['hide_in_members'] == __( 'No', 'ultimate-member' ) || $changes['hide_in_members'] == 'No' || array_intersect( array( 'No', __( 'No', 'ultimate-member' ) ), $changes['hide_in_members'] ) ) {
+				delete_user_meta( $user_id, 'hide_in_members' );
+				unset( $changes['hide_in_members'] );
+			}
+		}
 	}
 
 	/**
@@ -464,3 +473,103 @@ function um_disable_native_email_notificatiion( $changed, $user_id ) {
 	add_filter( 'send_email_change_email', '__return_false' );
 }
 add_action( 'um_account_pre_update_profile', 'um_disable_native_email_notificatiion', 10, 2 );
+
+
+/**
+ * Add export and erase user's data in privacy tab
+ *
+ * @param $args
+ */
+add_action( 'um_after_account_privacy', 'um_after_account_privacy' );
+function um_after_account_privacy( $args ) {
+	?>
+
+	<div class="um-field um-field-export_data">
+		<div class="um-field-label">
+			<label>
+				<?php esc_html_e( 'Download your data', 'ultimate-member' ); ?>
+			</label>
+			<span class="um-tip um-tip-w" original-title="<?php esc_attr_e( 'You can request a file with the information that we believe is most relevant and useful to you.', 'ultimate-member' ); ?>">
+				<i class="um-icon-help-circled"></i>
+			</span>
+			<div class="um-clear"></div>
+		</div>
+		<label name="um-export-data">
+			<?php esc_html_e( 'Enter your current password to confirm export of your personal data.', 'ultimate-member' ); ?>
+		</label>
+		<div class="um-field-area">
+			<input id="um-export-data" type="password" placeholder="<?php esc_attr_e( 'Password', 'ultimate-member' )?>">
+			<div class="um-field-error um-export-data">
+				<span class="um-field-arrow"><i class="um-faicon-caret-up"></i></span><?php esc_html_e( 'You must enter a password', 'ultimate-member' ); ?>
+			</div>
+			<div class="um-field-area-response um-export-data"></div>
+		</div>
+		<a class="um-request-button um-export-data-button" data-action="um-export-data" href="javascript:void(0);">
+			<?php esc_html_e( 'Request data', 'ultimate-member' ); ?>
+		</a>
+	</div>
+
+	<div class="um-field um-field-export_data">
+		<div class="um-field-label">
+			<label>
+				<?php esc_html_e( 'Erase of your data', 'ultimate-member' ); ?>
+			</label>
+			<span class="um-tip um-tip-w" original-title="<?php esc_attr_e( 'You can request erasing of the data that we have about you.', 'ultimate-member' ); ?>">
+				<i class="um-icon-help-circled"></i>
+			</span>
+			<div class="um-clear"></div>
+		</div>
+		<label name="um-erase-data">
+			<?php esc_html_e( 'Enter your current password to confirm the erasure of your personal data.', 'ultimate-member' ); ?>
+			<input id="um-erase-data" type="password" placeholder="<?php esc_attr_e( 'Password', 'ultimate-member' )?>">
+			<div class="um-field-error um-erase-data">
+				<span class="um-field-arrow"><i class="um-faicon-caret-up"></i></span><?php esc_html_e( 'You must enter a password', 'ultimate-member' ); ?>
+			</div>
+			<div class="um-field-area-response um-erase-data"></div>
+		</label>
+		<a class="um-request-button um-erase-data-button" data-action="um-erase-data" href="javascript:void(0);">
+			<?php esc_html_e( 'Request data erase', 'ultimate-member' ); ?>
+		</a>
+	</div>
+
+	<?php
+}
+
+
+function um_request_user_data() {
+	UM()->check_ajax_nonce();
+
+	$user_id = get_current_user_id();
+	$password = $_POST['password'];
+	$user = get_userdata( $user_id );
+	$hash = $user->data->user_pass;
+
+	if ( wp_check_password( $password, $hash ) && isset( $_POST['request_action'] ) ) {
+
+		if ( $_POST['request_action'] == 'um-export-data' ) {
+			$request_id = wp_create_user_request( $user->data->user_email, 'export_personal_data' );
+		} elseif ( $_POST['request_action'] == 'um-erase-data' ) {
+			$request_id = wp_create_user_request( $user->data->user_email, 'remove_personal_data' );
+		}
+
+		if ( empty( $request_id ) ) {
+			wp_send_json_error( __( 'Wrong request.', 'ultimate-member' ) );
+		}
+
+		if ( is_wp_error( $request_id ) ) {
+			$answer = $request_id->get_error_message();
+		} else {
+			wp_send_user_request( $request_id );
+			$answer = esc_html__( 'A confirmation email has been sent to your email. Click the link within the email to confirm your export request.', 'ultimate-member' );
+		}
+
+	} else {
+
+		$answer = esc_html__( 'The password you entered is incorrect.', 'ultimate-member' );
+
+	}
+
+	wp_send_json_success( array( 'answer' => esc_html( $answer ) ) );
+}
+add_action( 'wp_ajax_nopriv_um_request_user_data', 'um_request_user_data' );
+add_action( 'wp_ajax_um_request_user_data', 'um_request_user_data' );

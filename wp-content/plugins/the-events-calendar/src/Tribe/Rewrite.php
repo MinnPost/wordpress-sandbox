@@ -436,7 +436,7 @@ class Tribe__Events__Rewrite extends Tribe__Rewrite {
 	 * {@inheritDoc}
 	 */
 	protected function get_matcher_to_query_var_map() {
-		$matchers = [
+		$map = [
 			'month'    => 'eventDisplay',
 			'list'     => 'eventDisplay',
 			'today'    => 'eventDisplay',
@@ -456,9 +456,9 @@ class Tribe__Events__Rewrite extends Tribe__Rewrite {
 		 * @param  array  array of the current matchers for query vars.
 		 * @param  self   $rewrite
 		 */
-		$matchers = apply_filters( 'tribe_events_rewrite_matchers_to_query_vars_map', $matchers, $this );
+		$map = apply_filters( 'tribe_events_rewrite_matchers_to_query_vars_map', $map, $this );
 
-		return $matchers;
+		return $map;
 	}
 
 	/**
@@ -470,6 +470,12 @@ class Tribe__Events__Rewrite extends Tribe__Rewrite {
 		// Handle the dates.
 		$localized_matchers['(\d{4}-\d{2})']       = 'eventDate';
 		$localized_matchers['(\d{4}-\d{2}-\d{2})'] = 'eventDate';
+
+		// Handle the event archive possible variations.
+		$localized_matchers = array_merge(
+			$localized_matchers,
+			$this->get_option_controlled_slug_entry( $localized_matchers, 'events', 'eventsSlug' )
+		);
 
 		return $localized_matchers;
 	}
@@ -524,7 +530,7 @@ class Tribe__Events__Rewrite extends Tribe__Rewrite {
 	}
 
 	/**
-	 * Overrides the base method, from commmon, to filter the parsed query variables and handle some cases related to
+	 * Overrides the base method, from common, to filter the parsed query variables and handle some cases related to
 	 * the `eventDisplay` query variable.
 	 *
 	 * {@inheritDoc}
@@ -568,5 +574,52 @@ class Tribe__Events__Rewrite extends Tribe__Rewrite {
 		$query_vars['eventDisplay'] = $url_query_vars['eventDisplay'];
 
 		return $query_vars;
+	}
+
+	/**
+	 * Adds an entry for an option controlled slug.
+	 *
+	 * E.g. the events archive can be changed from `/events` to somethings like `/trainings`.
+	 *
+	 * @since 4.9.13
+	 *
+	 * @param array  $localized_matchers An array of the current localized matchers.
+	 * @param string $default_slug       The default slug for the option controlled slug; e.g. `events` for the events
+	 *                                   archive.
+	 * @param string $option_name        The name of the Tribe option that stores the modified slug, if any.
+	 *
+	 * @return array An entry to add to the localized matchers; this will be an empty array if there's no need to add
+	 *               an entry..
+	 */
+	protected function get_option_controlled_slug_entry( array $localized_matchers, $default_slug, $option_name ) {
+		$using_default_archive_slug = $default_slug === tribe_get_option( $option_name, $default_slug );
+
+		$filter = static function ( $matcher ) use ( $default_slug )
+		{
+			return isset( $matcher['query_var'] )
+			       && 'post_type' === $matcher['query_var']
+			       && isset( $matcher['localized_slugs'] )
+			       && is_array( $matcher['localized_slugs'] )
+			       && in_array( $default_slug, $matcher['localized_slugs'], true );
+		};
+
+		$archive_localized_matcher = array_filter( $localized_matchers, $filter );
+		$archive_localized_matcher = reset( $archive_localized_matcher );
+
+		if ( $using_default_archive_slug || false === $archive_localized_matcher ) {
+			return [];
+		}
+
+		$archive_localized_matcher['localized_slugs'][] = $archive_localized_matcher['en_slug'];
+		// Create an entry for each localized slug to replace (?:events).
+		$entry = [
+			'(?:' . $default_slug . ')' => [
+				'query_var'       => 'post_type',
+				'en_slug'         => $archive_localized_matcher['en_slug'],
+				'localized_slugs' => $archive_localized_matcher['localized_slugs']
+			]
+		];
+
+		return $entry;
 	}
 }

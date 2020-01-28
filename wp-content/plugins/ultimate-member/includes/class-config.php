@@ -150,6 +150,7 @@ if ( ! class_exists( 'um\Config' ) ) {
 
 				'_um_sortby'                    => 'user_registered_desc',
 				'_um_sortby_custom'             => '',
+				'_um_sortby_custom_label'       => '',
 				'_um_enable_sorting'            => 0,
 				'_um_sorting_fields'            => array(),
 
@@ -531,6 +532,7 @@ if ( ! class_exists( 'um\Config' ) ) {
 				'account_email'                         => 1,
 				'account_general_password'              => 0,
 				'account_hide_in_directory'             => 1,
+				'account_hide_in_directory_default'     => 'No',
 				'account_require_strongpass'            => 0,
 				'photo_thumb_sizes'                     => array( 40, 80, 190 ),
 				'cover_thumb_sizes'                     => array( 300, 600 ),
@@ -569,6 +571,7 @@ if ( ! class_exists( 'um\Config' ) ) {
 				'custom_roles_increment'                => 1,
 				'um_profile_object_cache_stop'          => 0,
 				'rest_api_version'                      => '2.0',
+				'member_directory_own_table'         => 0,
 				'profile_show_html_bio'                 => 0,
 			);
 

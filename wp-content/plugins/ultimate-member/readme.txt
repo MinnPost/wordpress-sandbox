@@ -7,7 +7,7 @@ Tags: community, member, membership, user-profile, user-registration
 Requires PHP: 5.6
 Requires at least: 5.0
 Tested up to: 5.3
-Stable tag: 2.1.2
+Stable tag: 2.1.3
 License: GNU Version 2 or Any Later Version
 License URI: http://www.gnu.org/licenses/gpl-3.0.txt
 
@@ -42,6 +42,7 @@ Read about all of the plugin's features at [Ultimate Member](https://ultimatemem
 
 Ultimate Member has a range of extensions that allow you to extend the power of the plugin. You can purchase all of these extensions at a significant discount with our [All Access Pass](https://ultimatemember.com/pricing/) or you can purchase extensions individually.
 
+* [Profile Tabs](https://ultimatemember.com/extensions/profile-tabs/) - Allow users to add custom tabs to profiles
 * [Unsplash](https://ultimatemember.com/extensions/unsplash/) - Allow users to select a profile cover photo from [Unsplash](https://unsplash.com/) from their profile
 * [User Bookmarks](https://ultimatemember.com/extensions/user-bookmarks/) - Allow users to bookmark content from your website
 * [User Photos](https://ultimatemember.com/extensions/user-photos/) - Allow users to upload photos to their profile
@@ -143,6 +144,36 @@ The plugin works with popular caching plugins by automatically excluding Ultimat
 
 * To learn more about version 2.1 please see this [topic](https://wordpress.org/support/topic/version-2-1-4/)
 * UM2.1+ is a significant update to the Member Directories' code base from 2.0.x. Please make sure you take a full-site backup with restore point before updating the plugin
+
+= 2.1.3: January 21, 2020 =
+
+* Enhancements:
+
+  - Added sorting by Last & First name
+  - Added integrations with future extensions
+  - Added filter for changing the order of options in select-type filter
+  - Added GDPR template to get overwritten in the theme directory
+  - Added member directories' custom sorting labels
+  - Added ability to use custom metatable for faster requests for Member Directories
+  - Added ability to request Erase or Download user data via Privacy tab at the Account page
+  - Added an option to set the "Hide profile from directory" option by default
+
+* Bugfixes:
+
+  - Fixed [um_loggedin] shortcode render with htmlspecialchars_decode
+  - Fixed checkbox options missing selections with conditional settings
+  - Fixed vulnerability with uploading cover/profile photo for other user ID
+  - Fixed integration with WPML for Account and User pages in case if there are different permalinks for different languages for these pages
+  - Fixed issues with pagination settings
+  - Fixed search line additional slashes
+  - Fixed issues with member results JS template
+  - Fixed getting posts count at the Posts tab for 3rd party integrations
+  - Fixed member directories' admin filtering
+  - Fixed issue with reset filters on member directory
+  - Fixed getting image/file custom fields values in form submission with not validated values
+  - Fixed JS handlers for select-type filters with callback and parent/child relations
+  - Fixed um_convert_tags for array-type values
+  - Fixed small CSS issues
 
 = 2.1.2: December 4, 2019 =
 

@@ -159,9 +159,13 @@ if ( ! class_exists( 'um\core\Plugin_Updater' ) ) {
 					'key'   => 'filesharing',
 					'title' => 'File Sharing',
 				),
-				'um-user-location/um-user-location.php'                     => array(
+				'um-user-location/um-user-location.php'                 => array(
 					'key'   => 'user-location',
 					'title' => 'User Location',
+				),
+				'um-profile-tabs/um-profile-tabs.php'                   => array(
+					'key'   => 'profile_tabs',
+					'title' => 'Profile tabs',
 				),
 			);
 
@@ -270,6 +274,19 @@ if ( ! class_exists( 'um\core\Plugin_Updater' ) ) {
 
 			if ( ! is_wp_error( $request ) ) {
 				$request = json_decode( wp_remote_retrieve_body( $request ) );
+			} else {
+				$request = wp_remote_post(
+					UM()->store_url,
+					array(
+						'timeout'   => UM()->request_timeout,
+						'sslverify' => true,
+						'body'      => $api_params
+					)
+				);
+
+				if ( ! is_wp_error( $request ) ) {
+					$request = json_decode( wp_remote_retrieve_body( $request ) );
+				}
 			}
 
 			$request = ( $request ) ? maybe_unserialize( $request ) : false;

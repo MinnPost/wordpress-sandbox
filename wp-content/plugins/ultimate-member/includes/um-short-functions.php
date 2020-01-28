@@ -209,8 +209,12 @@ function um_convert_tags( $content, $args = array(), $with_kses = true ) {
 	// Support for all usermeta keys
 	if ( ! empty( $matches[1] ) && is_array( $matches[1] ) ) {
 		foreach ( $matches[1] as $match ) {
-			$strip_key = str_replace( 'usermeta:', '', $match );
-			$content = str_replace( '{' . $match . '}', um_user( $strip_key ), $content );
+			$key = str_replace( 'usermeta:', '', $match );
+			$value = um_user( $key );
+			if ( is_array( $value ) ) {
+				$value = implode( ', ', $value );
+			}
+			$content = str_replace( '{' . $match . '}', apply_filters( 'um_convert_tags', $value, $key ), $content );
 		}
 	}
 	return $content;
@@ -995,12 +999,12 @@ function um_is_file_owner( $url, $user_id = null, $image_path = false ) {
  */
 function um_is_temp_file( $filename ) {
 	$user_basedir = UM()->uploader()->get_upload_user_base_dir( 'temp' );
-	
+
 	$file = $user_basedir . '/' . $filename;
-	
+
 	if ( file_exists( $file ) ) {
 		return true;
-	}	
+	}
 	return false;
 }
 
@@ -1014,8 +1018,9 @@ function um_is_temp_file( $filename ) {
  */
 function um_user_last_login_timestamp( $user_id ) {
 	$value = get_user_meta( $user_id, '_um_last_login', true );
-	if ($value)
+	if ( $value ) {
 		return $value;
+	}
 
 	return '';
 }
@@ -1047,8 +1052,9 @@ function um_get_core_page( $slug, $updated = false ) {
 
 	if ( isset( UM()->config()->permalinks[ $slug ] ) ) {
 		$url = get_permalink( UM()->config()->permalinks[ $slug ] );
-		if ( $updated )
+		if ( $updated ) {
 			$url = add_query_arg( 'updated', esc_attr( $updated ), $url );
+		}
 	}
 
 	/**

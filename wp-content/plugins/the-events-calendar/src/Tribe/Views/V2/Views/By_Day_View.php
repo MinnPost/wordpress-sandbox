@@ -10,11 +10,13 @@
 namespace Tribe\Events\Views\V2\Views;
 
 use Tribe\Events\Views\V2\Messages;
+use Tribe\Events\Views\V2\Repository\Event_Period;
 use Tribe\Events\Views\V2\Utils\Stack;
 use Tribe\Events\Views\V2\View;
 use Tribe\Traits\Cache_User;
 use Tribe__Cache_Listener as Cache_Listener;
 use Tribe__Date_Utils as Dates;
+use Tribe__Timezones as Timezones;
 use Tribe__Utils__Array as Arr;
 
 /**
@@ -26,6 +28,8 @@ use Tribe__Utils__Array as Arr;
  */
 abstract class By_Day_View extends View {
 	use Cache_User;
+
+	const CHUNK_SIZE = 200;
 
 	/**
 	 * The date input by the user, either by selecting the default view or using the bar.
@@ -52,6 +56,15 @@ abstract class By_Day_View extends View {
 	 * @var array
 	 */
 	protected $grid_days_found_cache = [];
+
+	/**
+	 * An array of cached events for the grid.
+	 *
+	 * @since 5.0.0
+	 *
+	 * @var array
+	 */
+	protected $grid_events = [];
 
 	/**
 	 * An instance of the Stack object.
@@ -94,12 +107,14 @@ abstract class By_Day_View extends View {
 			! $force
 			&& ! empty( $this->grid_days_cache )
 			&& isset( $this->user_date )
-			&& ( null === $date || $this->user_date === $date )
+			&& ( ! $date || $this->user_date === $date )
 		) {
 			return $this->grid_days_cache;
 		}
 
-		$this->user_date = $date ?: $this->context->get( 'event_date', 'now' );
+		if ( empty( $this->user_date ) ) {
+			$this->user_date = $date ?: $this->context->get( 'event_date', 'now' );
+		}
 
 		list( $grid_start, $grid_end ) = $this->calculate_grid_start_end( $this->user_date );
 
@@ -121,7 +136,7 @@ abstract class By_Day_View extends View {
 			/**
 			 * If repository arguments have not ben set up yet, let's do it now.
 			 */
-			$this->repository_args = $this->filter_repository_args( $this->setup_repository_args() );
+			$this->repository_args = $this->filter_repository_args( $this->setup_repository_args( $this->context ) );
 		}
 
 		$repository_args = $this->repository_args;
@@ -133,42 +148,151 @@ abstract class By_Day_View extends View {
 		$this->warmup_cache( 'grid_days_found', 0, Cache_Listener::TRIGGER_SAVE_POST );
 		$events_per_day = $this->get_events_per_day();
 
+		// @todo remove this when the Event_Period repository is solid and clean up.
+		$using_period_repository = tribe_events_view_v2_use_period_repository();
+
+		if ( $using_period_repository ) {
+			/** @var Event_Period $repository */
+			if ( tribe_is_truthy( tribe_get_option( 'enable_month_view_cache', false ) ) ) {
+				$repository = tribe_events( 'period', 'caching' );
+			} else {
+				$repository = tribe_events( 'period' );
+			}
+			$repository->by_period( $grid_start_date, $grid_end_date )->fetch();
+		} else {
+			global $wpdb;
+
+			$first_grid_day = $days->start;
+			$start          = tribe_beginning_of_day( $first_grid_day->format( Dates::DBDATETIMEFORMAT ) );
+			$last_grid_day  = $days->end;
+			$end            = tribe_end_of_day( $last_grid_day->format( Dates::DBDATETIMEFORMAT ) );
+
+			$view_event_ids = tribe_events()
+				->set_found_rows( true )
+				->fields( 'ids' )
+				->by_args( $repository_args )
+				->where( 'date_overlaps', $start, $end, null, 2 )
+				->per_page( -1 )
+				->order_by( $order_by, $order )
+				->all();
+
+			$day_results = [];
+
+			$start_meta_key = '_EventStartDate';
+			$end_meta_key   = '_EventEndDate';
+
+			if ( Timezones::is_mode( 'site' ) ) {
+				$start_meta_key = '_EventStartDateUTC';
+				$end_meta_key   = '_EventEndDateUTC';
+			}
+
+			$results = [];
+			$request_chunks = array_chunk( $view_event_ids, $this->get_chunk_size() );
+
+			foreach ( $request_chunks as $chunk_ids ) {
+				$sql = "
+				SELECT
+				  post_id,
+					meta_key,
+					meta_value
+				FROM
+					{$wpdb->postmeta}
+				WHERE
+					meta_key IN ( %s, %s )
+					AND post_id IN ( " . implode( ',', $chunk_ids ) . " )
+			";
+
+				$chunk_results = $wpdb->get_results( $wpdb->prepare( $sql, [ $start_meta_key, $end_meta_key ] ) );
+
+				$results = array_merge( $results, $chunk_results );
+			}
+
+			$indexed_results = [];
+
+			foreach ( $results as $row ) {
+				if ( ! isset( $indexed_results[ $row->post_id ] ) ) {
+					$indexed_results[ $row->post_id ] = [
+						'ID'         => $row->post_id,
+						'start_date' => null,
+						'end_date'   => null,
+					];
+				}
+
+				$key = $start_meta_key === $row->meta_key ? 'start_date' : 'end_date';
+
+				$indexed_results[ $row->post_id ][ $key ] = $row->meta_value;
+			}
+
+			foreach ( $view_event_ids as $id ) {
+				$day_results[] = (object) $indexed_results[ $id ];
+			}
+		}
+
+		$all_day_event_ids = [];
+
 		// phpcs:ignore
 		/** @var \DateTime $day */
 		foreach ( $days as $day ) {
 			$day_string = $day->format( 'Y-m-d' );
 
-			if ( isset( $this->grid_days_cache[ $day_string ] ) ) {
-				continue;
+			if ( $using_period_repository && isset( $repository ) ) {
+				$day_results = $repository->by_date( $day_string )->get_set();
+
+				$event_ids = [];
+				if ( $day_results->count() ) {
+					// Sort events by honoring order and direction.
+					$day_results->order_by( $order_by, $order );
+					$event_ids = array_map( 'absint', $day_results->pluck( 'ID' ) );
+				}
+
+				if ( $events_per_day > -1 ) {
+					$day_event_ids = array_slice( $event_ids, 0, $events_per_day );
+				}
+
+				$this->grid_days_cache[ $day_string ]       = $day_event_ids;
+				$this->grid_days_found_cache[ $day_string ] = $day_results->count();
+			} else {
+				$start = tribe_beginning_of_day( $day->format( Dates::DBDATETIMEFORMAT ) );
+				$end   = tribe_end_of_day( $day->format( Dates::DBDATETIMEFORMAT ) );
+
+				// Events overlap a day if Event start date <= Day End AND Event end date >= Day Start.
+				$results_in_day = array_filter(
+					$day_results,
+					static function ( $event ) use ( $start, $end ) {
+						return $event->start_date <= $end && $event->end_date >= $start;
+					}
+				);
+
+				$day_event_ids = array_map( 'absint', wp_list_pluck( $results_in_day, 'ID' ) );
+
+				if ( $events_per_day > -1 ) {
+					$day_event_ids = array_slice( $day_event_ids, 0, $events_per_day );
+				}
+
+				$this->grid_days_cache[ $day_string ]       = $day_event_ids;
+				$this->grid_days_found_cache[ $day_string ] = count( $results_in_day );
 			}
 
-			$start = tribe_beginning_of_day( $day->format( Dates::DBDATETIMEFORMAT ) );
-			$end   = tribe_end_of_day( $day->format( Dates::DBDATETIMEFORMAT ) );
-
-			/*
-			 * We want events overlapping the current day, by more than 1 second.
-			 * This prevents events ending on the cutoff from showing up here.
-			 */
-			$day_query = tribe_events()
-				->by_args( $repository_args )
-				->where( 'date_overlaps', $start, $end, null, 2 )
-				->per_page( $events_per_day )
-				->order_by( $order_by, $order );
-			$event_ids = $day_query->get_ids();
-			$found     = $day_query->found();
-
-			$this->grid_days_cache[ $day_string ]       = (array) $event_ids;
-			$this->grid_days_found_cache[ $day_string ] = (int) $found;
-
-			/*
-			 * Multi-day events will always appear on the second day and forward, back-fill if they did not make the
-			 * cut (of events per day) on previous days.
-			 */
-			$this->backfill_multiday_event_ids( $event_ids );
+			$all_day_event_ids = array_merge( $all_day_event_ids, $day_event_ids );
 		}
 
-		if ( is_array( $this->grid_days_cache ) && count( $this->grid_days_cache ) ) {
-			$this->grid_days_cache = $this->add_implied_events( $this->grid_days_cache );
+		$this->grid_events = $this->get_grid_events( $all_day_event_ids );
+
+		/*
+		 * Multi-day events will always appear on the second day and forward, back-fill if they did not make the
+		 * cut (of events per day) on previous days.
+		 */
+		$this->backfill_multiday_event_ids( $this->grid_events );
+
+		if ( $using_period_repository ) {
+			$post_ids = array_filter( array_unique( array_merge( ... array_values( $this->grid_days_cache ) ) ) );
+			/** @var \Tribe__Cache $cache */
+			$cache = tribe( 'cache' );
+			$cache->warmup_post_caches( $post_ids, true );
+		} else {
+			if ( is_array( $this->grid_days_cache ) && count( $this->grid_days_cache ) ) {
+				$this->grid_days_cache = $this->add_implied_events( $this->grid_days_cache );
+			}
 		}
 
 		// Drop the last day we've added before.
@@ -238,7 +362,7 @@ abstract class By_Day_View extends View {
 	 * @return int The number of events to show, per each day, in total, in the view.
 	 */
 	protected function get_events_per_day() {
-		$events_per_day = $this->context->get( 'events_per_page', 10 );
+		$events_per_day = $this->context->get( 'events_per_page', 12 );
 
 		/**
 		 * Filters the number of events per day to fetch in th View.
@@ -298,16 +422,6 @@ abstract class By_Day_View extends View {
 	}
 
 	/**
-	 * Return the PHP `date` format that should be used to build the View URL when targeting a specific date.
-	 *
-	 * @since 4.9.9
-	 *
-	 * @return string The PHP `date` format that should be used to build the View URL when targeting a specific date;
-	 *                e.g. `Y-m` for Month View, or `Y-m-d` for Week View.
-	 */
-	abstract  protected function get_url_date_format();
-
-	/**
 	 * Adds the implied events to the grid days results.
 	 *
 	 * The combination of sticky events, other order rules and a limit to the number of events per day,
@@ -356,6 +470,39 @@ abstract class By_Day_View extends View {
 	}
 
 	/**
+	 * Fetches events for the grid in chunks so we do not have to fetch events a second time.
+	 *
+	 * @since 5.0.0
+	 *
+	 * @param array $event_ids
+	 *
+	 * @return array|void
+	 */
+	protected function get_grid_events( array $event_ids = [] ) {
+		if ( empty( $event_ids ) ) {
+			return [];
+		}
+
+		$events = [];
+
+		$event_id_chunks = array_chunk( $event_ids, $this->get_chunk_size() );
+		foreach ( $event_id_chunks as $ids ) {
+			// Prefetch provided events in a single query.
+			$event_results = tribe_events()
+				->in( $ids )
+				->per_page( -1 )
+				->all();
+
+			// Massage events to be indexed by event ID.
+			foreach ( $event_results as $event_result ) {
+				$events[ $event_result->ID ] = $event_result;
+			}
+		}
+
+		return $events;
+	}
+
+	/**
 	 * Back-fills the days cache to add multi-day events that, due to events-per-day limits, might not appear on first
 	 * day.
 	 *
@@ -367,10 +514,10 @@ abstract class By_Day_View extends View {
 	 *
 	 * @since 4.9.12
 	 *
-	 * @param array $event_ids An array of event post IDs for the day.
+	 * @param array $events An array of event posts
 	 */
-	protected function backfill_multiday_event_ids( array $event_ids = [] ) {
-		if ( empty( $event_ids ) ) {
+	protected function backfill_multiday_event_ids( array $events = [] ) {
+		if ( empty( $events ) ) {
 			return;
 		}
 
@@ -380,8 +527,10 @@ abstract class By_Day_View extends View {
 			return;
 		}
 
+		$event_ids = wp_list_pluck( $events, 'ID' );
+
 		foreach ( $event_ids as $event_id ) {
-			$event = tribe_get_event( $event_id );
+			$event = $events[ $event_id ];
 
 			if ( ! $event instanceof \WP_Post ) {
 				continue;
@@ -415,5 +564,37 @@ abstract class By_Day_View extends View {
 				}
 			}
 		}
+	}
+
+	/**
+	 * ${CARET}
+	 *
+	 * @since 4.9.13
+	 *
+	 * @return bool
+	 */
+	protected function using_period_repository() {
+		return defined( 'TRIBE_EVENTS_V2_VIEWS_USE_PERIOD_REPOSITORY' )
+		       && TRIBE_EVENTS_V2_VIEWS_USE_PERIOD_REPOSITORY;
+	}
+
+	/**
+	 * Gets the current desired chunk size for breaking up batched queries.
+	 *
+	 * @since 5.0.0
+	 *
+	 * @return int
+	 */
+	protected function get_chunk_size() {
+		/**
+		 * Filters the chunk size used for building grid dates.
+		 *
+		 * @since 5.0.0
+		 *
+		 * @param int $chunk_size Max number of values to query at a time.
+		 * @param \Tribe__Context $context Context of request.
+		 * @param By_Day_View $view Current view object.
+		 */
+		return apply_filters( 'tribe_events_views_v2_by_day_view_chunk_size', self::CHUNK_SIZE, $this->get_context(), $this );
 	}
 }

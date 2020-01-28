@@ -12,6 +12,7 @@ use Tribe\Traits\Cache_User;
 use Tribe__Repository__Interface as Repository_Interface;
 use Tribe__Template as Base_Template;
 use Tribe__Utils__Array as Arr;
+use WP_Post;
 
 /**
  * Class Template
@@ -88,6 +89,7 @@ class Template extends Base_Template {
 		// Set some defaults on the template.
 		$this->set( 'view_class', get_class( $view ), false );
 		$this->set( 'view_slug', $view->get_slug(), false );
+		$this->set( 'view_label', $view->get_label(), false );
 
 		// Set which view globally.
 		$this->set( 'view', $view, false );
@@ -149,10 +151,30 @@ class Template extends Base_Template {
 
 		if ( $this->view instanceof View_Interface ) {
 			$this->set( 'view_slug', $this->view->get_slug(), false );
+			$this->set( 'view_label', $this->view->get_label(), false );
 			$this->set( 'view_class', get_class( $this->view ), false );
 		}
 
 		return parent::get_template_file( 'base' );
+	}
+
+	/**
+	 * Sets up the post data and replace the global post variable on all required places.
+	 *
+	 * @since 4.9.13
+	 *
+	 * @param WP_Post $event Which event will replace the Post for the templates
+	 *
+	 * @return bool|void  Returns whatever WP_Query::setup_postdata() sends back.
+	 */
+	public function setup_postdata( WP_Post $event ) {
+		global $post, $wp_query;
+
+		// Replace the global $post with the event given.
+		$post = $event;
+
+		// Setup Post data with the info passed.
+		return $wp_query->setup_postdata( $post );
 	}
 
 	/**
@@ -186,5 +208,16 @@ class Template extends Base_Template {
 	 */
 	public function get_view() {
 		return $this->view;
+	}
+
+	/**
+	 * Returns the current template context.
+	 *
+	 * @since 5.0.0
+	 *
+	 * @return \Tribe__Context The template context instance, or the global context if no context is set.
+	 */
+	public function get_context() {
+		return $this->context instanceof \Tribe__Context ? $this->context : tribe_context();
 	}
 }

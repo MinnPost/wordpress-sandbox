@@ -37,6 +37,7 @@ if ( ! class_exists( 'UM' ) ) {
 	 * @method UM_User_Bookmarks User_Bookmarks()
 	 * @method UM_Unsplash Unsplash()
 	 * @method UM_ForumWP ForumWP()
+	 * @method UM_Profile_Tabs Profile_Tabs()
 	 */
 	final class UM extends UM_Functions {
 
@@ -581,7 +582,14 @@ if ( ! class_exists( 'UM' ) ) {
 		 */
 		function member_directory() {
 			if ( empty( $this->classes['member_directory'] ) ) {
-				$this->classes['member_directory'] = new um\core\Member_Directory();
+
+				$search_in_table = $this->options()->get( 'member_directory_own_table' );
+
+				if ( ! empty( $search_in_table ) ) {
+					$this->classes['member_directory'] = new um\core\Member_Directory_Meta();
+				} else {
+					$this->classes['member_directory'] = new um\core\Member_Directory();
+				}
 			}
 			return $this->classes['member_directory'];
 		}
@@ -1455,8 +1463,6 @@ if ( ! class_exists( 'UM' ) ) {
 			require_once 'core/um-filters-navmenu.php';
 			require_once 'core/um-filters-avatars.php';
 			require_once 'core/um-filters-user.php';
-
-			//require_once 'core/um-filters-members.php';
 
 			require_once 'core/um-filters-profile.php';
 			require_once 'core/um-filters-account.php';
