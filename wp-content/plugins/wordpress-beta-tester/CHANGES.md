@@ -1,5 +1,16 @@
 [unreleased]
 
+#### 2.2.2 / 2020-02-22
+* fix for strange Core API response where preferred version response contained the word 'version'. We now grab the last word of that response
+
+#### 2.2.1 / 2020-02-20
+* fix some i18n strings, thanks @pedro-mendonca
+
+#### 2.2.0 / 2020-02-19
+* added support for updating to the _beta/RC offer_. Based on and with tons of help from @pbrion, thanks Paul 👏🏻
+* fixed so a downgrade from 'unstable' to 'point' serves the correct download
+* test and exit from **Extra Settings** if `wp-config.php` is not writeable
+
 #### 2.1.0 / 2019-09-17
 * add extra setting to skip successful autoupdate emails
 * add description to checkbox settings
