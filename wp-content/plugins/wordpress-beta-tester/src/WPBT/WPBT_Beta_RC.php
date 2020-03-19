@@ -106,6 +106,10 @@ class WPBT_Beta_RC {
 		add_filter( 'http_response', array( $this, 'update_to_beta_or_rc_releases' ), 10, 3 );
 		// set priority to 11 so that we fire after the function core hooks into this filter.
 		add_filter( 'update_footer', array( $this, 'update_footer' ), 11 );
+
+		// Add dashboard widget.
+		add_action( 'wp_dashboard_setup', array( $this, 'add_dashboard_widget' ) );
+		add_action( 'wp_network_dashboard_setup', array( $this, 'add_dashboard_widget' ) );
 	}
 
 	/**
@@ -169,9 +173,9 @@ class WPBT_Beta_RC {
 	 *
 	 * @since 2.2.0
 	 *
-	 * @param array  $response HTTP response.
-	 * @param array  $parsed_args HTTP request arguments.
-	 * @param string $url The request URL.
+	 * @param  array  $response    HTTP response.
+	 * @param  array  $parsed_args HTTP request arguments.
+	 * @param  string $url         The request URL.
 	 * @return array
 	 *
 	 * @filter http_response
@@ -269,8 +273,8 @@ class WPBT_Beta_RC {
 	 *
 	 * @since 2.2.0
 	 *
-	 * @param string $url URL of a beta/RC release package.
-	 * @return bool       True if the package at `$url` exists, false otherwise.
+	 * @param  string $url URL of a beta/RC release package.
+	 * @return bool   True if the package at `$url` exists, false otherwise.
 	 */
 	private function next_package_exists( $url ) {
 		// note: adding this filter will be a no-op until a version of QM that supports
@@ -291,7 +295,7 @@ class WPBT_Beta_RC {
 	 *
 	 * @since 2.2.0
 	 *
-	 * @param string $content The content that will be printed.
+	 * @param  string $content The content that will be printed.
 	 * @return string
 	 *
 	 * @filter update_footer
@@ -318,11 +322,11 @@ class WPBT_Beta_RC {
 	 *
 	 * @since 2.2.0
 	 *
-	 * @param mixed  $pre_site_transient The default value to return if the site
-	 *                                   transient does not exist. Any value other
-	 *                                   than false will short-circuit the retrieval
-	 *                                   of the transient, and return the returned value.
-	 * @param string $transient          Transient name.
+	 * @param  mixed  $pre_site_transient The default value to return if the site
+	 *                                    transient does not exist. Any value other
+	 *                                    than false will short-circuit the retrieval
+	 *                                    of the transient, and return the returned value.
+	 * @param  string $transient          Transient name.
 	 * @return object
 	 *
 	 * @filter pre_site_transient_update_core
@@ -348,9 +352,9 @@ class WPBT_Beta_RC {
 	 *
 	 * @since 2.2.0
 	 *
-	 * @param array $silenced QM HTTP codes to be silenced.
-	 * @param array $http     QM "HTTP" request object.
-	 * @return int[]          Array of HTTP Status Codes to be silenced.
+	 * @param  array $silenced QM HTTP codes to be silenced.
+	 * @param  array $http     QM "HTTP" request object.
+	 * @return int[] Array of HTTP Status Codes to be silenced.
 	 */
 	public function qm_silence_404s( $silenced, $http ) {
 		$silenced[] = 404;
@@ -364,7 +368,7 @@ class WPBT_Beta_RC {
 	 * @since 2.2.0
 	 *
 	 * @return bool|string Will be boolean false if the next beta/RC package was not found,
-	 *                  or the version of the package (as a string) otherwise.
+	 *                     or the version of the package (as a string) otherwise.
 	 */
 	public function get_found_version() {
 		return $this->found;
@@ -379,5 +383,122 @@ class WPBT_Beta_RC {
 	 */
 	public function next_package_versions() {
 		return array_keys( $this->next_package_urls );
+	}
+
+	/**
+	 * Add dashboard widget for beta testing information.
+	 *
+	 * @since 2.2.3
+	 *
+	 * @return void
+	 */
+	public function add_dashboard_widget() {
+		$wp_version = get_bloginfo( 'version' );
+		$beta_rc    = 1 === preg_match( '/alpha|beta|RC/', $wp_version );
+
+		if ( $beta_rc ) {
+			wp_add_dashboard_widget( 'beta_tester_dashboard_widget', __( 'WordPress Beta Testing', 'wordpress-beta-tester' ), array( $this, 'beta_tester_dashboard' ) );
+		}
+	}
+
+	/**
+	 * Setup dashboard widget.
+	 *
+	 * @since 2.2.3
+	 *
+	 * @return void
+	 */
+	public function beta_tester_dashboard() {
+		$next_version = $this->next_package_versions();
+		$milestone    = array_shift( $next_version );
+
+		/* translators: %s: WordPress version */
+		printf( wp_kses_post( '<p>' . __( 'Please help test <strong>WordPress %s</strong>.', 'wordpress-beta-tester' ) . '</p>' ), esc_attr( $milestone ) );
+
+		echo wp_kses_post( $this->add_dev_notes_field_guide_links( $milestone ) );
+		echo wp_kses_post( $this->parse_development_feed( $milestone ) );
+
+		/* translators: %1: link to closed and reopened trac tickets on current milestone */
+		printf( wp_kses_post( '<p>' . __( 'Here are the <a href="%s">commits for the milestone</a>.', 'wordpress-beta-tester' ) . '</p>' ), esc_url_raw( "https://core.trac.wordpress.org/query?status=closed&status=reopened&milestone=$milestone" ) );
+
+		/* translators: %s: link to trac search */
+		printf( wp_kses_post( '<p>' . __( '&#128027; Did you find a bug? Search for a <a href="%s">trac ticket</a> to see if it has already been reported.', 'wordpress-beta-tester' ) . '</p>' ), 'https://core.trac.wordpress.org/search' );
+
+		$capability = is_multisite() ? 'manage_network_options' : 'manage_options';
+		if ( current_user_can( $capability ) ) {
+			$parent             = is_multisite() ? 'settings.php' : 'tools.php';
+			$wpbt_settings_page = add_query_arg( 'page', 'wp-beta-tester', network_admin_url( $parent ) );
+
+			/* translators: %s: WP Beta Tester settings URL */
+			printf( wp_kses_post( '<p>' . __( 'Head over to your <a href="%s">WordPress Beta Tester Settings</a> and make sure the <strong>beta/RC</strong> stream is selected.', 'wordpress-beta-tester' ) . '</p>' ), esc_url_raw( $wpbt_settings_page ) );
+		}
+	}
+
+	/**
+	 * Parse development RSS feed for list of milestoned items.
+	 *
+	 * @since 2.2.3
+	 * @param string $milestone Milestone version.
+	 *
+	 * @return string HTML unordered list.
+	 */
+	private function parse_development_feed( $milestone ) {
+		$rss_args = array(
+			'show_summary' => 0,
+			'items'        => 10,
+		);
+		ob_start();
+		wp_widget_rss_output( 'https://wordpress.org/news/category/development/feed/', $rss_args );
+		$feed = ob_get_contents();
+		ob_end_clean();
+
+		$milestone = preg_quote( $milestone, '.' );
+		$li_regex  = "#<li>.*$milestone.*?<\/li>#";
+		preg_match( $li_regex, $feed, $matches );
+		$match = array_pop( $matches );
+		$list  = empty( $match ) ? '' : "<ul>$match</ul>";
+
+		return $list;
+	}
+
+	/**
+	 * Add milestone dev notes and field guide when on RC version.
+	 *
+	 * @since x.x.x
+	 * @param string $milestone Milestone version.
+	 *
+	 * @return string HTML unordered list.
+	 */
+	private function add_dev_notes_field_guide_links( $milestone ) {
+		$wp_version       = get_bloginfo( 'version' );
+		$beta_rc          = 1 === preg_match( '/beta|RC/', $wp_version );
+		$rc               = 1 === preg_match( '/RC/', $wp_version );
+		$milestone_dash   = str_replace( '.', '-', $milestone );
+		$dev_note_link    = '';
+		$field_guide_link = '';
+
+		if ( $beta_rc ) {
+			$dev_note_link = sprintf(
+			/* translators: %1$s Link to dev notes, %2$s: Link title */
+				'<a href="%1$s">%2$s</a>',
+				"https://make.wordpress.org/core/tag/$milestone_dash+dev-notes/",
+				/* translators: %s: Milestone version */
+				sprintf( __( 'WordPress %s Dev Notes', 'wordpress-beta-tester' ), $milestone )
+			);
+			$dev_note_link = "<li>$dev_note_link</li>";
+		}
+		if ( $rc ) {
+			$field_guide_link = sprintf(
+			/* translators: %1$s Link to field guide, %2$s: Link title */
+				'<a href="%1$s">%2$s</a>',
+				"https://make.wordpress.org/core/tag/$milestone_dash+field-guide/",
+				/* translators: %s: Milestone version */
+				sprintf( __( 'WordPress %s Field Guide', 'wordpress-beta-tester' ), $milestone )
+			);
+			$field_guide_link = "<li>$field_guide_link</li>";
+		}
+		$links = $beta_rc || $rc ? "<ul> $dev_note_link $field_guide_link </ul>" : null;
+
+		return $links;
 	}
 }

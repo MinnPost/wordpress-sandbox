@@ -2,9 +2,9 @@
 
 Tags: beta, advanced, testing
 Contributors: westi, mlteal, afragen, pbiron
-Tested up to: 5.3
+Tested up to: 5.4
 Requires at least: 3.1
-Stable Tag: 2.2.2
+Stable Tag: 2.2.8
 License: GPLv2
 License URI: https://www.opensource.org/licenses/GPL-2.0
 Requires PHP: 5.2.4
@@ -39,6 +39,29 @@ If no settings are present there is no testing to be done that requires this fea
 PRs are welcome on [GitHub](https://github.com/afragen/wordpress-beta-tester).
 
 ## Changelog
+
+#### 2.2.8 / 2020-03-17 🍀
+* add Dev Notes and Field Guide links to dashboard
+* add text/link for bug reporting to trac
+* add help tabs to screen
+* arbitrarily changed settings page id from `wp_beta_tester` to `wp-beta-tester` 😏
+
+#### 2.2.7 / 2020-03-02
+* update trac link in callout for _closed_ or _reopened_ tickets on the milestone
+* only show Beta Tester Settings page link in callout with appropriate privileges, using `manage_network_options` and `manage_options`
+* menu to Settings page also checks privileges as above
+
+#### 2.2.6 / 2020-02-25
+* removed extra `</li>` in dashboard callout, 4th time's the charm 😭
+
+#### 2.2.5 / 2020-02-25
+* less greedy regex for matching release posts in RSS for dashboard callout
+
+#### 2.2.4 / 2020-02-25 🤦‍♂️
+* added dashboard widget for network dashboard
+
+#### 2.2.3 / 2020-02-25
+* add dashboard widget callout for testing
 
 #### 2.2.2 / 2020-02-22
 * fix for strange Core API response where preferred version response contained the word 'version'. We now grab the last word of that response
@@ -140,3 +163,4 @@ PRs are welcome on [GitHub](https://github.com/afragen/wordpress-beta-tester).
 
 1. This shows the main administration page for the plugin
 2. This shows the Extra Settings page for the plugin
+3. This shows the Dashboard callout
