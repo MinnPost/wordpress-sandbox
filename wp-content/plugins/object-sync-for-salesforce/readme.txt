@@ -3,8 +3,8 @@ Contributors: minnpost, inn_nerds, jonathanstegall, benlk, rclations, harmoney
 Donate link: https://www.minnpost.com/support/?campaign=7010G0000012fXGQAY
 Tags: salesforce, sync, crm
 Requires at least: 4.6
-Tested up to: 5.2
-Stable tag: 1.8.12
+Tested up to: 5.3
+Stable tag: 1.9.0
 Requires PHP: 5.6.20
 License: GPLv2 or later
 License URI: http://www.gnu.org/licenses/gpl-2.0.html
@@ -49,7 +49,9 @@ For purposes of this documentation, we'll assume that your name, as defined in S
 
 #### Create an App
 
-1. In Salesforce, go to `Your Name > Setup`. Then on the left sidebar, under `App Setup`, click `Create > Apps`. In the **Connected Apps** section of this page, click New to create a new app.
+1. In Salesforce, create a new Connected App. This differs between Lightning and Classic Salesforce.
+    - **Lightning:** Click on the cog icon at the top right of the browser window and click on `Setup`. Then on the left sidebar, under `App Setup`, click `Platform Tools > Apps > App Manager`. In the **Lightning Experience App Manager** section of this page, click `New Connected App` to create a new app.
+    - **Classic:** At the top right of the browser window, go to `Your Name > Setup`. Then on the left sidebar, under `App Setup`, click `Create > Apps`. In the **Connected Apps** section of this page, click New to create a new app.
 2. Enable OAuth Settings
 3. Set the callback URL to: `https://<your site>/wp-admin/options-general.php?page=object-sync-salesforce-admin&tab=authorize` (must use HTTPS).
 4. Select at least "Perform requests on your behalf at any time" for OAuth Scope as well as the appropriate other scopes for your application. Many setups will also need to select "Access and manage your data (api)" as one of these scopes.
@@ -261,6 +263,15 @@ This plugin can be relatively complicated, and sometimes other plugins can effec
 - **Build other integrations in WordPress** this plugin focuses on the Salesforce REST API, as it covers the integration needs we have. Salesforce also has many other developer options: the SOAP API (we hope to incorporate this into Object Sync for Salesforce at some point), the Bulk API, and the Metadata API. Developers could extend this plugin to integrate with one of these. We would welcome any pull requests!
 
 == Changelog ==
+
+* 1.9.0 (2020-03-20)
+    * Feature: when pushing or pulling the `wp_capabilities` field on a WordPress user, treat the data as WordPress needs it to assign roles. Thanks to WordPress user @emilyb6116 for reporting this and for testing the fix.
+    * Feature: Hide admin menu items that won't work pre-authorization until the plugin is authorized with Salesforce. Thanks to WordPress user @mgparisi for pointing this out.
+    * Bug fix: Correctly handle empty values for fields coming from Salesforce. Thanks to everyone who pointed out this issue and eventually discovered the cause: @prowp on GitHub and WordPress users @rickymortimer, @emilyb6116, @zumajoe.
+    * Bug fix: When a Salesforce query has invalid fields, clear it from the plugin's storage. Thanks to WordPress users @nishithmistry, @zumajoe, @alexeympw, and @jesodoth.
+    * Maintenance: Adding new fields to a fieldmap is faster and involves less code duplication.
+    * Maintenance: For WordPress 5.3 compatibility, replace `current_time( 'timestamp' )` with `time()`.
+    * Maintenance: Update Salesforce app setup instructions for Lightning.* 1.9.0 (2020-03-20)
 
 * 1.8.12 (2019-09-19)
     * Bug fix: fix the `object_sync_for_salesforce_pull_query_modify` filter to prevent SOQL query properties from being added multiple times.
