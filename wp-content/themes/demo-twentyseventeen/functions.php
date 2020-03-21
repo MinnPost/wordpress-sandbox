@@ -168,6 +168,14 @@ function twentyseventeen_cmb2_settings() {
 			'type' => 'text',
 		)
 	);
+	$user_settings->add_field(
+		array(
+			'name' => 'Temporary Field To Be Deleted',
+			'desc' => '',
+			'id'   => '_temp_field_to_be_deleted',
+			'type' => 'text',
+		)
+	);
 
 	$post_settings = new_cmb2_box(
 		array(
