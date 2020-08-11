@@ -49,7 +49,7 @@ if ( ! class_exists( 'um\core\Fields' ) ) {
 			/**
 			 * Set value on form submission
 			 */
-			if( isset( $_REQUEST[ $id ] ) ){
+			if ( isset( $_REQUEST[ $id ] ) ) {
 				$checked = $_REQUEST[ $id ];
 			}
 
@@ -150,7 +150,7 @@ if ( ! class_exists( 'um\core\Fields' ) ) {
 			unset( $fields[ $id ]['in_group'] );
 			unset( $fields[ $id ]['position'] );
 
-			do_action( 'um_add_new_field', $id );
+			do_action( 'um_add_new_field', $id, $args );
 
 			update_option( 'um_fields', $fields );
 		}
@@ -249,9 +249,11 @@ if ( ! class_exists( 'um\core\Fields' ) ) {
 		function delete_field_from_db( $id ) {
 			$fields = UM()->builtin()->saved_fields;
 			if ( isset( $fields[ $id ] ) ) {
+				$args = $fields[ $id ];
+
 				unset( $fields[ $id ] );
 
-				do_action( 'um_delete_custom_field', $id );
+				do_action( 'um_delete_custom_field', $id, $args );
 
 				update_option( 'um_fields', $fields );
 			}
@@ -360,7 +362,7 @@ if ( ! class_exists( 'um\core\Fields' ) ) {
 			unset( $all_fields[ $new_metakey ]['position'] );
 
 
-			do_action( 'um_add_new_field', $new_metakey );
+			do_action( 'um_add_new_field', $new_metakey, $duplicate );
 
 			UM()->query()->update_attr( 'custom_fields', $form_id, $fields );
 			update_option( 'um_fields', $all_fields );
@@ -963,7 +965,8 @@ if ( ! class_exists( 'um\core\Fields' ) ) {
 					$value = (int) $value;
 				}
 
-				if ( $key == 'role' ) {
+				if ( strstr( $key, 'role_' ) || $key == 'role' ) {
+					$field_value = strtolower( UM()->roles()->get_editable_priority_user_role( um_user( 'ID' ) ) );
 
 					$role_keys = get_option( 'um_roles' );
 
@@ -1095,7 +1098,7 @@ if ( ! class_exists( 'um\core\Fields' ) ) {
 		 */
 		function is_radio_checked( $key, $value, $data ) {
 			global $wpdb;
-					
+
 			if ( isset( UM()->form()->post_form[ $key ] ) ) {
 				if ( is_array( UM()->form()->post_form[ $key ] ) && in_array( $value, UM()->form()->post_form[ $key ] ) ) {
 					return true;
@@ -1107,14 +1110,10 @@ if ( ! class_exists( 'um\core\Fields' ) ) {
 				if ( $this->editing && 'custom' !== $this->set_mode ) {
 					if ( um_user( $key ) ) {
 
-						if ( strstr( $key, 'role_' ) ) {
-							$key = 'role';
-						}
-
 						$um_user_value = um_user( $key );
 
-						if ( $key == 'role' ) {
-							$um_user_value = strtolower( $um_user_value );
+						if ( strstr( $key, 'role_' ) || $key == 'role' ) {
+							$um_user_value = strtolower( UM()->roles()->get_editable_priority_user_role( um_user( 'ID' ) ) );
 
 							$role_keys = get_option( 'um_roles' );
 
@@ -2124,7 +2123,7 @@ if ( ! class_exists( 'um\core\Fields' ) ) {
 					 * }
 					 * ?>
 					 */
-					
+
 					$output .= apply_filters( "um_edit_field_{$mode}_{$type}", $output, $data );
 					break;
 
@@ -2165,7 +2164,7 @@ if ( ! class_exists( 'um\core\Fields' ) ) {
 						$output .= $this->field_notice( $this->show_notice( $key ) );
 					}
 
-					$output .= '</div>'; 
+					$output .= '</div>';
 					break;
 
 				/* Text */
@@ -3342,7 +3341,7 @@ if ( ! class_exists( 'um\core\Fields' ) ) {
 						foreach ( $options as $k => $v ) {
 
 							$v = rtrim( $v );
-                           
+
 							$um_field_checkbox_item_title = $v;
 							$option_value = $v;
 
@@ -3579,8 +3578,13 @@ if ( ! class_exists( 'um\core\Fields' ) ) {
 				case 'shortcode':
 
 					$content = str_replace( '{profile_id}', um_profile_id(), $content );
+					if ( version_compare( get_bloginfo('version'),'5.4', '<' ) ) {
+						$content = do_shortcode( $content );
+					} else {
+						$content = apply_shortcodes( $content );
+					}
 
-					$output .= '<div ' . $this->get_atts( $key, $classes, $conditional, $data ) . '>' . do_shortcode( $content ) . '</div>';
+					$output .= '<div ' . $this->get_atts( $key, $classes, $conditional, $data ) . '>' . $content . '</div>';
 					break;
 
 				/* Unlimited Group */
@@ -4103,8 +4107,13 @@ if ( ! class_exists( 'um\core\Fields' ) ) {
 				case 'shortcode':
 
 					$content = str_replace( '{profile_id}', um_profile_id(), $content );
+					if ( version_compare( get_bloginfo('version'),'5.4', '<' ) ) {
+						$content = do_shortcode( $content );
+					} else {
+						$content = apply_shortcodes( $content );
+					}
 
-					$output .= '<div ' . $this->get_atts( $key, $classes, $conditional, $data ) . '>' . do_shortcode( $content ) . '</div>';
+					$output .= '<div ' . $this->get_atts( $key, $classes, $conditional, $data ) . '>' . $content . '</div>';
 					break;
 
 				/* Gap/Space */

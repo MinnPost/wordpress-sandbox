@@ -27,22 +27,25 @@ function um_submit_form_errors_hook_login( $args ) {
 	}
 
 	if ( isset( $args['username'] ) ) {
+		$authenticate = $args['username'];
 		$field = 'username';
 		if ( is_email( $args['username'] ) ) {
 			$is_email = true;
 			$data = get_user_by('email', $args['username'] );
-			$user_name = (isset ( $data->user_login ) ) ? $data->user_login : null;
+			$user_name = isset( $data->user_login ) ? $data->user_login : null;
 		} else {
 			$user_name  = $args['username'];
 		}
 	} elseif ( isset( $args['user_email'] ) ) {
+		$authenticate = $args['user_email'];
 		$field = 'user_email';
 		$is_email = true;
 		$data = get_user_by('email', $args['user_email'] );
-		$user_name = (isset ( $data->user_login ) ) ? $data->user_login : null;
+		$user_name = isset( $data->user_login ) ? $data->user_login : null;
 	} else {
 		$field = 'user_login';
 		$user_name = $args['user_login'];
+		$authenticate = $args['user_login'];
 	}
 
 	if ( $args['user_password'] == '' ) {
@@ -56,18 +59,16 @@ function um_submit_form_errors_hook_login( $args ) {
 		UM()->form()->add_error( 'user_password', __( 'Password is incorrect. Please try again.', 'ultimate-member' ) );
 	}
 
-	$user = apply_filters( 'authenticate', null, $user_name, $args['user_password'] );
-
-	$authenticate_user = apply_filters( 'wp_authenticate_user', $user_name, $args['user_password'] );
-
 	// @since 4.18 replacement for 'wp_login_failed' action hook
 	// see WP function wp_authenticate()
-	$ignore_codes = array('empty_username', 'empty_password');
+	$ignore_codes = array( 'empty_username', 'empty_password' );
 
+	$user = apply_filters( 'authenticate', null, $authenticate, $args['user_password'] );
 	if ( is_wp_error( $user ) && ! in_array( $user->get_error_code(), $ignore_codes ) ) {
 		UM()->form()->add_error( $user->get_error_code(), __( $user->get_error_message(), 'ultimate-member' ) );
 	}
 
+	$authenticate_user = apply_filters( 'wp_authenticate_user', $user_name, $args['user_password'] );
 	if ( is_wp_error( $authenticate_user ) && ! in_array( $authenticate_user->get_error_code(), $ignore_codes ) ) {
 		UM()->form()->add_error( $authenticate_user->get_error_code(), __( $authenticate_user->get_error_message(), 'ultimate-member' ) );
 	}
@@ -140,7 +141,7 @@ function um_submit_form_errors_hook_logincheck( $args ) {
 	}
 
 	if ( isset( $args['form_id'] ) && $args['form_id'] == UM()->shortcodes()->core_login_form() && UM()->form()->errors && ! isset( $_POST[ UM()->honeypot ] ) ) {
-		exit( wp_redirect( um_get_core_page('login') ) );
+		exit( wp_redirect( um_get_core_page( 'login' ) ) );
 	}
 
 }
@@ -179,8 +180,8 @@ function um_user_login( $args ) {
 
 	$rememberme = ( isset( $args['rememberme'] ) && 1 ==  $args['rememberme']  && isset( $_REQUEST['rememberme'] ) ) ? 1 : 0;
 
-	if ( ( UM()->options()->get('deny_admin_frontend_login')   && ! isset( $_GET['provider'] ) ) && strrpos( um_user('wp_roles' ), 'administrator' ) !== false ) {
-		wp_die( __('This action has been prevented for security measures.','ultimate-member') );
+	if ( ( UM()->options()->get( 'deny_admin_frontend_login' ) && ! isset( $_GET['provider'] ) ) && strrpos( um_user('wp_roles' ), 'administrator' ) !== false ) {
+		wp_die( __( 'This action has been prevented for security measures.', 'ultimate-member' ) );
 	}
 
 	UM()->user()->auto_login( um_user( 'ID' ), $rememberme );
@@ -470,17 +471,3 @@ function um_add_login_fields( $args ) {
 	echo UM()->fields()->display( 'login', $args );
 }
 add_action( 'um_main_login_fields', 'um_add_login_fields', 100 );
-
-
-/**
- * Remove authenticate filter
- * @uses 'wp_authenticate_username_password_before'
- *
- * @param $user
- * @param $username
- * @param $password
- */
-function um_auth_username_password_before( $user, $username, $password ) {
-	remove_filter( 'authenticate', 'wp_authenticate_username_password', 20 );
-}
-add_action( 'wp_authenticate_username_password_before', 'um_auth_username_password_before', 10, 3 );

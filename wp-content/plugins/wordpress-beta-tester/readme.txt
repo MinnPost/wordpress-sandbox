@@ -2,9 +2,9 @@
 
 Tags: beta, advanced, testing
 Contributors: westi, mlteal, afragen, pbiron
-Tested up to: 5.4
+Tested up to: 5.5
 Requires at least: 3.1
-Stable Tag: 2.2.8
+Stable Tag: 2.2.12
 License: GPLv2
 License URI: https://www.opensource.org/licenses/GPL-2.0
 Requires PHP: 5.2.4
@@ -39,6 +39,21 @@ If no settings are present there is no testing to be done that requires this fea
 PRs are welcome on [GitHub](https://github.com/afragen/wordpress-beta-tester).
 
 ## Changelog
+
+#### 2.2.12 / 2020-08-10
+* fix intermittent PHP warning [#21](https://github.com/afragen/wordpress-beta-tester/issues/21)
+* deactivate and die if user attempting to run with `wordpress-develop`
+
+#### 2.2.11 / 2020-08-01
+* minor cleanup
+
+#### 2.2.10 / 2020-05-01
+* sanitize, escape & ignore
+* move multiline boolean operator to front of line, new guidelines in WPCS
+* fix `correct_versions_for_downgrade()` for being on current release version
+
+#### 2.2.9 / 2020-03-24
+* delete development RSS feed transient after core upgrade
 
 #### 2.2.8 / 2020-03-17 🍀
 * add Dev Notes and Field Guide links to dashboard

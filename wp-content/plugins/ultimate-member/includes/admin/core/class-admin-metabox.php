@@ -10,6 +10,7 @@ if ( ! class_exists( 'um\admin\core\Admin_Metabox' ) ) {
 
 	/**
 	 * Class Admin_Metabox
+	 *
 	 * @package um\admin\core
 	 */
 	class Admin_Metabox {
@@ -19,7 +20,17 @@ if ( ! class_exists( 'um\admin\core\Admin_Metabox' ) ) {
 		 * @var bool
 		 */
 		private $form_nonce_added = false;
+
+
+		/**
+		 * @var bool
+		 */
 		private $directory_nonce_added = false;
+
+
+		/**
+		 * @var bool
+		 */
 		private $custom_nonce_added = false;
 
 
@@ -179,14 +190,12 @@ if ( ! class_exists( 'um\admin\core\Admin_Metabox' ) ) {
 		/**
 		 * @param $post_id
 		 * @param $post
-		 *
-		 * @return mixed
 		 */
 		function save_metabox_custom( $post_id, $post ) {
 			// validate nonce
 			if ( ! isset( $_POST['um_admin_save_metabox_custom_nonce'] ) ||
 			     ! wp_verify_nonce( $_POST['um_admin_save_metabox_custom_nonce'], basename( __FILE__ ) ) ) {
-				return $post_id;
+				return;
 			}
 
 			/**
@@ -285,56 +294,52 @@ if ( ! class_exists( 'um\admin\core\Admin_Metabox' ) ) {
 		/**
 		 * @param $post_id
 		 * @param $post
-		 *
-		 * @return mixed
 		 */
 		function save_metabox_restrict_content( $post_id, $post ) {
 			// validate nonce
-			if ( ! isset( $_POST['um_admin_save_metabox_restrict_content_nonce'] ) || !wp_verify_nonce( $_POST['um_admin_save_metabox_restrict_content_nonce'], basename( __FILE__ ) ) ) {
-				return $post_id;
+			if ( ! isset( $_POST['um_admin_save_metabox_restrict_content_nonce'] ) ||
+			     ! wp_verify_nonce( $_POST['um_admin_save_metabox_restrict_content_nonce'], basename( __FILE__ ) ) ) {
+				return;
 			}
 
 			// validate user
 			$post_type = get_post_type_object( $post->post_type );
 			if ( ! current_user_can( $post_type->cap->edit_post, $post_id ) ) {
-				return $post_id;
+				return;
 			}
 
-			if ( ! empty( $_POST['um_content_restriction'] ) ) {
+			if ( ! empty( $_POST['um_content_restriction'] ) && is_array( $_POST['um_content_restriction'] ) ) {
 				update_post_meta( $post_id, 'um_content_restriction', $_POST['um_content_restriction'] );
 			} else {
 				delete_post_meta( $post_id, 'um_content_restriction' );
 			}
-
-			return $post_id;
 		}
 
 
 		/**
 		 * @param $post_id
 		 *
-		 * @return mixed
 		 */
 		function save_attachment_metabox_restrict_content( $post_id ) {
 			// validate nonce
-			if ( ! isset( $_POST['um_admin_save_metabox_restrict_content_nonce'] ) || !wp_verify_nonce( $_POST['um_admin_save_metabox_restrict_content_nonce'], basename( __FILE__ ) ) )
-				return $post_id;
+			if ( ! isset( $_POST['um_admin_save_metabox_restrict_content_nonce'] )
+			     || ! wp_verify_nonce( $_POST['um_admin_save_metabox_restrict_content_nonce'], basename( __FILE__ ) ) ) {
+				return;
+			}
 
 			$post = get_post( $post_id );
 
 			// validate user
 			$post_type = get_post_type_object( $post->post_type );
 			if ( ! current_user_can( $post_type->cap->edit_post, $post_id ) ) {
-				return $post_id;
+				return;
 			}
 
-			if ( ! empty( $_POST['um_content_restriction'] ) ) {
+			if ( ! empty( $_POST['um_content_restriction'] ) && is_array( $_POST['um_content_restriction'] ) ) {
 				update_post_meta( $post_id, 'um_content_restriction', $_POST['um_content_restriction'] );
 			} else {
 				delete_post_meta( $post_id, 'um_content_restriction' );
 			}
-
-			return $post_id;
 		}
 
 
@@ -375,102 +380,102 @@ if ( ! class_exists( 'um\admin\core\Admin_Metabox' ) ) {
 			 */
 			$fields = apply_filters( 'um_admin_category_access_settings_fields', array(
 				array(
-					'id'		    => '_um_custom_access_settings',
-					'type'		    => 'checkbox',
-					'label'    		=> __( 'Restrict access to this content?', 'ultimate-member' ),
-					'description' 	=> __( 'Activate content restriction for this post', 'ultimate-member' ),
-					'value' 		=> ! empty( $data['_um_custom_access_settings'] ) ? $data['_um_custom_access_settings'] : 0,
+					'id'            => '_um_custom_access_settings',
+					'type'          => 'checkbox',
+					'label'         => __( 'Restrict access to this content?', 'ultimate-member' ),
+					'description'   => __( 'Activate content restriction for this post', 'ultimate-member' ),
+					'value'         => ! empty( $data['_um_custom_access_settings'] ) ? $data['_um_custom_access_settings'] : 0,
 				),
 				array(
-					'id'		=> '_um_accessible',
-					'type'		=> 'select',
-					'label'    		=> __( 'Who can access this content?', 'ultimate-member' ),
-					'description' 	=> __( 'Activate content restriction for this post', 'ultimate-member' ),
-					'value' 		=> ! empty( $data['_um_accessible'] ) ? $data['_um_accessible'] : 0,
-					'options'		=> array(
+					'id'            => '_um_accessible',
+					'type'          => 'select',
+					'label'         => __( 'Who can access this content?', 'ultimate-member' ),
+					'description'   => __( 'Activate content restriction for this post', 'ultimate-member' ),
+					'value'         => ! empty( $data['_um_accessible'] ) ? $data['_um_accessible'] : 0,
+					'options'       => array(
 						'0'         => __( 'Everyone', 'ultimate-member' ),
 						'1'         => __( 'Logged out users', 'ultimate-member' ),
 						'2'         => __( 'Logged in users', 'ultimate-member' ),
 					),
-					'conditional'	=> array( '_um_custom_access_settings', '=', '1' )
+					'conditional'   => array( '_um_custom_access_settings', '=', '1' )
 				),
 				array(
-					'id'       		=> '_um_access_roles',
-					'type'     		=> 'multi_checkbox',
-					'label'    		=> __( 'Select which roles can access this content', 'ultimate-member' ),
-					'description' 	=> __( 'Activate content restriction for this post', 'ultimate-member' ),
-					'options'		=> UM()->roles()->get_roles( false, array( 'administrator' ) ),
+					'id'            => '_um_access_roles',
+					'type'          => 'multi_checkbox',
+					'label'         => __( 'Select which roles can access this content', 'ultimate-member' ),
+					'description'   => __( 'Activate content restriction for this post', 'ultimate-member' ),
+					'options'       => UM()->roles()->get_roles( false, array( 'administrator' ) ),
 					'columns'       => 3,
-					'conditional'	=> array( '_um_accessible', '=', '2' )
+					'conditional'   => array( '_um_accessible', '=', '2' )
 				),
 				array(
-					'id'       		=> '_um_noaccess_action',
-					'type'     		=> 'select',
-					'label'    		=> __( 'What happens when users without access tries to view the content?', 'ultimate-member' ),
-					'description' 	=> __( 'Action when users without access tries to view the content', 'ultimate-member' ),
-					'value' 		=> ! empty( $data['_um_noaccess_action'] ) ? $data['_um_noaccess_action'] : 0,
-					'options'		=> array(
+					'id'            => '_um_noaccess_action',
+					'type'          => 'select',
+					'label'         => __( 'What happens when users without access tries to view the content?', 'ultimate-member' ),
+					'description'   => __( 'Action when users without access tries to view the content', 'ultimate-member' ),
+					'value'         => ! empty( $data['_um_noaccess_action'] ) ? $data['_um_noaccess_action'] : 0,
+					'options'       => array(
 						'0'         => __( 'Show access restricted message', 'ultimate-member' ),
 						'1'         => __( 'Redirect user', 'ultimate-member' ),
 					),
-					'conditional'	=> array( '_um_accessible', '!=', '0' )
+					'conditional'   => array( '_um_accessible', '!=', '0' )
 				),
 				array(
-					'id'       		=> '_um_restrict_by_custom_message',
-					'type'     		=> 'select',
-					'label'    		=> __( 'Would you like to use the global default message or apply a custom message to this content?', 'ultimate-member' ),
-					'description' 	=> __( 'Action when users without access tries to view the content', 'ultimate-member' ),
-					'value' 		=> ! empty( $data['_um_restrict_by_custom_message'] ) ? $data['_um_restrict_by_custom_message'] : '0',
-					'options'		=> array(
+					'id'            => '_um_restrict_by_custom_message',
+					'type'          => 'select',
+					'label'         => __( 'Would you like to use the global default message or apply a custom message to this content?', 'ultimate-member' ),
+					'description'   => __( 'Action when users without access tries to view the content', 'ultimate-member' ),
+					'value'         => ! empty( $data['_um_restrict_by_custom_message'] ) ? $data['_um_restrict_by_custom_message'] : '0',
+					'options'       => array(
 						'0'         => __( 'Global default message (default)', 'ultimate-member' ),
 						'1'         => __( 'Custom message', 'ultimate-member' ),
 					),
-					'conditional'	=> array( '_um_noaccess_action', '=', '0' )
+					'conditional'   => array( '_um_noaccess_action', '=', '0' )
 				),
 				array(
-					'id'       		=> '_um_restrict_custom_message',
-					'type'     		=> 'wp_editor',
-					'label'    		=> __( 'Custom Restrict Content message', 'ultimate-member' ),
-					'description' 	=> __( 'Changed global restrict message', 'ultimate-member' ),
-					'value' 		=> ! empty( $data['_um_restrict_custom_message'] ) ? $data['_um_restrict_custom_message'] : '',
-					'conditional'	=> array( '_um_restrict_by_custom_message', '=', '1' )
+					'id'            => '_um_restrict_custom_message',
+					'type'          => 'wp_editor',
+					'label'         => __( 'Custom Restrict Content message', 'ultimate-member' ),
+					'description'   => __( 'Changed global restrict message', 'ultimate-member' ),
+					'value'         => ! empty( $data['_um_restrict_custom_message'] ) ? $data['_um_restrict_custom_message'] : '',
+					'conditional'   => array( '_um_restrict_by_custom_message', '=', '1' )
 				),
 				array(
-					'id'       		=> '_um_access_redirect',
-					'type'     		=> 'select',
-					'label'    		=> __( 'Where should users be redirected to?', 'ultimate-member' ),
-					'description' 	=> __( 'Select redirect to page when user hasn\'t access to content', 'ultimate-member' ),
-					'value' 		=> ! empty( $data['_um_access_redirect'] ) ? $data['_um_access_redirect'] : '0',
-					'conditional'	=> array( '_um_noaccess_action', '=', '1' ),
-					'options'		=> array(
+					'id'            => '_um_access_redirect',
+					'type'          => 'select',
+					'label'         => __( 'Where should users be redirected to?', 'ultimate-member' ),
+					'description'   => __( 'Select redirect to page when user hasn\'t access to content', 'ultimate-member' ),
+					'value'         => ! empty( $data['_um_access_redirect'] ) ? $data['_um_access_redirect'] : '0',
+					'conditional'   => array( '_um_noaccess_action', '=', '1' ),
+					'options'       => array(
 						'0'         => __( 'Login page', 'ultimate-member' ),
 						'1'         => __( 'Custom URL', 'ultimate-member' ),
 					),
 				),
 				array(
-					'id'       		=> '_um_access_redirect_url',
-					'type'     		=> 'text',
-					'label'    		=> __( 'Redirect URL', 'ultimate-member' ),
-					'description' 	=> __( 'Changed global restrict message', 'ultimate-member' ),
-					'value' 		=> ! empty( $data['_um_access_redirect_url'] ) ? $data['_um_access_redirect_url'] : '',
-					'conditional'	=> array( '_um_access_redirect', '=', '1' )
+					'id'            => '_um_access_redirect_url',
+					'type'          => 'text',
+					'label'         => __( 'Redirect URL', 'ultimate-member' ),
+					'description'   => __( 'Changed global restrict message', 'ultimate-member' ),
+					'value'         => ! empty( $data['_um_access_redirect_url'] ) ? $data['_um_access_redirect_url'] : '',
+					'conditional'   => array( '_um_access_redirect', '=', '1' )
 				),
 				array(
-					'id'       		=> '_um_access_hide_from_queries',
-					'type'     		=> 'checkbox',
-					'label'    		=> __( 'Hide from queries', 'ultimate-member' ),
-					'description' 	=> __( 'Hide this content from archives, RSS feeds etc for users who do not have permission to view this content', 'ultimate-member' ),
-					'value' 		=> ! empty( $data['_um_access_hide_from_queries'] ) ? $data['_um_access_hide_from_queries'] : '',
-					'conditional'	=> array( '_um_accessible', '!=', '0' )
+					'id'            => '_um_access_hide_from_queries',
+					'type'          => 'checkbox',
+					'label'         => __( 'Hide from queries', 'ultimate-member' ),
+					'description'   => __( 'Hide this content from archives, RSS feeds etc for users who do not have permission to view this content', 'ultimate-member' ),
+					'value'         => ! empty( $data['_um_access_hide_from_queries'] ) ? $data['_um_access_hide_from_queries'] : '',
+					'conditional'   => array( '_um_accessible', '!=', '0' )
 				)
 			), $data, 'create' );
 
 			UM()->admin_forms( array(
-				'class'		        => 'um-restrict-content um-third-column',
-				'prefix_id'	        => 'um_content_restriction',
-				'without_wrapper'	=> true,
-				'div_line'	        => true,
-				'fields' => $fields
+				'class'             => 'um-restrict-content um-third-column',
+				'prefix_id'         => 'um_content_restriction',
+				'without_wrapper'   => true,
+				'div_line'          => true,
+				'fields'            => $fields
 			) )->render_form();
 
 			wp_nonce_field( basename( __FILE__ ), 'um_admin_save_taxonomy_restrict_content_nonce' );
@@ -525,110 +530,110 @@ if ( ! class_exists( 'um\admin\core\Admin_Metabox' ) ) {
 			 */
 			$fields = apply_filters( 'um_admin_category_access_settings_fields', array(
 				array(
-					'id'		    => '_um_custom_access_settings',
-					'type'		    => 'checkbox',
-					'class'		    => 'form-field',
-					'label'    		=> __( 'Restrict access to this content?', 'ultimate-member' ),
-					'description' 	=> __( 'Activate content restriction for this post', 'ultimate-member' ),
-					'value' 		=> ! empty( $data['_um_custom_access_settings'] ) ? $data['_um_custom_access_settings'] : 0,
+					'id'            => '_um_custom_access_settings',
+					'type'          => 'checkbox',
+					'class'         => 'form-field',
+					'label'         => __( 'Restrict access to this content?', 'ultimate-member' ),
+					'description'   => __( 'Activate content restriction for this post', 'ultimate-member' ),
+					'value'         => ! empty( $data['_um_custom_access_settings'] ) ? $data['_um_custom_access_settings'] : 0,
 				),
 				array(
-					'id'		=> '_um_accessible',
-					'type'		=> 'select',
-					'class'		=> 'form-field',
-					'label'    		=> __( 'Who can access this content?', 'ultimate-member' ),
-					'description' 	=> __( 'Activate content restriction for this post', 'ultimate-member' ),
-					'value' 		=> ! empty( $data['_um_accessible'] ) ? $data['_um_accessible'] : 0,
-					'options'		=> array(
+					'id'            => '_um_accessible',
+					'type'          => 'select',
+					'class'         => 'form-field',
+					'label'         => __( 'Who can access this content?', 'ultimate-member' ),
+					'description'   => __( 'Activate content restriction for this post', 'ultimate-member' ),
+					'value'         => ! empty( $data['_um_accessible'] ) ? $data['_um_accessible'] : 0,
+					'options'       => array(
 						'0'         => __( 'Everyone', 'ultimate-member' ),
 						'1'         => __( 'Logged out users', 'ultimate-member' ),
 						'2'         => __( 'Logged in users', 'ultimate-member' ),
 					),
-					'conditional'	=> array( '_um_custom_access_settings', '=', '1' )
+					'conditional'   => array( '_um_custom_access_settings', '=', '1' )
 				),
 				array(
-					'id'       		=> '_um_access_roles',
-					'type'     		=> 'multi_checkbox',
-					'class'		    => 'form-field',
-					'label'    		=> __( 'Select which roles can access this content', 'ultimate-member' ),
-					'description' 	=> __( 'Activate content restriction for this post', 'ultimate-member' ),
-					'value' 		=> $_um_access_roles_value,
-					'options'		=> UM()->roles()->get_roles( false, array( 'administrator' ) ),
+					'id'            => '_um_access_roles',
+					'type'          => 'multi_checkbox',
+					'class'         => 'form-field',
+					'label'         => __( 'Select which roles can access this content', 'ultimate-member' ),
+					'description'   => __( 'Activate content restriction for this post', 'ultimate-member' ),
+					'value'         => $_um_access_roles_value,
+					'options'       => UM()->roles()->get_roles( false, array( 'administrator' ) ),
 					'columns'       => 3,
-					'conditional'	=> array( '_um_accessible', '=', '2' )
+					'conditional'   => array( '_um_accessible', '=', '2' )
 				),
 				array(
-					'id'       		=> '_um_noaccess_action',
-					'type'     		=> 'select',
-					'class'		    => 'form-field',
-					'label'    		=> __( 'What happens when users without access tries to view the content?', 'ultimate-member' ),
-					'description' 	=> __( 'Action when users without access tries to view the content', 'ultimate-member' ),
-					'value' 		=> ! empty( $data['_um_noaccess_action'] ) ? $data['_um_noaccess_action'] : 0,
-					'options'		=> array(
+					'id'            => '_um_noaccess_action',
+					'type'          => 'select',
+					'class'         => 'form-field',
+					'label'         => __( 'What happens when users without access tries to view the content?', 'ultimate-member' ),
+					'description'   => __( 'Action when users without access tries to view the content', 'ultimate-member' ),
+					'value'         => ! empty( $data['_um_noaccess_action'] ) ? $data['_um_noaccess_action'] : 0,
+					'options'       => array(
 						'0'         => __( 'Show access restricted message', 'ultimate-member' ),
 						'1'         => __( 'Redirect user', 'ultimate-member' ),
 					),
-					'conditional'	=> array( '_um_accessible', '!=', '0' )
+					'conditional'   => array( '_um_accessible', '!=', '0' )
 				),
 				array(
-					'id'       		=> '_um_restrict_by_custom_message',
-					'type'     		=> 'select',
-					'class'		    => 'form-field',
-					'label'    		=> __( 'Would you like to use the global default message or apply a custom message to this content?', 'ultimate-member' ),
-					'description' 	=> __( 'Action when users without access tries to view the content', 'ultimate-member' ),
-					'value' 		=> ! empty( $data['_um_restrict_by_custom_message'] ) ? $data['_um_restrict_by_custom_message'] : '0',
-					'options'		=> array(
+					'id'            => '_um_restrict_by_custom_message',
+					'type'          => 'select',
+					'class'         => 'form-field',
+					'label'         => __( 'Would you like to use the global default message or apply a custom message to this content?', 'ultimate-member' ),
+					'description'   => __( 'Action when users without access tries to view the content', 'ultimate-member' ),
+					'value'         => ! empty( $data['_um_restrict_by_custom_message'] ) ? $data['_um_restrict_by_custom_message'] : '0',
+					'options'       => array(
 						'0'         => __( 'Global default message (default)', 'ultimate-member' ),
 						'1'         => __( 'Custom message', 'ultimate-member' ),
 					),
-					'conditional'	=> array( '_um_noaccess_action', '=', '0' )
+					'conditional'   => array( '_um_noaccess_action', '=', '0' )
 				),
 				array(
-					'id'       		=> '_um_restrict_custom_message',
-					'type'     		=> 'wp_editor',
-					'class'		    => 'form-field',
-					'label'    		=> __( 'Custom Restrict Content message', 'ultimate-member' ),
-					'description' 	=> __( 'Changed global restrict message', 'ultimate-member' ),
-					'value' 		=> ! empty( $data['_um_restrict_custom_message'] ) ? $data['_um_restrict_custom_message'] : '',
-					'conditional'	=> array( '_um_restrict_by_custom_message', '=', '1' )
+					'id'            => '_um_restrict_custom_message',
+					'type'          => 'wp_editor',
+					'class'         => 'form-field',
+					'label'         => __( 'Custom Restrict Content message', 'ultimate-member' ),
+					'description'   => __( 'Changed global restrict message', 'ultimate-member' ),
+					'value'         => ! empty( $data['_um_restrict_custom_message'] ) ? $data['_um_restrict_custom_message'] : '',
+					'conditional'   => array( '_um_restrict_by_custom_message', '=', '1' )
 				),
 				array(
-					'id'       		=> '_um_access_redirect',
-					'type'     		=> 'select',
-					'class'		    => 'form-field',
-					'label'    		=> __( 'Where should users be redirected to?', 'ultimate-member' ),
-					'description' 	=> __( 'Select redirect to page when user hasn\'t access to content', 'ultimate-member' ),
-					'value' 		=> ! empty( $data['_um_access_redirect'] ) ? $data['_um_access_redirect'] : '0',
-					'conditional'	=> array( '_um_noaccess_action', '=', '1' ),
-					'options'		=> array(
+					'id'            => '_um_access_redirect',
+					'type'          => 'select',
+					'class'         => 'form-field',
+					'label'         => __( 'Where should users be redirected to?', 'ultimate-member' ),
+					'description'   => __( 'Select redirect to page when user hasn\'t access to content', 'ultimate-member' ),
+					'value'         => ! empty( $data['_um_access_redirect'] ) ? $data['_um_access_redirect'] : '0',
+					'conditional'   => array( '_um_noaccess_action', '=', '1' ),
+					'options'       => array(
 						'0'         => __( 'Login page', 'ultimate-member' ),
 						'1'         => __( 'Custom URL', 'ultimate-member' ),
 					),
 				),
 				array(
-					'id'       		=> '_um_access_redirect_url',
-					'type'     		=> 'text',
-					'class'		    => 'form-field',
-					'label'    		=> __( 'Redirect URL', 'ultimate-member' ),
-					'description' 	=> __( 'Changed global restrict message', 'ultimate-member' ),
-					'value' 		=> ! empty( $data['_um_access_redirect_url'] ) ? $data['_um_access_redirect_url'] : '',
-					'conditional'	=> array( '_um_access_redirect', '=', '1' )
+					'id'            => '_um_access_redirect_url',
+					'type'          => 'text',
+					'class'         => 'form-field',
+					'label'         => __( 'Redirect URL', 'ultimate-member' ),
+					'description'   => __( 'Changed global restrict message', 'ultimate-member' ),
+					'value'         => ! empty( $data['_um_access_redirect_url'] ) ? $data['_um_access_redirect_url'] : '',
+					'conditional'   => array( '_um_access_redirect', '=', '1' )
 				),
 				array(
-					'id'       		=> '_um_access_hide_from_queries',
-					'type'     		=> 'checkbox',
-					'class'		    => 'form-field',
-					'label'    		=> __( 'Hide from queries', 'ultimate-member' ),
-					'description' 	=> __( 'Hide this content from archives, RSS feeds etc for users who do not have permission to view this content', 'ultimate-member' ),
-					'value' 		=> ! empty( $data['_um_access_hide_from_queries'] ) ? $data['_um_access_hide_from_queries'] : '',
-					'conditional'	=> array( '_um_accessible', '!=', '0' )
+					'id'            => '_um_access_hide_from_queries',
+					'type'          => 'checkbox',
+					'class'         => 'form-field',
+					'label'         => __( 'Hide from queries', 'ultimate-member' ),
+					'description'   => __( 'Hide this content from archives, RSS feeds etc for users who do not have permission to view this content', 'ultimate-member' ),
+					'value'         => ! empty( $data['_um_access_hide_from_queries'] ) ? $data['_um_access_hide_from_queries'] : '',
+					'conditional'   => array( '_um_accessible', '!=', '0' )
 				)
 			), $data, 'edit' );
 
 			UM()->admin_forms( array(
-				'class'		        => 'um-restrict-content um-third-column',
-				'prefix_id'	        => 'um_content_restriction',
-				'without_wrapper'	=> true,
+				'class'             => 'um-restrict-content um-third-column',
+				'prefix_id'         => 'um_content_restriction',
+				'without_wrapper'   => true,
 				'fields'            => $fields
 			) )->render_form();
 
@@ -656,7 +661,7 @@ if ( ! class_exists( 'um\admin\core\Admin_Metabox' ) ) {
 				return $termID;
 			}
 
-			if ( ! empty( $_REQUEST['um_content_restriction'] ) ) {
+			if ( ! empty( $_REQUEST['um_content_restriction'] ) && is_array( $_REQUEST['um_content_restriction'] ) ) {
 				update_term_meta( $termID, 'um_content_restriction', $_REQUEST['um_content_restriction'] );
 			} else {
 				delete_term_meta( $termID, 'um_content_restriction' );
@@ -1045,7 +1050,8 @@ if ( ! class_exists( 'um\admin\core\Admin_Metabox' ) ) {
 			global $wpdb;
 
 			// validate nonce
-			if ( ! isset( $_POST['um_admin_save_metabox_directory_nonce'] ) || ! wp_verify_nonce( $_POST['um_admin_save_metabox_directory_nonce'], basename( __FILE__ ) ) ) {
+			if ( ! isset( $_POST['um_admin_save_metabox_directory_nonce'] ) ||
+			     ! wp_verify_nonce( $_POST['um_admin_save_metabox_directory_nonce'], basename( __FILE__ ) ) ) {
 				return;
 			}
 
@@ -1063,10 +1069,12 @@ if ( ! class_exists( 'um\admin\core\Admin_Metabox' ) ) {
 			$where = array( 'ID' => $post_id );
 
 			if ( empty( $_POST['post_title'] ) ) {
-				$_POST['post_title'] = 'Directory #'.$post_id;
+				$_POST['post_title'] = sprintf( __( 'Directory #%s', 'ultimate-member' ), $post_id );
 			}
 
-			$wpdb->update( $wpdb->posts, array( 'post_title' => $_POST['post_title'] ), $where );
+			$wpdb->update( $wpdb->posts, array( 'post_title' => sanitize_text_field( $_POST['post_title'] ) ), $where );
+
+			do_action( 'um_before_member_directory_save', $post_id );
 
 			// save
 			delete_post_meta( $post_id, '_um_roles' );
@@ -1076,6 +1084,7 @@ if ( ! class_exists( 'um\admin\core\Admin_Metabox' ) ) {
 			delete_post_meta( $post_id, '_um_roles_can_search' );
 			delete_post_meta( $post_id, '_um_roles_can_filter' );
 			delete_post_meta( $post_id, '_um_show_these_users' );
+			delete_post_meta( $post_id, '_um_exclude_these_users' );
 
 			delete_post_meta( $post_id, '_um_search_filters' );
 			delete_post_meta( $post_id, '_um_search_filters_gmt' );
@@ -1084,6 +1093,10 @@ if ( ! class_exists( 'um\admin\core\Admin_Metabox' ) ) {
 			foreach ( $_POST['um_metadata'] as $k => $v ) {
 
 				if ( $k == '_um_show_these_users' && trim( $_POST['um_metadata'][ $k ] ) ) {
+					$v = preg_split( '/[\r\n]+/', $v, -1, PREG_SPLIT_NO_EMPTY );
+				}
+
+				if ( $k == '_um_exclude_these_users' && trim( $_POST['um_metadata'][ $k ] ) ) {
 					$v = preg_split( '/[\r\n]+/', $v, -1, PREG_SPLIT_NO_EMPTY );
 				}
 
@@ -1126,25 +1139,32 @@ if ( ! class_exists( 'um\admin\core\Admin_Metabox' ) ) {
 		 *
 		 * @param $post_id
 		 * @param $post
-		 *
-		 * @return mixed
 		 */
 		function save_metabox_form( $post_id, $post ) {
 			global $wpdb;
 
 			// validate nonce
-			if ( !isset( $_POST['um_admin_save_metabox_form_nonce'] ) || !wp_verify_nonce( $_POST['um_admin_save_metabox_form_nonce'], basename( __FILE__ ) ) ) return $post_id;
+			if ( ! isset( $_POST['um_admin_save_metabox_form_nonce'] ) ||
+			     ! wp_verify_nonce( $_POST['um_admin_save_metabox_form_nonce'], basename( __FILE__ ) ) ) {
+				return;
+			}
 
 			// validate post type
-			if ( $post->post_type != 'um_form' ) return $post_id;
+			if ( $post->post_type != 'um_form' ) {
+				return;
+			}
 
 			// validate user
 			$post_type = get_post_type_object( $post->post_type );
-			if ( !current_user_can( $post_type->cap->edit_post, $post_id ) ) return $post_id;
+			if ( ! current_user_can( $post_type->cap->edit_post, $post_id ) ) {
+				return;
+			}
 
 			$where = array( 'ID' => $post_id );
-			if ( empty( $_POST['post_title'] ) ) $_POST['post_title'] = 'Form #' . $post_id;
-			$wpdb->update( $wpdb->posts, array( 'post_title' => $_POST['post_title'] ), $where );
+			if ( empty( $_POST['post_title'] ) ) {
+				$_POST['post_title'] = sprintf( __( 'Form #%s', 'ultimate-member' ), $post_id );
+			}
+			$wpdb->update( $wpdb->posts, array( 'post_title' => sanitize_text_field( $_POST['post_title'] ) ), $where );
 
 			// save
 			delete_post_meta( $post_id, '_um_profile_metafields' );
@@ -2245,15 +2265,24 @@ if ( ! class_exists( 'um\admin\core\Admin_Metabox' ) ) {
 					break;
 
 				case '_public':
-					?>
+					$privacy_options = array(
+						'1'     => __( 'Everyone', 'ultimate-member' ),
+						'2'     => __( 'Members', 'ultimate-member' ),
+						'-1'    => __( 'Only visible to profile owner and admins', 'ultimate-member' ),
+						'-3'    => __( 'Only visible to profile owner and specific roles', 'ultimate-member' ),
+						'-2'    => __( 'Only specific member roles', 'ultimate-member' ),
+					);
 
-					<p><label for="_public"><?php _e( 'Privacy', 'ultimate-member' ) ?> <?php UM()->tooltip( __( 'Field privacy allows you to select who can view this field on the front-end. The site admin can view all fields regardless of the option set here.', 'ultimate-member' ) ); ?></label>
-						<select name="_public" id="_public" class="um-adm-conditional" data-cond1='-2' data-cond1-show='_roles' data-cond2='-3' data-cond2-show='_roles'  style="width: 100%">
-							<option value="1" <?php selected( 1, $this->edit_mode_value ); ?>><?php _e( 'Everyone', 'ultimate-member' ) ?></option>
-							<option value="2" <?php selected( 2, $this->edit_mode_value ); ?>><?php _e( 'Members', 'ultimate-member' ) ?></option>
-							<option value="-1" <?php selected( -1, $this->edit_mode_value ); ?>><?php _e( 'Only visible to profile owner and admins', 'ultimate-member' ) ?></option>
-							<option value="-3" <?php selected( -3, $this->edit_mode_value ); ?>><?php _e( 'Only visible to profile owner and specific roles', 'ultimate-member' ) ?></option>
-							<option value="-2" <?php selected( -2, $this->edit_mode_value ); ?>><?php _e( 'Only specific member roles', 'ultimate-member' ) ?></option>
+					$privacy_options = apply_filters( 'um_field_privacy_options', $privacy_options ); ?>
+
+					<p>
+						<label for="_public"><?php _e( 'Privacy', 'ultimate-member' ) ?> <?php UM()->tooltip( __( 'Field privacy allows you to select who can view this field on the front-end. The site admin can view all fields regardless of the option set here.', 'ultimate-member' ) ); ?></label>
+						<select name="_public" id="_public" class="um-adm-conditional" data-cond1="-2" data-cond1-show="_roles" data-cond2="-3" data-cond2-show="_roles"  style="width: 100%">
+							<?php foreach ( $privacy_options as $value => $title ) { ?>
+								<option value="<?php echo esc_attr( $value ) ?>" <?php selected( $value, $this->edit_mode_value ); ?>>
+									<?php echo $title ?>
+								</option>
+							<?php } ?>
 						</select>
 					</p>
 

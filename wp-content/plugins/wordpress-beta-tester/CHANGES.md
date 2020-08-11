@@ -1,5 +1,20 @@
 [unreleased]
 
+#### 2.2.12 / 2020-08-10
+* fix intermittent PHP warning [#21](https://github.com/afragen/wordpress-beta-tester/issues/21)
+* deactivate and die if user attempting to run with `wordpress-develop`
+
+#### 2.2.11 / 2020-08-01
+* minor cleanup
+
+#### 2.2.10 / 2020-05-01
+* sanitize, escape & ignore
+* move multiline boolean operator to front of line, new guidelines in WPCS
+* fix `correct_versions_for_downgrade()` for being on current release version
+
+#### 2.2.9 / 2020-03-24
+* delete development RSS feed transient after core upgrade
+
 #### 2.2.8 / 2020-03-17 🍀
 * add Dev Notes and Field Guide links to dashboard
 * add text/link for bug reporting to trac

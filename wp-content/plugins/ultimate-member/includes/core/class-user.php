@@ -387,14 +387,14 @@ if ( ! class_exists( 'um\core\User' ) ) {
 			$args = array( 'fields' => 'ID', 'number' => 1 );
 			$args['meta_query']['relation'] = 'OR';
 			$args['meta_query'][] = array(
-				'key' => 'account_status',
-				'value' => 'awaiting_email_confirmation',
-				'compare' => '='
+				'key'       => 'account_status',
+				'value'     => 'awaiting_email_confirmation',
+				'compare'   => '='
 			);
 			$args['meta_query'][] = array(
-				'key' => 'account_status',
-				'value' => 'awaiting_admin_review',
-				'compare' => '='
+				'key'       => 'account_status',
+				'value'     => 'awaiting_admin_review',
+				'compare'   => '='
 			);
 
 			/**
@@ -1711,7 +1711,7 @@ if ( ! class_exists( 'um\core\User' ) ) {
 			if ( $privacy == __( 'Only me', 'ultimate-member' ) || $privacy == 'Only me' ) {
 				return true;
 			}
-			return false;
+			return $this->is_private_case( $user_id, $privacy );
 		}
 
 

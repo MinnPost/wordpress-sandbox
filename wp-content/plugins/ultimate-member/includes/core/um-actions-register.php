@@ -51,6 +51,11 @@ add_action('um_post_registration_pending_hook', 'um_post_registration_pending_ho
  * @param $args
  */
 function um_after_insert_user( $user_id, $args ) {
+
+	if ( empty( $user_id ) || ( is_object( $user_id ) && is_a( $user_id, 'WP_Error' ) ) ) {
+		return;
+	}
+
 	//clear Users cached queue
 	UM()->user()->remove_cached_queue();
 
@@ -58,7 +63,12 @@ function um_after_insert_user( $user_id, $args ) {
 	if ( ! empty( $args['submitted'] ) ) {
 		UM()->user()->set_registration_details( $args['submitted'], $args );
 	}
-    UM()->user()->set_status( um_user( 'status' ) );
+
+	/* save user status */
+	UM()->user()->set_status( um_user( 'status' ) );
+
+	/* create user uploads directory */
+	UM()->uploader()->get_upload_user_base_dir( $user_id, true );
 
 	/**
 	 * UM hook

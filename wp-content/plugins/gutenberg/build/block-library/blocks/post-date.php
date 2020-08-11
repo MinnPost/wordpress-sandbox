@@ -8,35 +8,34 @@
 /**
  * Renders the `core/post-date` block on the server.
  *
- * @param array $attributes The block attributes.
- *
+ * @param array    $attributes Block attributes.
+ * @param string   $content    Block default content.
+ * @param WP_Block $block      Block instance.
  * @return string Returns the filtered post date for the current post wrapped inside "time" tags.
  */
-function gutenberg_render_block_core_post_date( $attributes ) {
-	$post = gutenberg_get_post_from_context();
-	if ( ! $post ) {
+function gutenberg_render_block_core_post_date( $attributes, $content, $block ) {
+	if ( ! isset( $block->context['postId'] ) ) {
 		return '';
 	}
-	return '<time datetime="'
-		. get_the_date( 'c', $post ) . '">'
-		. get_the_date( isset( $attributes['format'] ) ? $attributes['format'] : '', $post )
-		. '</time>';
+
+	$align_class_name = empty( $attributes['textAlign'] ) ? '' : ' ' . "has-text-align-{$attributes['textAlign']}";
+
+	return sprintf(
+		'<div class="%1$s"><time datetime="%2$s">%3$s</time></div>',
+		'wp-block-post-date' . esc_attr( $align_class_name ),
+		get_the_date( 'c', $block->context['postId'] ),
+		get_the_date( isset( $attributes['format'] ) ? $attributes['format'] : '', $block->context['postId'] )
+	);
 }
 
 /**
  * Registers the `core/post-date` block on the server.
  */
 function gutenberg_register_block_core_post_date() {
-	$path     = __DIR__ . '/post-date/block.json';
-	$metadata = json_decode( file_get_contents( $path ), true );
-
-	register_block_type(
-		$metadata['name'],
-		array_merge(
-			$metadata,
-			array(
-				'render_callback' => 'gutenberg_render_block_core_post_date',
-			)
+	register_block_type_from_metadata(
+		__DIR__ . '/post-date',
+		array(
+			'render_callback' => 'gutenberg_render_block_core_post_date',
 		)
 	);
 }

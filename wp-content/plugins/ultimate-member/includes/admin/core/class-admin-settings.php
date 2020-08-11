@@ -91,7 +91,9 @@ if ( ! class_exists( 'um\admin\core\Admin_Settings' ) ) {
 				wp_send_json_error( __( 'Wrong callback', 'ultimate-member' ) );
 			}
 
-			if ( 'um_usermeta_fields' == $_POST['cb_func'] ) {
+			$cb_func = sanitize_key( $_POST['cb_func'] );
+
+			if ( 'um_usermeta_fields' == $cb_func ) {
 				//first install metatable
 				global $wpdb;
 
@@ -169,7 +171,7 @@ if ( ! class_exists( 'um\admin\core\Admin_Settings' ) ) {
 				UM()->options()->update( 'member_directory_own_table', true );
 
 				wp_send_json_success();
-			} elseif ( 'um_get_metadata' == $_POST['cb_func'] ) {
+			} elseif ( 'um_get_metadata' == $cb_func ) {
 				global $wpdb;
 
 				$wp_usermeta_option = get_option( 'um_usermeta_fields', array() );
@@ -181,7 +183,7 @@ if ( ! class_exists( 'um\admin\core\Admin_Settings' ) ) {
 				);
 
 				wp_send_json_success( array( 'count' => $count ) );
-			} elseif ( 'um_update_metadata_per_page' == $_POST['cb_func'] ) {
+			} elseif ( 'um_update_metadata_per_page' == $cb_func ) {
 
 				if ( empty( $_POST['page'] ) ) {
 					wp_send_json_error( __( 'Wrong data', 'ultimate-member' ) );
@@ -196,7 +198,7 @@ if ( ! class_exists( 'um\admin\core\Admin_Settings' ) ) {
 					FROM {$wpdb->usermeta} 
 					WHERE meta_key IN ('" . implode( "','", $wp_usermeta_option ) . "')
 					LIMIT %d, %d",
-					( $_POST['page'] - 1 ) * $per_page,
+					( absint( $_POST['page'] ) - 1 ) * $per_page,
 					$per_page
 				), ARRAY_A );
 
@@ -212,8 +214,8 @@ if ( ! class_exists( 'um\admin\core\Admin_Settings' ) ) {
 					VALUES " . implode( ',', $values ) );
 				}
 
-				$from = ( $_POST['page'] * $per_page ) - $per_page + 1;
-				$to = $_POST['page'] * $per_page;
+				$from = ( absint( $_POST['page'] ) * $per_page ) - $per_page + 1;
+				$to = absint( $_POST['page'] ) * $per_page;
 
 				wp_send_json_success( array( 'message' => sprintf( __( 'Metadata from %s to %s was upgraded successfully...', 'ultimate-member' ), $from, $to ) ) );
 			}
@@ -635,63 +637,63 @@ if ( ! class_exists( 'um\admin\core\Admin_Settings' ) ) {
 							'title'     => __( 'Account', 'ultimate-member' ),
 							'fields'    => array(
 								array(
-									'id'       		=> 'account_tab_password',
-									'type'     		=> 'checkbox',
-									'label'   		=> __( 'Password Account Tab','ultimate-member' ),
-									'tooltip' 	=> 'Enable/disable the Password account tab in account page',
+									'id'        => 'account_tab_password',
+									'type'      => 'checkbox',
+									'label'     => __( 'Password Account Tab', 'ultimate-member' ),
+									'tooltip'   => __( 'Enable/disable the Password account tab in account page', 'ultimate-member' ),
 								),
 								array(
-									'id'       		=> 'account_tab_privacy',
-									'type'     		=> 'checkbox',
-									'label'   		=> __( 'Privacy Account Tab','ultimate-member' ),
-									'tooltip' 	=> __('Enable/disable the Privacy account tab in account page','ultimate-member'),
+									'id'        => 'account_tab_privacy',
+									'type'      => 'checkbox',
+									'label'     => __( 'Privacy Account Tab','ultimate-member' ),
+									'tooltip'   => __( 'Enable/disable the Privacy account tab in account page', 'ultimate-member' ),
 								),
 								array(
-									'id'       		=> 'account_tab_notifications',
-									'type'     		=> 'checkbox',
-									'label'   		=> __( 'Notifications Account Tab','ultimate-member' ),
-									'tooltip' 	=> __('Enable/disable the Notifications account tab in account page','ultimate-member'),
+									'id'        => 'account_tab_notifications',
+									'type'      => 'checkbox',
+									'label'     => __( 'Notifications Account Tab','ultimate-member' ),
+									'tooltip'   => __( 'Enable/disable the Notifications account tab in account page', 'ultimate-member' ),
 								),
 								array(
-									'id'       		=> 'account_tab_delete',
-									'type'     		=> 'checkbox',
-									'label'   		=> __( 'Delete Account Tab','ultimate-member' ),
-									'tooltip' 	=> __('Enable/disable the Delete account tab in account page','ultimate-member'),
+									'id'        => 'account_tab_delete',
+									'type'      => 'checkbox',
+									'label'     => __( 'Delete Account Tab','ultimate-member' ),
+									'tooltip'   => __( 'Enable/disable the Delete account tab in account page', 'ultimate-member' ),
 								),
 								array(
-									'id'       		=> 'delete_account_text',
-									'type'    		=> 'textarea', // bug with wp 4.4? should be editor
-									'label'    		=> __( 'Account Deletion Custom Text','ultimate-member' ),
-									'tooltip' 	=> __('This is custom text that will be displayed to users before they delete their accounts from your site','ultimate-member'),
-									'args'     		=> array(
+									'id'        => 'delete_account_text',
+									'type'      => 'textarea', // bug with wp 4.4? should be editor
+									'label'     => __( 'Account Deletion Custom Text','ultimate-member' ),
+									'tooltip'   => __( 'This is custom text that will be displayed to users before they delete their accounts from your site', 'ultimate-member' ),
+									'args'      => array(
 										'textarea_rows'    => 6
 									),
 								),
 								array(
-									'id'       		=> 'account_name',
-									'type'     		=> 'checkbox',
-									'label'   		=> __( 'Add a First & Last Name fields','ultimate-member' ),
-									'tooltip' 	=> __('Whether to enable these fields on the user account page by default or hide them.','ultimate-member'),
+									'id'        => 'account_name',
+									'type'      => 'checkbox',
+									'label'     => __( 'Add a First & Last Name fields','ultimate-member' ),
+									'tooltip'   => __( 'Whether to enable these fields on the user account page by default or hide them.', 'ultimate-member' ),
 								),
 								array(
-									'id'       		=> 'account_name_disable',
-									'type'     		=> 'checkbox',
-									'label'   		=> __( 'Disable First & Last Name fields','ultimate-member' ),
-									'tooltip' 	=> __('Whether to allow users changing their first and last name in account page.','ultimate-member'),
-									'conditional'		=> array( 'account_name', '=', '1' ),
+									'id'            => 'account_name_disable',
+									'type'          => 'checkbox',
+									'label'         => __( 'Disable First & Last Name fields','ultimate-member' ),
+									'tooltip'       => __( 'Whether to allow users changing their first and last name in account page.', 'ultimate-member' ),
+									'conditional'   => array( 'account_name', '=', '1' ),
 								),
 								array(
-									'id'       		=> 'account_name_require',
-									'type'     		=> 'checkbox',
-									'label'   		=> __( 'Require First & Last Name','ultimate-member' ),
-									'tooltip' 	=> __('Require first and last name?','ultimate-member'),
-									'conditional'		=> array( 'account_name', '=', '1' ),
+									'id'            => 'account_name_require',
+									'type'          => 'checkbox',
+									'label'         => __( 'Require First & Last Name', 'ultimate-member' ),
+									'tooltip'       => __( 'Require first and last name?', 'ultimate-member' ),
+									'conditional'   => array( 'account_name', '=', '1' ),
 								),
 								array(
-									'id'       		=> 'account_email',
-									'type'     		=> 'checkbox',
-									'label'   		=> __( 'Allow users to change e-mail','ultimate-member' ),
-									'tooltip' 	=> __( 'Whether to allow users changing their email in account page.', 'ultimate-member' ),
+									'id'        => 'account_email',
+									'type'      => 'checkbox',
+									'label'     => __( 'Allow users to change e-mail','ultimate-member' ),
+									'tooltip'   => __( 'Whether to allow users changing their email in account page.', 'ultimate-member' ),
 								),
 								array(
 									'id'        => 'account_general_password',
@@ -729,63 +731,63 @@ if ( ! class_exists( 'um\admin\core\Admin_Settings' ) ) {
 							'title'     => __( 'Uploads', 'ultimate-member' ),
 							'fields'    => array(
 								array(
-									'id'       		=> 'profile_photo_max_size',
-									'type'     		=> 'text',
-									'size'     		=> 'small',
-									'label'    		=> __( 'Profile Photo Maximum File Size (bytes)', 'ultimate-member' ),
-									'tooltip' 	   	=> __( 'Sets a maximum size for the uploaded photo', 'ultimate-member' ),
+									'id'        => 'profile_photo_max_size',
+									'type'      => 'text',
+									'size'      => 'small',
+									'label'     => __( 'Profile Photo Maximum File Size (bytes)', 'ultimate-member' ),
+									'tooltip'   => __( 'Sets a maximum size for the uploaded photo', 'ultimate-member' ),
 								),
 
 								array(
-									'id'       		=> 'cover_photo_max_size',
-									'type'     		=> 'text',
-									'size'     		=> 'small',
-									'label'    		=> __( 'Cover Photo Maximum File Size (bytes)', 'ultimate-member' ),
-									'tooltip' 	   	=> __( 'Sets a maximum size for the uploaded cover', 'ultimate-member' ),
+									'id'        => 'cover_photo_max_size',
+									'type'      => 'text',
+									'size'      => 'small',
+									'label'     => __( 'Cover Photo Maximum File Size (bytes)', 'ultimate-member' ),
+									'tooltip'   => __( 'Sets a maximum size for the uploaded cover', 'ultimate-member' ),
 								),
 								array(
-									'id'       		=> 'photo_thumb_sizes',
-									'type'     		=> 'multi_text',
-									'size'     		=> 'small',
-									'label'    		=> __( 'Profile Photo Thumbnail Sizes (px)','ultimate-member' ),
-									'tooltip' 	=> __( 'Here you can define which thumbnail sizes will be created for each profile photo upload.','ultimate-member' ),
-									'validate' 		=> 'numeric',
-									'add_text'		=> __('Add New Size','ultimate-member'),
-									'show_default_number' => 1,
+									'id'                    => 'photo_thumb_sizes',
+									'type'                  => 'multi_text',
+									'size'                  => 'small',
+									'label'                 => __( 'Profile Photo Thumbnail Sizes (px)', 'ultimate-member' ),
+									'tooltip'               => __( 'Here you can define which thumbnail sizes will be created for each profile photo upload.', 'ultimate-member' ),
+									'validate'              => 'numeric',
+									'add_text'              => __( 'Add New Size', 'ultimate-member' ),
+									'show_default_number'   => 1,
 								),
 								array(
-									'id'       		=> 'cover_thumb_sizes',
-									'type'     		=> 'multi_text',
-									'size'     		=> 'small',
-									'label'    		=> __( 'Cover Photo Thumbnail Sizes (px)','ultimate-member' ),
-									'tooltip' 	=> __( 'Here you can define which thumbnail sizes will be created for each cover photo upload.','ultimate-member' ),
-									'validate' 		=> 'numeric',
-									'add_text'		=> __('Add New Size','ultimate-member'),
-									'show_default_number' => 1,
-								),
-
-								array(
-									'id'       		=> 'image_compression',
-									'type'     		=> 'text',
-									'size'     		=> 'small',
-									'label'    		=> __( 'Image Quality','ultimate-member'),
-									'tooltip' 	   	=> __( 'Quality is used to determine quality of image uploads, and ranges from 0 (worst quality, smaller file) to 100 (best quality, biggest file). The default range is 60.', 'ultimate-member' ),
+									'id'                    => 'cover_thumb_sizes',
+									'type'                  => 'multi_text',
+									'size'                  => 'small',
+									'label'                 => __( 'Cover Photo Thumbnail Sizes (px)', 'ultimate-member' ),
+									'tooltip'               => __( 'Here you can define which thumbnail sizes will be created for each cover photo upload.', 'ultimate-member' ),
+									'validate'              => 'numeric',
+									'add_text'              => __( 'Add New Size', 'ultimate-member' ),
+									'show_default_number'   => 1,
 								),
 
 								array(
-									'id'       		=> 'image_max_width',
-									'type'     		=> 'text',
-									'size'     		=> 'small',
-									'label'    		=> __( 'Image Upload Maximum Width (px)', 'ultimate-member' ),
-									'tooltip' 	   	=> __( 'Any image upload above this width will be resized to this limit automatically.', 'ultimate-member' ),
+									'id'        => 'image_compression',
+									'type'      => 'text',
+									'size'      => 'small',
+									'label'     => __( 'Image Quality', 'ultimate-member' ),
+									'tooltip'   => __( 'Quality is used to determine quality of image uploads, and ranges from 0 (worst quality, smaller file) to 100 (best quality, biggest file). The default range is 60.', 'ultimate-member' ),
 								),
 
 								array(
-									'id'       		=> 'cover_min_width',
-									'type'     		=> 'text',
-									'size'     		=> 'small',
-									'label'    		=> __( 'Cover Photo Minimum Width (px)', 'ultimate-member' ),
-									'tooltip' 	   	=> __( 'This will be the minimum width for cover photo uploads', 'ultimate-member' ),
+									'id'        => 'image_max_width',
+									'type'      => 'text',
+									'size'      => 'small',
+									'label'     => __( 'Image Upload Maximum Width (px)', 'ultimate-member' ),
+									'tooltip'   => __( 'Any image upload above this width will be resized to this limit automatically.', 'ultimate-member' ),
+								),
+
+								array(
+									'id'        => 'cover_min_width',
+									'type'      => 'text',
+									'size'      => 'small',
+									'label'     => __( 'Cover Photo Minimum Width (px)', 'ultimate-member' ),
+									'tooltip'   => __( 'This will be the minimum width for cover photo uploads', 'ultimate-member' ),
 								),
 							)
 						)
@@ -1412,8 +1414,8 @@ if ( ! class_exists( 'um\admin\core\Admin_Settings' ) ) {
 		 * Settings page callback
 		 */
 		function settings_page() {
-			$current_tab = empty( $_GET['tab'] ) ? '' : urldecode( $_GET['tab'] );
-			$current_subtab = empty( $_GET['section'] ) ? '' : urldecode( $_GET['section'] );
+			$current_tab = empty( $_GET['tab'] ) ? '' : sanitize_key( $_GET['tab'] );
+			$current_subtab = empty( $_GET['section'] ) ? '' : sanitize_key( $_GET['section'] );
 
 			$settings_struct = $this->settings_structure[ $current_tab ];
 
@@ -1605,7 +1607,7 @@ if ( ! class_exists( 'um\admin\core\Admin_Settings' ) ) {
 						}
 					}
 
-					$current_tab = empty( $_GET['tab'] ) ? '' : urldecode( $_GET['tab'] );
+					$current_tab = empty( $_GET['tab'] ) ? '' : sanitize_key( $_GET['tab'] );
 					foreach ( $menu_tabs as $name => $label ) {
 						$active = ( $current_tab == $name ) ? 'nav-tab-active' : '';
 						$tabs .= '<a href="' . esc_url( admin_url( 'admin.php?page=um_options' . ( empty( $name ) ? '' : '&tab=' . $name ) ) ) . '" class="nav-tab ' . $active . '">' .
@@ -1660,8 +1662,8 @@ if ( ! class_exists( 'um\admin\core\Admin_Settings' ) ) {
 
 			$subtabs = '<div><ul class="subsubsub">';
 
-			$current_tab = empty( $_GET['tab'] ) ? '' : urldecode( $_GET['tab'] );
-			$current_subtab = empty( $_GET['section'] ) ? '' : urldecode( $_GET['section'] );
+			$current_tab = empty( $_GET['tab'] ) ? '' : sanitize_key( $_GET['tab'] );
+			$current_subtab = empty( $_GET['section'] ) ? '' : sanitize_key( $_GET['section'] );
 			foreach ( $menu_subtabs as $name => $label ) {
 				$active = ( $current_subtab == $name ) ? 'current' : '';
 				$subtabs .= '<a href="' . esc_url( admin_url( 'admin.php?page=um_options' . ( empty( $current_tab ) ? '' : '&tab=' . $current_tab ) . ( empty( $name ) ? '' : '&section=' . $name ) ) ) . '" class="' . $active . '">'
@@ -1680,7 +1682,7 @@ if ( ! class_exists( 'um\admin\core\Admin_Settings' ) ) {
 		 */
 		function save_settings_handler() {
 
-			if ( isset( $_POST['um-settings-action'] ) && 'save' == $_POST['um-settings-action'] && ! empty( $_POST['um_options'] ) ) {
+			if ( isset( $_POST['um-settings-action'] ) && 'save' == sanitize_key( $_POST['um-settings-action'] ) && ! empty( $_POST['um_options'] ) ) {
 
 				$nonce = ! empty( $_POST['__umnonce'] ) ? $_POST['__umnonce'] : '';
 
@@ -1759,11 +1761,11 @@ if ( ! class_exists( 'um\admin\core\Admin_Settings' ) ) {
 				);
 
 				if ( ! empty( $_GET['tab'] ) ) {
-					$arg['tab'] = $_GET['tab'];
+					$arg['tab'] = sanitize_key( $_GET['tab'] );
 				}
 
 				if ( ! empty( $_GET['section'] ) ) {
-					$arg['section'] = $_GET['section'];
+					$arg['section'] = sanitize_key( $_GET['section'] );
 				}
 
 				um_js_redirect( add_query_arg( $arg, admin_url( 'admin.php' ) ) );
@@ -1780,12 +1782,12 @@ if ( ! class_exists( 'um\admin\core\Admin_Settings' ) ) {
 		function remove_empty_values( $settings ) {
 			$tab = '';
 			if ( ! empty( $_GET['tab'] ) ) {
-				$tab = $_GET['tab'];
+				$tab = sanitize_key( $_GET['tab'] );
 			}
 
 			$section = '';
 			if ( ! empty( $_GET['section'] ) ) {
-				$section = $_GET['section'];
+				$section = sanitize_key( $_GET['section'] );
 			}
 
 			if ( isset( $this->settings_structure[ $tab ]['sections'][ $section ]['fields'] ) ) {
@@ -2078,7 +2080,7 @@ if ( ! class_exists( 'um\admin\core\Admin_Settings' ) ) {
 		 *
 		 */
 		function settings_before_email_tab() {
-			$email_key = empty( $_GET['email'] ) ? '' : urldecode( $_GET['email'] );
+			$email_key = empty( $_GET['email'] ) ? '' : sanitize_key( $_GET['email'] );
 			$emails = UM()->config()->email_notifications;
 
 			if ( empty( $email_key ) || empty( $emails[ $email_key ] ) ) {
@@ -2093,7 +2095,7 @@ if ( ! class_exists( 'um\admin\core\Admin_Settings' ) ) {
 		 * @return string
 		 */
 		function settings_email_tab( $section ) {
-			$email_key = empty( $_GET['email'] ) ? '' : urldecode( $_GET['email'] );
+			$email_key = empty( $_GET['email'] ) ? '' : sanitize_key( $_GET['email'] );
 			$emails = UM()->config()->email_notifications;
 
 			if ( empty( $email_key ) || empty( $emails[ $email_key ] ) ) {

@@ -3,7 +3,9 @@
  * Plugin Name: Gutenberg
  * Plugin URI: https://github.com/WordPress/gutenberg
  * Description: Printing since 1440. This is the development plugin for the new block editor in core.
- * Version: 7.7.1
+ * Requires at least: 5.3
+ * Requires PHP: 5.6
+ * Version: 8.7.1
  * Author: Gutenberg Team
  * Text Domain: gutenberg
  *
@@ -11,8 +13,8 @@
  */
 
 ### BEGIN AUTO-GENERATED DEFINES
-define( 'GUTENBERG_VERSION', '7.7.1' );
-define( 'GUTENBERG_GIT_COMMIT', '2f62e84e6c4467fb46f5e3c504b6962893ec7e39' );
+define( 'GUTENBERG_VERSION', '8.7.1' );
+define( 'GUTENBERG_GIT_COMMIT', '1c30d0885a02ecedd9790d226a47519a52c8dc19' );
 ### END AUTO-GENERATED DEFINES
 
 gutenberg_pre_init();
@@ -55,14 +57,24 @@ function gutenberg_menu() {
 				'the_gutenberg_widgets'
 			);
 		}
-		if ( array_key_exists( 'gutenberg-full-site-editing', get_option( 'gutenberg-experiments' ) ) ) {
+		if ( array_key_exists( 'gutenberg-navigation', get_option( 'gutenberg-experiments' ) ) ) {
 			add_submenu_page(
 				'gutenberg',
+				__( 'Navigation (beta)', 'gutenberg' ),
+				__( 'Navigation (beta)', 'gutenberg' ),
+				'edit_theme_options',
+				'gutenberg-navigation',
+				'gutenberg_navigation_page'
+			);
+		}
+		if ( array_key_exists( 'gutenberg-full-site-editing', get_option( 'gutenberg-experiments' ) ) ) {
+			add_menu_page(
 				__( 'Site Editor (beta)', 'gutenberg' ),
 				__( 'Site Editor (beta)', 'gutenberg' ),
 				'edit_theme_options',
 				'gutenberg-edit-site',
-				'gutenberg_edit_site_page'
+				'gutenberg_edit_site_page',
+				'dashicons-layout'
 			);
 		}
 	}
@@ -150,3 +162,23 @@ function gutenberg_rest_nonce() {
 	exit( wp_create_nonce( 'wp_rest' ) );
 }
 add_action( 'wp_ajax_gutenberg_rest_nonce', 'gutenberg_rest_nonce' );
+
+
+/**
+ * Exposes the site icon url to the Gutenberg editor through the WordPress REST
+ * API. The site icon url should instead be fetched from the wp/v2/settings
+ * endpoint when https://github.com/WordPress/gutenberg/pull/19967 is complete.
+ *
+ * @since 8.2.1
+ *
+ * @param WP_REST_Response $response Response data served by the WordPress REST index endpoint.
+ * @return WP_REST_Response
+ */
+function register_site_icon_url( $response ) {
+	$data                  = $response->data;
+	$data['site_icon_url'] = get_site_icon_url();
+	$response->set_data( $data );
+	return $response;
+}
+
+add_filter( 'rest_index', 'register_site_icon_url' );
