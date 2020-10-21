@@ -3,7 +3,7 @@
  */
 import classnames from 'classnames';
 import { __ } from '@wordpress/i18n';
-import { CartCheckoutFeedbackPrompt } from '@woocommerce/block-components/feedback-prompt';
+import { CartCheckoutFeedbackPrompt } from '@woocommerce/editor-components/feedback-prompt';
 import { InspectorControls } from '@wordpress/block-editor';
 import {
 	PanelBody,
@@ -17,12 +17,17 @@ import {
 	PRIVACY_URL,
 	TERMS_URL,
 	CHECKOUT_PAGE_ID,
+	isExperimentalBuild,
 } from '@woocommerce/block-settings';
 import { getAdminLink } from '@woocommerce/settings';
-import { __experimentalCreateInterpolateElement } from 'wordpress-element';
+import { createInterpolateElement } from 'wordpress-element';
 import { useRef } from '@wordpress/element';
-import { EditorProvider, useEditorContext } from '@woocommerce/base-context';
-import PageSelector from '@woocommerce/block-components/page-selector';
+import {
+	EditorProvider,
+	useEditorContext,
+	StoreNoticesProvider,
+} from '@woocommerce/base-context';
+import PageSelector from '@woocommerce/editor-components/page-selector';
 import {
 	previewCart,
 	previewSavedPaymentMethods,
@@ -41,6 +46,7 @@ const BlockSettings = ( { attributes, setAttributes } ) => {
 		showPhoneField,
 		requireCompanyField,
 		requirePhoneField,
+		allowCreateAccount,
 		showOrderNotes,
 		showPolicyLinks,
 		showReturnToCart,
@@ -57,7 +63,7 @@ const BlockSettings = ( { attributes, setAttributes } ) => {
 					isDismissible={ false }
 					status="warning"
 				>
-					{ __experimentalCreateInterpolateElement(
+					{ createInterpolateElement(
 						__(
 							'If you would like to use this block as your default checkout you must update your <a>page settings in WooCommerce</a>.',
 							'woo-gutenberg-products-block'
@@ -150,6 +156,27 @@ const BlockSettings = ( { attributes, setAttributes } ) => {
 					/>
 				) }
 			</PanelBody>
+			{ isExperimentalBuild() && (
+				<PanelBody
+					title={ __(
+						'Account options',
+						'woo-gutenberg-products-block'
+					) }
+				>
+					<ToggleControl
+						label={ __(
+							'Allow shopper to sign up for a user account during checkout',
+							'woo-gutenberg-products-block'
+						) }
+						checked={ allowCreateAccount }
+						onChange={ () =>
+							setAttributes( {
+								allowCreateAccount: ! allowCreateAccount,
+							} )
+						}
+					/>
+				</PanelBody>
+			) }
 			<PanelBody
 				title={ __( 'Order notes', 'woo-gutenberg-products-block' ) }
 			>
@@ -199,7 +226,7 @@ const BlockSettings = ( { attributes, setAttributes } ) => {
 						className="wc-block-base-control-notice"
 						isDismissible={ false }
 					>
-						{ __experimentalCreateInterpolateElement(
+						{ createInterpolateElement(
 							__(
 								'Pages must be first setup in store settings: <a1>Privacy policy</a1>, <a2>Terms and conditions</a2>.',
 								'woo-gutenberg-products-block'
@@ -320,9 +347,11 @@ const CheckoutEditor = ( { attributes, setAttributes } ) => {
 						'woo-gutenberg-products-block'
 					) }
 				>
-					<Disabled>
-						<Block attributes={ attributes } />
-					</Disabled>
+					<StoreNoticesProvider context="wc/checkout">
+						<Disabled>
+							<Block attributes={ attributes } />
+						</Disabled>
+					</StoreNoticesProvider>
 				</BlockErrorBoundary>
 			</div>
 		</EditorProvider>

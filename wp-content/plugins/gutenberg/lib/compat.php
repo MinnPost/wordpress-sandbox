@@ -366,11 +366,18 @@ function gutenberg_replace_default_block_categories( $default_categories ) {
 }
 add_filter( 'block_categories', 'gutenberg_replace_default_block_categories' );
 
+global $current_parsed_block;
+$current_parsed_block = array(
+	'blockName'  => null,
+	'attributes' => null,
+);
+
 /**
  * Shim that hooks into `pre_render_block` so as to override `render_block` with
  * a function that assigns block context.
  *
- * This can be removed when plugin support requires WordPress 5.5.0+.
+ * The context handling can be removed when plugin support requires WordPress 5.5.0+.
+ * The global current_parsed_block assignment can be removed when plugin support requires WordPress 5.6.0+.
  *
  * @see https://core.trac.wordpress.org/ticket/49927
  * @see https://core.trac.wordpress.org/changeset/48243
@@ -382,6 +389,7 @@ add_filter( 'block_categories', 'gutenberg_replace_default_block_categories' );
  */
 function gutenberg_render_block_with_assigned_block_context( $pre_render, $parsed_block ) {
 	global $post, $wp_query;
+	global $current_parsed_block;
 
 	/*
 	 * If a non-null value is provided, a filter has run at an earlier priority
@@ -390,6 +398,8 @@ function gutenberg_render_block_with_assigned_block_context( $pre_render, $parse
 	if ( null !== $pre_render ) {
 		return $pre_render;
 	}
+
+	$current_parsed_block = $parsed_block;
 
 	$source_block = $parsed_block;
 
@@ -415,6 +425,27 @@ function gutenberg_render_block_with_assigned_block_context( $pre_render, $parse
 
 		foreach ( $wp_query->tax_query->queried_terms['category']['terms'] as $category_slug_or_id ) {
 			$context['query']['categoryIds'][] = 'slug' === $wp_query->tax_query->queried_terms['category']['field'] ? get_cat_ID( $category_slug_or_id ) : $category_slug_or_id;
+		}
+	}
+
+	if ( isset( $wp_query->tax_query->queried_terms['post_tag'] ) ) {
+		if ( isset( $context['query'] ) ) {
+			$context['query']['tagIds'] = array();
+		} else {
+			$context['query'] = array( 'tagIds' => array() );
+		}
+
+		foreach ( $wp_query->tax_query->queried_terms['post_tag']['terms'] as $tag_slug_or_id ) {
+			$tag_ID = $tag_slug_or_id;
+
+			if ( 'slug' === $wp_query->tax_query->queried_terms['post_tag']['field'] ) {
+				$tag = get_term_by( 'slug', $tag_slug_or_id, 'post_tag' );
+
+				if ( $tag ) {
+					$tag_ID = $tag->term_id;
+				}
+			}
+			$context['query']['tagIds'][] = $tag_ID;
 		}
 	}
 

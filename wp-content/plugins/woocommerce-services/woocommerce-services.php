@@ -1,13 +1,13 @@
 <?php
 /**
- * Plugin Name: WooCommerce Services
+ * Plugin Name: WooCommerce Shipping & Tax
  * Plugin URI: https://woocommerce.com/
  * Description: Hosted services for WooCommerce: automated tax calculation, shipping label printing, and smoother payment setup.
  * Author: Automattic
  * Author URI: https://woocommerce.com/
  * Text Domain: woocommerce-services
  * Domain Path: /i18n/languages/
- * Version: 1.24.2
+ * Version: 1.25.0
  * WC requires at least: 3.0.0
  * WC tested up to: 4.2
  *
@@ -26,7 +26,7 @@
  * You should have received a copy of the GNU General Public License
  * along with this program. If not, see <http://www.gnu.org/licenses/>.
  *
- * WooCommerce Services incorporates code from WooCommerce Sales Tax Plugin by TaxJar, Copyright 2014-2017 TaxJar.
+ * WooCommerce Shipping & Tax incorporates code from WooCommerce Sales Tax Plugin by TaxJar, Copyright 2014-2017 TaxJar.
  * WooCommerce Sales Tax Plugin by TaxJar is distributed under the terms of the GNU GPL, Version 2 (or later).
  */
 
@@ -48,7 +48,7 @@ if ( ! class_exists( 'WC_Connect_Loader' ) ) {
 	define( 'WOOCOMMERCE_CONNECT_MAX_JSON_DECODE_DEPTH', 32 );
 
 	if ( ! defined( 'WOOCOMMERCE_CONNECT_SERVER_API_VERSION ' ) ) {
-		define( 'WOOCOMMERCE_CONNECT_SERVER_API_VERSION', '3');
+		define( 'WOOCOMMERCE_CONNECT_SERVER_API_VERSION', '4');
 	}
 
 	// Check for CI environment variable to trigger test mode.
@@ -479,7 +479,7 @@ if ( ! class_exists( 'WC_Connect_Loader' ) ) {
 			if ( ! class_exists( 'WooCommerce' ) ) {
 				add_action( 'admin_notices', function() {
 					/* translators: %s WC download URL link. */
-					echo '<div class="error"><p><strong>' . sprintf( esc_html__( 'WooCommerce Services requires the WooCommerce plugin to be installed and active. You can download %s here.', 'woocommerce-services' ), '<a href="https://wordpress.org/plugins/woocommerce/" target="_blank">WooCommerce</a>' ) . '</strong></p></div>';
+					echo '<div class="error"><p><strong>' . sprintf( esc_html__( 'WooCommerce Shipping & Tax requires the WooCommerce plugin to be installed and active. You can download %s here.', 'woocommerce-services' ), '<a href="https://wordpress.org/plugins/woocommerce/" target="_blank">WooCommerce</a>' ) . '</strong></p></div>';
 				} );
 				return;
 			}
@@ -1069,7 +1069,7 @@ if ( ! class_exists( 'WC_Connect_Loader' ) ) {
 					case 'ups':
 						$tracking_url = 'https://www.ups.com/track?tracknum=' . $tracking;
 						break;
-					case 'dhl':
+					case 'dhlexpress':
 						$tracking_url = 'https://www.dhl.com/en/express/tracking.html?AWB=' . $tracking . '&brand=DHL';
 						break;
 
@@ -1232,7 +1232,7 @@ if ( ! class_exists( 'WC_Connect_Loader' ) ) {
 			}
 			wp_register_script( 'wc_services_admin_pointers', $this->wc_connect_base_url . 'woocommerce-services-admin-pointers-' . $plugin_version . '.js', array( 'wp-pointer', 'jquery' ), null );
 			wp_register_style( 'wc_connect_banner', $this->wc_connect_base_url . 'woocommerce-services-banner-' . $plugin_version . '.css', array(), null );
-			wp_register_script( 'wc_connect_banner', $this->wc_connect_base_url . 'woocommerce-services-banner-' . $plugin_version . '.js',  array( 'updates' ), null );
+			wp_register_script( 'wc_connect_banner', $this->wc_connect_base_url . 'woocommerce-services-banner-' . $plugin_version . '.js',  array(), null );
 
 			$i18n_json = $this->get_i18n_json();
 			/** @var array $i18nStrings defined in i18n/strings.php */
