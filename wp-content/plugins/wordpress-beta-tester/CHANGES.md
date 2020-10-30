@@ -1,5 +1,16 @@
 [unreleased]
 
+#### 3.0.1 - 3.0.3 / 2020-10-27
+* fixed regex to get next versions
+* really didn't need to use `ReflectionClass` 🤦‍♂️, thanks @pbiron
+* use `ReflectionClass` to get static variable `$core_update_constant` from `class WP_Beta_Tester` into `class WPBT_Core`
+
+#### 3.0.0 / 2020-10-23
+* major refactor for new core update API, thanks @dd32!
+* now requires PHP >5.6
+* allows for overrides when using the `WP_AUTO_UPDATE_CORE` constant
+* update on-screen help
+
 #### 2.2.13 / 2020-09-05
 * enclose `WPConfigTransformer` in try/catch
 
