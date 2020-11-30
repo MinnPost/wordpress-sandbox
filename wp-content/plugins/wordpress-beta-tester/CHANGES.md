@@ -1,5 +1,14 @@
 [unreleased]
 
+#### 3.0.8 / 2020-11-28
+* fix some PHP errors when using older versions of WP, for testing updates directly from these older versions like when using Core Rollback plugin
+
+#### 3.0.7 / 2020-11-24
+* tweak to `channel_switching_modification()`
+
+#### 3.0.6 / 2020-11-21
+* improved flow between _Bleeding edge_ and _Point release_
+
 #### 3.0.5 / 2020-11-18
 * don't show beta as a next version when on RC
 

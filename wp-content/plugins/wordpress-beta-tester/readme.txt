@@ -7,7 +7,7 @@ License URI: https://www.opensource.org/licenses/GPL-2.0
 Requires at least: 3.1
 Requires PHP: 5.6
 Tested up to: 5.6
-Stable Tag: 3.0.5
+Stable Tag: 3.0.8
 
 Allows you to easily upgrade for testing the next versions of WordPress.
 
@@ -21,6 +21,8 @@ By default once enabled it switches your website onto the point release update c
 For the more adventurous there is the option to switch to the bleeding edge (trunk) of development.
 
 Don't forget to backup before you start!
+
+Please enable auto-updates for this plugin to ensure future changes are properly handled with core updates.
 
 ### Extra Settings
 
@@ -39,6 +41,15 @@ If no settings are present there is no testing to be done that requires this fea
 PRs are welcome on [GitHub](https://github.com/afragen/wordpress-beta-tester).
 
 ## Changelog
+
+#### 3.0.8 / 2020-11-28
+* fix some PHP errors when using older versions of WP, for testing updates directly from these older versions like when using Core Rollback plugin
+
+#### 3.0.7 / 2020-11-24
+* tweak to `channel_switching_modification()`
+
+#### 3.0.6 / 2020-11-21
+* improved flow between _Bleeding edge_ and _Point release_
 
 #### 3.0.5 / 2020-11-18
 * don't show beta as a next version when on RC

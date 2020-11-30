@@ -143,14 +143,39 @@ class WP_Beta_Tester {
 		// Use WP_AUTO_UPDATE_CORE if set.
 		$url = self::$core_update_constant ? add_query_arg( 'channel', self::$core_update_constant, $url ) : $url;
 
-		if ( 'branch-development' === self::$options['channel'] ) {
-			$url = add_query_arg( 'version', $this->get_current_wp_release(), $url );
-		}
+		// Make adjustments for switching between channels.
+		$url = $this->channel_switching_modification( $url );
 
 		// phpcs:ignore Squiz.PHP.CommentedOutCode.Found
 		// $url = add_query_arg( 'pretend_releases', array( '5.6-beta2' ), $url );
 
 		return wp_remote_get( $url, $args );
+	}
+
+	/**
+	 * Modify URL to version check to return expected API response.
+	 *
+	 * @param string $url Version check URL.
+	 *
+	 * @return string $url
+	 */
+	private function channel_switching_modification( $url ) {
+		$next_versions = ( new WPBT_Core( $this, static::$options ) )->calculate_next_versions();
+		$wp_version    = get_bloginfo( 'version' );
+		switch ( self::$options['channel'] ) {
+			case 'branch-development':
+				$url = add_query_arg( 'version', $next_versions['point'] . '-alpha', $url );
+				break;
+			case 'development':
+				if ( false !== strpos( $wp_version, $next_versions['point'] )
+					|| version_compare( $wp_version, $next_versions['point'], '<' )
+				) {
+					$url = add_query_arg( 'version', $next_versions['release'] . '-alpha', $url );
+				}
+				break;
+		}
+
+		return $url;
 	}
 
 	/**
@@ -373,7 +398,7 @@ class WP_Beta_Tester {
 	 * @filter update_footer
 	 */
 	public function update_footer() {
-		add_filter( 'pre_site_transient_update_core', array( $this, 'add_minimal_development_response' ), 10, 2 );
+		add_filter( 'pre_site_transient_update_core', array( $this, 'add_minimal_development_response' ), 10, 0 );
 
 		$content = core_update_footer();
 
@@ -387,16 +412,11 @@ class WP_Beta_Tester {
 	 *
 	 * @since 2.2.0
 	 *
-	 * @param  mixed  $pre_site_transient The default value to return if the site
-	 *                                    transient does not exist. Any value other
-	 *                                    than false will short-circuit the retrieval
-	 *                                    of the transient, and return the returned value.
-	 * @param  string $transient          Transient name.
 	 * @return object
 	 *
 	 * @filter pre_site_transient_update_core
 	 */
-	public function add_minimal_development_response( $pre_site_transient, $transient ) {
+	public function add_minimal_development_response() {
 		$from_api = new stdClass();
 		$update   = new stdClass();
 		// a "minimal" response is one with the `response`, `current` and `locale` properties.
