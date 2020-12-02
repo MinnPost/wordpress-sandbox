@@ -4,7 +4,7 @@ Donate link: https://www.minnpost.com/support/?campaign=7010G0000012fXGQAY
 Tags: salesforce, sync, crm
 Requires at least: 4.6
 Tested up to: 5.6
-Stable tag: 1.9.4
+Stable tag: 1.9.5
 Requires PHP: 5.6.20
 License: GPLv2 or later
 License URI: http://www.gnu.org/licenses/gpl-2.0.html
@@ -263,6 +263,9 @@ This plugin can be relatively complicated, and sometimes other plugins can effec
 - **Build other integrations in WordPress** this plugin focuses on the Salesforce REST API, as it covers the integration needs we have. Salesforce also has many other developer options: the SOAP API (we hope to incorporate this into Object Sync for Salesforce at some point), the Bulk API, and the Metadata API. Developers could extend this plugin to integrate with one of these. We would welcome any pull requests!
 
 == Changelog ==
+
+* 1.9.5 (2020-12-02)
+	* Bug fix: remove a strict array check that was incorrectly added. This could affect whether a push is allowed. Thanks to @afgarcia86 for the report.
 
 * 1.9.4 (2020-11-24)
 	* Feature: create new WordPress records when importing Salesforce objects. Thanks to WordPress user @afgarcia86.
