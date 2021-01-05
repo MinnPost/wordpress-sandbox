@@ -44,11 +44,26 @@ if ( ! function_exists( 'cmb2_post_fields' ) ) :
 				),
 			)
 		);
+		$excerpt->add_field(
+			array(
+				'name'       => __( 'Favorite day of the week', 'twentytwentyone_child' ),
+				'id'         => 'wiki_test_favorite_day_of_week',
+				'type'       => 'text',
+				'default_cb' => 'set_to_today',
+			)
+		);
 	}
 endif;
 
-
-
+/**
+ * Set to day of week.
+ *
+ * @param  object $field_args Current field args
+ * @param  object $field      Current field object
+ */
+function set_to_today( $field_args, $field ) {
+	return gmdate( 'l' );
+}
 
 
 //add_action( 'cmb2_admin_init', 'twentytwentyone_cmb2_settings' );
