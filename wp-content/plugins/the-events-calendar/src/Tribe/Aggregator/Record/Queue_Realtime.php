@@ -114,7 +114,7 @@ class Tribe__Events__Aggregator__Record__Queue_Realtime {
 	/**
 	 * Action to reply every time a heart beat is executed to send the progress of EA if an EA record is present.
 	 *
-	 * @since TBD Change the method signature to be a little bit less aggressive with enforcing types.
+	 * @since 5.4.0 Change the method signature to be a little bit less aggressive with enforcing types.
 	 *
 	 * @param array<string, mixed> $response The current response object.
 	 * @param array<string, mixed> $data     An array with the data from the client.
@@ -122,16 +122,6 @@ class Tribe__Events__Aggregator__Record__Queue_Realtime {
 	 * @return array<string, mixed> An array used to construct the heart beat response.
 	 */
 	public function receive_heartbeat( $response, $data ) {
-		// Makes sure we don't throw warnings when $response is not correct.
-		if ( empty( $response ) || ! is_array( $response ) ) {
-			return $response;
-		}
-
-		// Makes sure we don't throw warnings when $data is not correct.
-		if ( empty( $data ) || ! is_array( $data ) ) {
-			return $response;
-		}
-
 		if ( empty( $data['ea_record'] ) ) {
 			return $response;
 		}

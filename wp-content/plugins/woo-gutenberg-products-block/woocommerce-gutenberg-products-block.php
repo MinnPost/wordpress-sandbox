@@ -3,14 +3,14 @@
  * Plugin Name: WooCommerce Blocks
  * Plugin URI: https://github.com/woocommerce/woocommerce-gutenberg-products-block
  * Description: WooCommerce blocks for the Gutenberg editor.
- * Version: 4.3.0
+ * Version: 4.6.0
  * Author: Automattic
  * Author URI: https://woocommerce.com
  * Text Domain:  woo-gutenberg-products-block
  * Requires at least: 5.4
  * Requires PHP: 7.0
  * WC requires at least: 4.3
- * WC tested up to: 4.8
+ * WC tested up to: 5.1
  *
  * @package WooCommerce\Blocks
  * @internal This file is only used when running as a feature plugin.
@@ -91,7 +91,7 @@ if ( woocommerce_blocks_is_development_version() && ! defined( 'JETPACK_AUTOLOAD
 		function() {
 			echo '<div class="error"><p>';
 			printf(
-				/* Translators: %1$s is referring to a php constant name, %2$s is referring to the wp-config.php file. */
+				/* translators: %1$s is referring to a php constant name, %2$s is referring to the wp-config.php file. */
 				esc_html__( 'WooCommerce Blocks development mode requires the %1$s constant to be defined and true in your %2$s file. Otherwise you are loading the blocks package from WooCommerce core.', 'woo-gutenberg-products-block' ),
 				'JETPACK_AUTOLOAD_DEV',
 				'wp-config.php'

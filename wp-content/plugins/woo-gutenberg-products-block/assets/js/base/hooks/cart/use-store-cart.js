@@ -27,8 +27,8 @@ const defaultBillingAddress = {
 	phone: '',
 };
 
-const decodeAddress = ( address ) =>
-	mapValues( address, ( value ) => decodeEntities( value ) );
+const decodeValues = ( object ) =>
+	mapValues( object, ( value ) => decodeEntities( value ) );
 
 /**
  * @constant
@@ -51,7 +51,9 @@ export const defaultCartData = {
 	shippingRates: [],
 	shippingRatesLoading: false,
 	cartHasCalculatedShipping: false,
+	paymentRequirements: [],
 	receiveCart: () => {},
+	extensions: {},
 };
 
 /**
@@ -92,10 +94,12 @@ export const useStoreCart = ( options = { shouldSelect: true } ) => {
 					cartErrors: [],
 					billingAddress: defaultBillingAddress,
 					shippingAddress: defaultShippingAddress,
+					extensions: {},
 					shippingRates: previewCart.shipping_rates,
 					shippingRatesLoading: false,
 					cartHasCalculatedShipping:
 						previewCart.has_calculated_shipping,
+					paymentRequirements: previewCart.paymentRequirements,
 					receiveCart:
 						typeof previewCart?.receiveCart === 'function'
 							? previewCart.receiveCart
@@ -112,14 +116,17 @@ export const useStoreCart = ( options = { shouldSelect: true } ) => {
 			);
 			const shippingRatesLoading = store.isCustomerDataUpdating();
 			const { receiveCart } = dispatch( storeKey );
-			const billingAddress = decodeAddress( cartData.billingAddress );
+			const billingAddress = decodeValues( cartData.billingAddress );
 			const shippingAddress = cartData.needsShipping
-				? decodeAddress( cartData.shippingAddress )
+				? decodeValues( cartData.shippingAddress )
 				: billingAddress;
+			const cartFees = cartData.fees.map( ( fee ) =>
+				decodeValues( fee )
+			);
 			return {
 				cartCoupons: cartData.coupons,
 				cartItems: cartData.items || [],
-				cartFees: cartData.fees || [],
+				cartFees,
 				cartItemsCount: cartData.itemsCount,
 				cartItemsWeight: cartData.itemsWeight,
 				cartNeedsPayment: cartData.needsPayment,
@@ -130,9 +137,11 @@ export const useStoreCart = ( options = { shouldSelect: true } ) => {
 				cartErrors,
 				billingAddress,
 				shippingAddress,
+				extensions: cartData.extensions || {},
 				shippingRates: cartData.shippingRates || [],
 				shippingRatesLoading,
 				cartHasCalculatedShipping: cartData.hasCalculatedShipping,
+				paymentRequirements: cartData.paymentRequirements || [],
 				receiveCart,
 			};
 		},

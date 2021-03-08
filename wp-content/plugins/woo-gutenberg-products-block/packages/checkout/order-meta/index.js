@@ -1,41 +1,34 @@
 /**
  * External dependencies
  */
-import { createSlotFill } from 'wordpress-components';
 import classnames from 'classnames';
-import { CURRENT_USER_IS_ADMIN } from '@woocommerce/block-settings';
+import { useStoreCart } from '@woocommerce/base-hooks';
 
 /**
  * Internal dependencies
  */
-import BlockErrorBoundary from '../error-boundary';
+import { createSlotFill } from '../slot';
 
 const slotName = '__experimentalOrderMeta';
-const { Fill, Slot: OrderMetaSlot } = createSlotFill( slotName );
 
-function ExperimentalOrderMeta( { children } ) {
-	return (
-		<Fill>
-			<BlockErrorBoundary
-				renderError={ CURRENT_USER_IS_ADMIN ? null : () => null }
-			>
-				{ children }
-			</BlockErrorBoundary>
-		</Fill>
-	);
-}
+const { Fill: ExperimentalOrderMeta, Slot: OrderMetaSlot } = createSlotFill(
+	slotName
+);
 
-function Slot( { className } ) {
+const Slot = ( { className } ) => {
+	// We need to pluck out receiveCart.
+	// eslint-disable-next-line no-unused-vars
+	const { extensions, receiveCart, ...cart } = useStoreCart();
 	return (
 		<OrderMetaSlot
-			bubblesVirtually
 			className={ classnames(
 				className,
 				'wc-block-components-order-meta'
 			) }
+			fillProps={ { extensions, cart } }
 		/>
 	);
-}
+};
 
 ExperimentalOrderMeta.Slot = Slot;
 

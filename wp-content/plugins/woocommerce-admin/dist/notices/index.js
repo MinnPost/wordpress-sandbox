@@ -82,12 +82,12 @@ this["wc"] = this["wc"] || {}; this["wc"]["notices"] =
 /******/
 /******/
 /******/ 	// Load entry module and return exports
-/******/ 	return __webpack_require__(__webpack_require__.s = 477);
+/******/ 	return __webpack_require__(__webpack_require__.s = 470);
 /******/ })
 /************************************************************************/
 /******/ ({
 
-/***/ 15:
+/***/ 11:
 /***/ (function(module, exports) {
 
 (function() { module.exports = this["wp"]["data"]; }());
@@ -101,7 +101,7 @@ var arrayWithoutHoles = __webpack_require__(57);
 
 var iterableToArray = __webpack_require__(58);
 
-var unsupportedIterableToArray = __webpack_require__(39);
+var unsupportedIterableToArray = __webpack_require__(40);
 
 var nonIterableSpread = __webpack_require__(59);
 
@@ -137,7 +137,7 @@ module.exports = _arrayLikeToArray;
 
 /***/ }),
 
-/***/ 39:
+/***/ 40:
 /***/ (function(module, exports, __webpack_require__) {
 
 var arrayLikeToArray = __webpack_require__(37);
@@ -155,7 +155,7 @@ module.exports = _unsupportedIterableToArray;
 
 /***/ }),
 
-/***/ 477:
+/***/ 470:
 /***/ (function(module, __webpack_exports__, __webpack_require__) {
 
 "use strict";
@@ -178,7 +178,7 @@ __webpack_require__.r(selectors_namespaceObject);
 __webpack_require__.d(selectors_namespaceObject, "getNotices", function() { return getNotices; });
 
 // EXTERNAL MODULE: external {"this":["wp","data"]}
-var external_this_wp_data_ = __webpack_require__(15);
+var external_this_wp_data_ = __webpack_require__(11);
 
 // EXTERNAL MODULE: ./node_modules/@babel/runtime/helpers/toConsumableArray.js
 var toConsumableArray = __webpack_require__(19);

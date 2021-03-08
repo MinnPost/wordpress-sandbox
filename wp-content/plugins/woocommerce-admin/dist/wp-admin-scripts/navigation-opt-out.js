@@ -82,7 +82,7 @@ this["wc"] = this["wc"] || {}; this["wc"]["navigationOptOut"] =
 /******/
 /******/
 /******/ 	// Load entry module and return exports
-/******/ 	return __webpack_require__(__webpack_require__.s = 482);
+/******/ 	return __webpack_require__(__webpack_require__.s = 475);
 /******/ })
 /************************************************************************/
 /******/ ({
@@ -94,7 +94,7 @@ this["wc"] = this["wc"] || {}; this["wc"]["navigationOptOut"] =
 
 /***/ }),
 
-/***/ 11:
+/***/ 12:
 /***/ (function(module, exports) {
 
 function _classCallCheck(instance, Constructor) {
@@ -107,7 +107,7 @@ module.exports = _classCallCheck;
 
 /***/ }),
 
-/***/ 12:
+/***/ 13:
 /***/ (function(module, exports) {
 
 function _defineProperties(target, props) {
@@ -130,10 +130,10 @@ module.exports = _createClass;
 
 /***/ }),
 
-/***/ 13:
+/***/ 14:
 /***/ (function(module, exports, __webpack_require__) {
 
-var setPrototypeOf = __webpack_require__(75);
+var setPrototypeOf = __webpack_require__(72);
 
 function _inherits(subClass, superClass) {
   if (typeof superClass !== "function" && superClass !== null) {
@@ -154,12 +154,12 @@ module.exports = _inherits;
 
 /***/ }),
 
-/***/ 14:
+/***/ 15:
 /***/ (function(module, exports, __webpack_require__) {
 
-var _typeof = __webpack_require__(30);
+var _typeof = __webpack_require__(31);
 
-var assertThisInitialized = __webpack_require__(8);
+var assertThisInitialized = __webpack_require__(9);
 
 function _possibleConstructorReturn(self, call) {
   if (call && (_typeof(call) === "object" || typeof call === "function")) {
@@ -180,7 +180,7 @@ module.exports = _possibleConstructorReturn;
 
 /***/ }),
 
-/***/ 30:
+/***/ 31:
 /***/ (function(module, exports) {
 
 function _typeof(obj) {
@@ -210,14 +210,14 @@ module.exports = _typeof;
 
 /***/ }),
 
-/***/ 468:
+/***/ 461:
 /***/ (function(module, exports, __webpack_require__) {
 
 // extracted by mini-css-extract-plugin
 
 /***/ }),
 
-/***/ 482:
+/***/ 475:
 /***/ (function(module, __webpack_exports__, __webpack_require__) {
 
 "use strict";
@@ -228,23 +228,23 @@ __webpack_require__.r(__webpack_exports__);
 var external_this_wp_element_ = __webpack_require__(0);
 
 // EXTERNAL MODULE: ./node_modules/@babel/runtime/helpers/classCallCheck.js
-var classCallCheck = __webpack_require__(11);
+var classCallCheck = __webpack_require__(12);
 var classCallCheck_default = /*#__PURE__*/__webpack_require__.n(classCallCheck);
 
 // EXTERNAL MODULE: ./node_modules/@babel/runtime/helpers/createClass.js
-var createClass = __webpack_require__(12);
+var createClass = __webpack_require__(13);
 var createClass_default = /*#__PURE__*/__webpack_require__.n(createClass);
 
 // EXTERNAL MODULE: ./node_modules/@babel/runtime/helpers/inherits.js
-var inherits = __webpack_require__(13);
+var inherits = __webpack_require__(14);
 var inherits_default = /*#__PURE__*/__webpack_require__.n(inherits);
 
 // EXTERNAL MODULE: ./node_modules/@babel/runtime/helpers/possibleConstructorReturn.js
-var possibleConstructorReturn = __webpack_require__(14);
+var possibleConstructorReturn = __webpack_require__(15);
 var possibleConstructorReturn_default = /*#__PURE__*/__webpack_require__.n(possibleConstructorReturn);
 
 // EXTERNAL MODULE: ./node_modules/@babel/runtime/helpers/getPrototypeOf.js
-var getPrototypeOf = __webpack_require__(6);
+var getPrototypeOf = __webpack_require__(7);
 var getPrototypeOf_default = /*#__PURE__*/__webpack_require__.n(getPrototypeOf);
 
 // EXTERNAL MODULE: external {"this":["wp","i18n"]}
@@ -299,6 +299,10 @@ var container_NavigationOptOutContainer = /*#__PURE__*/function (_Component) {
         return null;
       }
 
+      if (!window.surveyData || !window.surveyData.url) {
+        return null;
+      }
+
       return Object(external_this_wp_element_["createElement"])(external_this_wp_components_["Modal"], {
         title: Object(external_this_wp_i18n_["__"])('Help us improve', 'woocommerce-admin'),
         onRequestClose: function onRequestClose() {
@@ -319,7 +323,7 @@ var container_NavigationOptOutContainer = /*#__PURE__*/function (_Component) {
       }, Object(external_this_wp_i18n_["__"])('No thanks', 'woocommerce-admin')), Object(external_this_wp_element_["createElement"])(external_this_wp_components_["Button"], {
         isPrimary: true,
         target: "_blank",
-        href: "https://automattic.survey.fm/new-navigation-opt-out",
+        href: window.surveyData.url,
         onClick: function onClick() {
           return _this2.setState({
             isModalOpen: false
@@ -332,7 +336,7 @@ var container_NavigationOptOutContainer = /*#__PURE__*/function (_Component) {
   return NavigationOptOutContainer;
 }(external_this_wp_element_["Component"]);
 // EXTERNAL MODULE: ./client/wp-admin-scripts/navigation-opt-out/style.scss
-var style = __webpack_require__(468);
+var style = __webpack_require__(461);
 
 // CONCATENATED MODULE: ./client/wp-admin-scripts/navigation-opt-out/index.js
 
@@ -353,7 +357,7 @@ Object(external_this_wp_element_["render"])(Object(external_this_wp_element_["cr
 
 /***/ }),
 
-/***/ 6:
+/***/ 7:
 /***/ (function(module, exports) {
 
 function _getPrototypeOf(o) {
@@ -367,7 +371,7 @@ module.exports = _getPrototypeOf;
 
 /***/ }),
 
-/***/ 75:
+/***/ 72:
 /***/ (function(module, exports) {
 
 function _setPrototypeOf(o, p) {
@@ -383,7 +387,7 @@ module.exports = _setPrototypeOf;
 
 /***/ }),
 
-/***/ 8:
+/***/ 9:
 /***/ (function(module, exports) {
 
 function _assertThisInitialized(self) {

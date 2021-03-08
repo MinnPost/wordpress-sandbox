@@ -82,7 +82,7 @@ this["wc"] = this["wc"] || {}; this["wc"]["tracks"] =
 /******/
 /******/
 /******/ 	// Load entry module and return exports
-/******/ 	return __webpack_require__(__webpack_require__.s = 464);
+/******/ 	return __webpack_require__(__webpack_require__.s = 457);
 /******/ })
 /************************************************************************/
 /******/ ({
@@ -285,7 +285,7 @@ var arrayWithoutHoles = __webpack_require__(57);
 
 var iterableToArray = __webpack_require__(58);
 
-var unsupportedIterableToArray = __webpack_require__(39);
+var unsupportedIterableToArray = __webpack_require__(40);
 
 var nonIterableSpread = __webpack_require__(59);
 
@@ -297,7 +297,7 @@ module.exports = _toConsumableArray;
 
 /***/ }),
 
-/***/ 287:
+/***/ 285:
 /***/ (function(module, exports, __webpack_require__) {
 
 /* WEBPACK VAR INJECTION */(function(process) {/* eslint-env browser */
@@ -468,7 +468,7 @@ function localstorage() {
   }
 }
 
-module.exports = __webpack_require__(465)(exports);
+module.exports = __webpack_require__(458)(exports);
 var formatters = module.exports.formatters;
 /**
  * Map %j to `JSON.stringify()`, since no Web Inspectors do that by default.
@@ -485,7 +485,7 @@ formatters.j = function (v) {
 
 /***/ }),
 
-/***/ 30:
+/***/ 31:
 /***/ (function(module, exports) {
 
 function _typeof(obj) {
@@ -525,7 +525,7 @@ module.exports = _arrayLikeToArray;
 
 /***/ }),
 
-/***/ 39:
+/***/ 40:
 /***/ (function(module, exports, __webpack_require__) {
 
 var arrayLikeToArray = __webpack_require__(37);
@@ -543,7 +543,7 @@ module.exports = _unsupportedIterableToArray;
 
 /***/ }),
 
-/***/ 464:
+/***/ 457:
 /***/ (function(module, __webpack_exports__, __webpack_require__) {
 
 "use strict";
@@ -553,9 +553,9 @@ __webpack_require__.r(__webpack_exports__);
 /* harmony export (binding) */ __webpack_require__.d(__webpack_exports__, "recordPageView", function() { return recordPageView; });
 /* harmony import */ var _babel_runtime_helpers_defineProperty__WEBPACK_IMPORTED_MODULE_0__ = __webpack_require__(5);
 /* harmony import */ var _babel_runtime_helpers_defineProperty__WEBPACK_IMPORTED_MODULE_0___default = /*#__PURE__*/__webpack_require__.n(_babel_runtime_helpers_defineProperty__WEBPACK_IMPORTED_MODULE_0__);
-/* harmony import */ var _babel_runtime_helpers_typeof__WEBPACK_IMPORTED_MODULE_1__ = __webpack_require__(30);
+/* harmony import */ var _babel_runtime_helpers_typeof__WEBPACK_IMPORTED_MODULE_1__ = __webpack_require__(31);
 /* harmony import */ var _babel_runtime_helpers_typeof__WEBPACK_IMPORTED_MODULE_1___default = /*#__PURE__*/__webpack_require__.n(_babel_runtime_helpers_typeof__WEBPACK_IMPORTED_MODULE_1__);
-/* harmony import */ var debug__WEBPACK_IMPORTED_MODULE_2__ = __webpack_require__(287);
+/* harmony import */ var debug__WEBPACK_IMPORTED_MODULE_2__ = __webpack_require__(285);
 /* harmony import */ var debug__WEBPACK_IMPORTED_MODULE_2___default = /*#__PURE__*/__webpack_require__.n(debug__WEBPACK_IMPORTED_MODULE_2__);
 
 
@@ -720,7 +720,7 @@ function recordPageView(path, extraProperties) {
 
 /***/ }),
 
-/***/ 465:
+/***/ 458:
 /***/ (function(module, exports, __webpack_require__) {
 
 var _toConsumableArray = __webpack_require__(19);
@@ -736,7 +736,7 @@ function setup(env) {
   createDebug.disable = disable;
   createDebug.enable = enable;
   createDebug.enabled = enabled;
-  createDebug.humanize = __webpack_require__(466);
+  createDebug.humanize = __webpack_require__(459);
   createDebug.destroy = destroy;
   Object.keys(env).forEach(function (key) {
     createDebug[key] = env[key];
@@ -990,7 +990,7 @@ module.exports = setup;
 
 /***/ }),
 
-/***/ 466:
+/***/ 459:
 /***/ (function(module, exports) {
 
 /**
