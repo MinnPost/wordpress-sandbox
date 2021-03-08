@@ -4,7 +4,7 @@ Donate link: https://www.minnpost.com/support/?campaign=7010G0000012fXGQAY
 Tags: salesforce, sync, crm
 Requires at least: 4.6
 Tested up to: 5.6
-Stable tag: 1.9.6
+Stable tag: 1.9.8
 Requires PHP: 5.6.20
 License: GPLv2 or later
 License URI: http://www.gnu.org/licenses/gpl-2.0.html
@@ -141,6 +141,10 @@ Object Sync for Salesforce, however, cannot see meta fields before the field has
 
 If you load Object Sync for Salesforce and then store data for a new meta field after this load, make sure you click the "Clear the plugin cache" link on the Fieldmaps tab.
 
+### Syncing pre-existing data
+
+This plugin was built to sync data that is created after it was installed. However, there are some techniques that can import pre-existing data. See the [Import & Export](https://github.com/MinnPost/object-sync-for-salesforce/blob/master/docs/import-export.md) section of the documentation for methods you can use for this.
+
 ### Using with ACF (Advanced Custom Fields)
 
 Object Sync for Salesforce does not and will not "officially" support ACF because you don't have to use ACF to use WordPress or to use Salesforce. However, they are **generally** usable together.
@@ -258,11 +262,19 @@ This plugin can be relatively complicated, and sometimes other plugins can effec
 - [WordPress-to-Lead for Salesforce CRM](https://appexchange.salesforce.com/listingDetail?listingId=a0N30000003GxgkEAC) can be installed through the Salesforce AppExchange. It allows you to run a contact form which users on your WordPress site can submit, and the results are added to Salesforce as a Lead object.
 - [Brilliant Web-to-Lead for Salesforce](https://wordpress.org/plugins/salesforce-wordpress-to-lead/) can be installed through the WordPress plugin directory. This is rather similar to the first option, but is a bit more customizable. By customizable, you can select the fields in WordPress and theme it in your WordPress theme.
 - [Gravity Forms Salesforce Add-on](https://wordpress.org/plugins/gravity-forms-salesforce/) can be installed through the WordPress plugin directory. It is quite powerful, as it can send form submissions from your WordPress site to Salesforce as whatever object you need. It's important to mention that this works for any form created with the [Gravity Forms](http://www.gravityforms.com/) plugin. It's also important to mention that this does not sync data back from Salesforce into Wordpress.
+- [WP Fusion Lite](https://wordpress.org/plugins/wp-fusion-lite/) can be installed through the WordPress plugin directory. This plugin is able to sync WordPress user records with contacts from different CRMs (including Salesforce) and manage content access based on tags it uses. This plugin also has a paid version that integrates with other WordPress plugins.
 - **Third party integration apps** such as [Zapier](https://zapier.com/) are subscription-based, paid ways to integrate different systems, and they offer differing amounts of customizability. They will usually sync in both directions, so in this case from WordPress to Salesforce and vice versa. The only limitations of something like this are the cost over time, and the possible vulnerability of basing an integration on a third party that could, at some point, go away.
 - [Visualforce](https://developer.salesforce.com/page/An_Introduction_to_Visualforce) If you are or have a Salesforce developer, you can build MVC based applications that integrate with Salesforce. It would be possible to build a system that uses, for example, the [WordPress REST API](https://developer.wordpress.org/rest-api/) to send and receive data to and from WordPress. This could be, in many ways, the flip side of what our plugin here does, but the complexity would be the same if the scope was the same.
 - **Build other integrations in WordPress** this plugin focuses on the Salesforce REST API, as it covers the integration needs we have. Salesforce also has many other developer options: the SOAP API (we hope to incorporate this into Object Sync for Salesforce at some point), the Bulk API, and the Metadata API. Developers could extend this plugin to integrate with one of these. We would welcome any pull requests!
 
 == Changelog ==
+
+* 1.9.8 (2021-02-11)
+    * Bug fix: fix PHP composer error.
+
+* 1.9.7 (2021-02-11)
+	* Bug fix: update the Salesforce field dropdown so it respects the API Name/Label settings value. Thanks to @CodeZeno.
+	* Maintenance: add documentation on how the plugin handles fields with different data types.
 
 * 1.9.6 (2020-12-07)
 	* Feature: update the default Salesforce REST API version to 50.0 (Winter '21).
