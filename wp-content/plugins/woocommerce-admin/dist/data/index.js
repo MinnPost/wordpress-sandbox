@@ -1611,6 +1611,7 @@ var with_settings_hydration_withSettingsHydration = function withSettingsHydrati
 // CONCATENATED MODULE: ./packages/data/build-module/settings/use-settings.js
 
 
+
 function use_settings_ownKeys(object, enumerableOnly) {
   var keys = Object.keys(object);
 
@@ -1672,7 +1673,7 @@ var use_settings_useSettings = function useSettings(group) {
       isRequesting: isUpdateSettingsRequesting(group),
       isDirty: getIsDirty(group, settingsKeys)
     };
-  }, [group, settingsKeys]),
+  }, [group].concat(toConsumableArray_default()(settingsKeys.sort()))),
       requestedSettings = _useSelect.requestedSettings,
       settingsError = _useSelect.settingsError,
       isRequesting = _useSelect.isRequesting,
