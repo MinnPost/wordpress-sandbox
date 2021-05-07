@@ -4,7 +4,7 @@ Tags: ecommerce, e-commerce, store, sales, reports, analytics, dashboard, activi
 Requires at least: 5.4.0
 Tested up to: 5.7.0
 Requires PHP: 7.0
-Stable tag: 2.2.2
+Stable tag: 2.2.4
 License: GPLv3
 License URI: https://github.com/woocommerce/woocommerce-admin/blob/main/license.txt
 
@@ -73,8 +73,13 @@ Release and roadmap notes are available on the [WooCommerce Developers Blog](htt
 
 == Changelog ==
 
-== 2.2.2 4/28/2021 ==
+== 2.2.4 5/7/2021 ==
+- Dev: Fix a bug where trying to load an asset registry causes a crash. #6951
 
+== 2.2.3 5/6/2021 ==
+- Dev: Do a git clean before the core release. #6945
+
+== 2.2.2 4/28/2021 ==
 - Fix: Disable the continue btn on OBW when requested are being made #6838
 - Tweak: Revert WCPay international support for bundled package #6901
 - Tweak: Store profiler - Changed MailPoet's title and description #6886
