@@ -26,6 +26,9 @@ class Object_Sync_Sf_Salesforce_Soap_Partner extends SforcePartnerClient {
 	*
 	*/
 	public function __construct( Object_Sync_Sf_Salesforce $sfapi, $wsdl = null ) {
+		if ( null === $this->salesforce_api ) {
+			return;
+		}
 		if ( false === $this->salesforce_api['soap_available'] ) {
 			return;
 		}

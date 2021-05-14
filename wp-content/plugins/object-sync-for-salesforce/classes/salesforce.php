@@ -330,6 +330,14 @@ class Object_Sync_Sf_Salesforce {
 				esc_url( $url )
 			);
 
+			/*$body = sprintf(
+				// translators: placeholders are: 1) the URL requested, 2) the message returned by the error, 3) the server code returned
+				'<p>' . esc_html__( 'URL: %1$s', 'object-sync-for-salesforce' ) . '</p><p>' . esc_html__( 'Message: %2$s', 'object-sync-for-salesforce' ) . '</p><p>' . esc_html__( 'Code: %3$s', 'object-sync-for-salesforce' ),
+				esc_attr( $url ),
+				esc_html( $data[0]['message'] ),
+				absint( $code )
+			);*/
+
 			$logging->setup(
 				$title,
 				print_r( $result, true ), // log the result because we are debugging the whole api call

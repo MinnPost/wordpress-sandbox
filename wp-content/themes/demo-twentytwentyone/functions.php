@@ -66,13 +66,13 @@ function set_to_today( $field_args, $field ) {
 }
 
 
-//add_action( 'cmb2_admin_init', 'twentytwentyone_cmb2_settings' );
+add_action( 'cmb2_admin_init', 'twentytwentyone_cmb2_settings' );
 /**
  * Define the metabox and field configurations.
  */
 function twentytwentyone_cmb2_settings() {
 
-	/*$user_settings = new_cmb2_box(
+	$user_settings = new_cmb2_box(
 		array(
 			'id'           => 'user_settings',
 			'title'        => __( 'User Settings', 'twentytwentyone_child' ),
@@ -564,7 +564,6 @@ function twentytwentyone_cmb2_settings() {
 			'type' => 'text',
 		)
 	);
-	*/
 
 }
 add_filter( 'object_sync_for_salesforce_pull_params_modify', 'change_pull_params', 10, 6 );
