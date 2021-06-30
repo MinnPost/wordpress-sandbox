@@ -2,10 +2,10 @@
 # This file is distributed under the same license as the WooCommerce Admin package.
 msgid ""
 msgstr ""
-"Project-Id-Version: WooCommerce Admin 2.3.0\n"
+"Project-Id-Version: WooCommerce Admin 2.3.1\n"
 "Report-Msgid-Bugs-To: "
 "https://wordpress.org/support/plugin/woocommerce-admin\n"
-"POT-Creation-Date: 2021-05-12 15:14:14+00:00\n"
+"POT-Creation-Date: 2021-05-24 09:39:21+00:00\n"
 "MIME-Version: 1.0\n"
 "Content-Type: text/plain; charset=utf-8\n"
 "Content-Transfer-Encoding: 8bit\n"
@@ -3553,6 +3553,8 @@ msgid "Set up additional payment providers"
 msgstr ""
 
 #: src/Notes/SetUpAdditionalPaymentTypes.php:94
+#: client/header/index.js:70
+#: client/task-list/tasks.js:198
 msgid "Set up payments"
 msgstr ""
 
@@ -5110,7 +5112,7 @@ msgid "Display Stats:"
 msgstr ""
 
 #: client/header/activity-panel/display-options/icons/display.js:41
-#: client/task-list/index.js:178
+#: client/task-list/index.js:175
 msgid "Display"
 msgstr ""
 
@@ -5142,6 +5144,7 @@ msgstr ""
 
 #: client/header/activity-panel/index.js:157
 #: client/marketing/overview/installed-extensions/row.js:112
+#: client/task-list/index.js:167
 #: client/task-list/tasks/payments/components/PaymentAction.js:111
 msgid "Finish setup"
 msgstr ""
@@ -5306,29 +5309,20 @@ msgstr ""
 msgid "%1$s &lsaquo; %2$s &#8212; WooCommerce"
 msgstr ""
 
-#: client/header/index.js:70
-#: client/task-list/tasks.js:198
-msgid "Choose payment methods"
-msgstr ""
-
 #: client/header/index.js:71
-#: client/task-list/tasks.js:214
 msgid "Add tax rates"
 msgstr ""
 
 #: client/header/index.js:72
-#: client/task-list/tasks.js:249
 msgid "Personalize your store"
 msgstr ""
 
 #: client/header/index.js:73
 #: client/store-management-links/index.js:43
-#: client/task-list/tasks.js:141
 msgid "Add products"
 msgstr ""
 
 #: client/header/index.js:74
-#: client/task-list/tasks.js:227
 msgid "Set up shipping costs"
 msgstr ""
 
@@ -5810,35 +5804,35 @@ msgstr ""
 msgid "A new navigation for WooCommerce"
 msgstr ""
 
-#: client/payments/payment-recommendations.tsx:157
+#: client/payments/payment-recommendations.tsx:158
 #: client/task-list/tasks/payments/components/RecommendedRibbon.js:15
 #: client/task-list/tasks/payments/components/WCPayCard/WCPayCard.js:54
 #: client/task-list/tasks/products/products.js:30
 msgid "Recommended"
 msgstr ""
 
-#: client/payments/payment-recommendations.tsx:183
+#: client/payments/payment-recommendations.tsx:184
 msgid "Recommended ways to get paid"
 msgstr ""
 
-#: client/payments/payment-recommendations.tsx:194
+#: client/payments/payment-recommendations.tsx:195
 msgid ""
 "We recommend adding one of the following payment extensions to your store. "
 "The extension will be installed and activated for you when you click \"Get "
 "started\"."
 msgstr ""
 
-#: client/payments/payment-recommendations.tsx:202
+#: client/payments/payment-recommendations.tsx:203
 #: client/task-list/list.js:287
 msgid "Task List Options"
 msgstr ""
 
-#: client/payments/payment-recommendations.tsx:208
+#: client/payments/payment-recommendations.tsx:209
 #: client/task-list/list.js:295
 msgid "Hide this"
 msgstr ""
 
-#: client/payments/payment-recommendations.tsx:220
+#: client/payments/payment-recommendations.tsx:221
 msgid "See more options"
 msgstr ""
 
@@ -5947,53 +5941,54 @@ msgstr ""
 msgid "WooCommerce + Jetpack"
 msgstr ""
 
-#: client/profile-wizard/steps/business-details/data/extension-benefits.js:11
-msgid "The default all-in-one solution for WooCommerce email."
+#: client/profile-wizard/steps/business-details/data/extension-benefits.js:14
+msgid ""
+"Create and send purchase follow-up emails, newsletters, and promotional "
+"campaigns straight from your dashboard."
 msgstr ""
 
-#: client/profile-wizard/steps/business-details/data/extension-benefits.js:18
+#: client/profile-wizard/steps/business-details/data/extension-benefits.js:21
 msgid "Market on Facebook"
 msgstr ""
 
-#: client/profile-wizard/steps/business-details/data/extension-benefits.js:20
+#: client/profile-wizard/steps/business-details/data/extension-benefits.js:23
 msgid ""
 "Grow your business by targeting the right people and driving sales with "
 "Facebook."
 msgstr ""
 
-#: client/profile-wizard/steps/business-details/data/extension-benefits.js:27
+#: client/profile-wizard/steps/business-details/data/extension-benefits.js:30
 msgid "Drive traffic to your store with Google Listings and Ads"
 msgstr ""
 
-#: client/profile-wizard/steps/business-details/data/extension-benefits.js:32
+#: client/profile-wizard/steps/business-details/data/extension-benefits.js:35
 msgid ""
 "Get in front of shoppers and drive traffic so you can grow your business "
 "with Smart Shopping Campaigns and free listings."
 msgstr ""
 
-#: client/profile-wizard/steps/business-details/data/extension-benefits.js:39
+#: client/profile-wizard/steps/business-details/data/extension-benefits.js:42
 msgid "Contact customers with Mailchimp"
 msgstr ""
 
-#: client/profile-wizard/steps/business-details/data/extension-benefits.js:41
+#: client/profile-wizard/steps/business-details/data/extension-benefits.js:44
 msgid ""
 "Send targeted campaigns, recover abandoned carts and much more with "
 "Mailchimp."
 msgstr ""
 
-#: client/profile-wizard/steps/business-details/data/extension-benefits.js:48
+#: client/profile-wizard/steps/business-details/data/extension-benefits.js:51
 msgid "Email marketing for WooCommerce with Creative Mail"
 msgstr ""
 
-#: client/profile-wizard/steps/business-details/data/extension-benefits.js:53
+#: client/profile-wizard/steps/business-details/data/extension-benefits.js:56
 msgid ""
 "Create on-brand store campaigns, fast email promotions and customer "
 "retargeting with Creative Mail."
 msgstr ""
 
 #: client/profile-wizard/steps/business-details/data/extension-benefits.js:9
-#: packages/data/src/plugins/constants.ts:72
-msgid "MailPoet"
+msgid "All-in-one email marketing by MailPoet"
 msgstr ""
 
 #: client/profile-wizard/steps/business-details/data/platform-options.js:13
@@ -6446,6 +6441,7 @@ msgid "Marketing & Merchandising"
 msgstr ""
 
 #: client/store-management-links/index.js:52
+#: client/task-list/tasks.js:249
 msgid "Personalize my store"
 msgstr ""
 
@@ -6466,15 +6462,11 @@ msgstr ""
 msgid "Tax"
 msgstr ""
 
-#: client/task-list/index.js:167
-msgid "Get ready to start selling"
-msgstr ""
-
-#: client/task-list/index.js:187
+#: client/task-list/index.js:184
 msgid "Show things to do next"
 msgstr ""
 
-#: client/task-list/index.js:202
+#: client/task-list/index.js:199
 msgid "Things to do next"
 msgstr ""
 
@@ -6483,11 +6475,15 @@ msgid "Task dismissed"
 msgstr ""
 
 #: client/task-list/tasks.js:104
-msgid "Add %s to your store"
+msgid "Add %s to my store"
 msgstr ""
 
 #: client/task-list/tasks.js:122
 msgid "4 minutes"
+msgstr ""
+
+#: client/task-list/tasks.js:141
+msgid "Add my products"
 msgstr ""
 
 #: client/task-list/tasks.js:149
@@ -6504,6 +6500,14 @@ msgid ""
 "href=\"https://wordpress.com/tos/\" target=\"_blank\">Terms of Service</a>"
 msgstr ""
 
+#: client/task-list/tasks.js:214
+msgid "Set up tax"
+msgstr ""
+
+#: client/task-list/tasks.js:227
+msgid "Set up shipping"
+msgstr ""
+
 #: client/task-list/tasks.js:244
 msgid "1 minute"
 msgstr ""
@@ -6513,7 +6517,7 @@ msgid "2 minutes"
 msgstr ""
 
 #: client/task-list/tasks.js:97
-msgid "Add paid extensions to your store"
+msgid "Add paid extensions to my store"
 msgstr ""
 
 #: client/task-list/tasks/appearance.js:118
@@ -7578,6 +7582,10 @@ msgstr ""
 
 #: packages/data/src/plugins/constants.ts:67
 msgid "Google Listings and Ads"
+msgstr ""
+
+#: packages/data/src/plugins/constants.ts:72
+msgid "MailPoet"
 msgstr ""
 
 #: client/analytics/report/customers/config.js:73

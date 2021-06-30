@@ -82,7 +82,7 @@ this["wc"] = this["wc"] || {}; this["wc"]["navigationOptOut"] =
 /******/
 /******/
 /******/ 	// Load entry module and return exports
-/******/ 	return __webpack_require__(__webpack_require__.s = 615);
+/******/ 	return __webpack_require__(__webpack_require__.s = 604);
 /******/ })
 /************************************************************************/
 /******/ ({
@@ -106,7 +106,6 @@ function _assertThisInitialized(self) {
 }
 
 module.exports = _assertThisInitialized;
-module.exports["default"] = module.exports, module.exports.__esModule = true;
 
 /***/ }),
 
@@ -134,7 +133,7 @@ module.exports = function (index, length) {
 
 var getBuiltIn = __webpack_require__(36);
 var getOwnPropertyNamesModule = __webpack_require__(74);
-var getOwnPropertySymbolsModule = __webpack_require__(88);
+var getOwnPropertySymbolsModule = __webpack_require__(89);
 var anObject = __webpack_require__(19);
 
 // all object keys, includes non-enumerable and symbols
@@ -147,7 +146,7 @@ module.exports = getBuiltIn('Reflect', 'ownKeys') || function ownKeys(it) {
 
 /***/ }),
 
-/***/ 105:
+/***/ 106:
 /***/ (function(module, exports, __webpack_require__) {
 
 var DESCRIPTORS = __webpack_require__(25);
@@ -170,7 +169,7 @@ module.exports = DESCRIPTORS ? Object.defineProperties : function defineProperti
 
 /***/ }),
 
-/***/ 108:
+/***/ 109:
 /***/ (function(module, exports, __webpack_require__) {
 
 var has = __webpack_require__(22);
@@ -191,7 +190,7 @@ module.exports = function (target, source) {
 
 /***/ }),
 
-/***/ 109:
+/***/ 110:
 /***/ (function(module, exports, __webpack_require__) {
 
 var global = __webpack_require__(8);
@@ -228,7 +227,6 @@ function _classCallCheck(instance, Constructor) {
 }
 
 module.exports = _classCallCheck;
-module.exports["default"] = module.exports, module.exports.__esModule = true;
 
 /***/ }),
 
@@ -252,14 +250,13 @@ function _createClass(Constructor, protoProps, staticProps) {
 }
 
 module.exports = _createClass;
-module.exports["default"] = module.exports, module.exports.__esModule = true;
 
 /***/ }),
 
 /***/ 16:
 /***/ (function(module, exports, __webpack_require__) {
 
-var setPrototypeOf = __webpack_require__(176);
+var setPrototypeOf = __webpack_require__(177);
 
 function _inherits(subClass, superClass) {
   if (typeof superClass !== "function" && superClass !== null) {
@@ -277,14 +274,13 @@ function _inherits(subClass, superClass) {
 }
 
 module.exports = _inherits;
-module.exports["default"] = module.exports, module.exports.__esModule = true;
 
 /***/ }),
 
 /***/ 17:
 /***/ (function(module, exports, __webpack_require__) {
 
-var _typeof = __webpack_require__(62)["default"];
+var _typeof = __webpack_require__(62);
 
 var assertThisInitialized = __webpack_require__(10);
 
@@ -297,7 +293,6 @@ function _possibleConstructorReturn(self, call) {
 }
 
 module.exports = _possibleConstructorReturn;
-module.exports["default"] = module.exports, module.exports.__esModule = true;
 
 /***/ }),
 
@@ -310,7 +305,7 @@ var aFunction = __webpack_require__(61);
 var anObject = __webpack_require__(19);
 var isObject = __webpack_require__(23);
 var create = __webpack_require__(69);
-var bind = __webpack_require__(205);
+var bind = __webpack_require__(206);
 var fails = __webpack_require__(12);
 
 var nativeConstruct = getBuiltIn('Reflect', 'construct');
@@ -359,7 +354,7 @@ $({ target: 'Reflect', stat: true, forced: FORCED, sham: FORCED }, {
 
 /***/ }),
 
-/***/ 176:
+/***/ 177:
 /***/ (function(module, exports) {
 
 function _setPrototypeOf(o, p) {
@@ -368,12 +363,10 @@ function _setPrototypeOf(o, p) {
     return o;
   };
 
-  module.exports["default"] = module.exports, module.exports.__esModule = true;
   return _setPrototypeOf(o, p);
 }
 
 module.exports = _setPrototypeOf;
-module.exports["default"] = module.exports, module.exports.__esModule = true;
 
 /***/ }),
 
@@ -398,7 +391,7 @@ module.exports = function (it) {
 
 /***/ }),
 
-/***/ 205:
+/***/ 206:
 /***/ (function(module, exports, __webpack_require__) {
 
 "use strict";
@@ -476,7 +469,7 @@ var getOwnPropertyDescriptor = __webpack_require__(45).f;
 var createNonEnumerableProperty = __webpack_require__(31);
 var redefine = __webpack_require__(37);
 var setGlobal = __webpack_require__(54);
-var copyConstructorProperties = __webpack_require__(108);
+var copyConstructorProperties = __webpack_require__(109);
 var isForced = __webpack_require__(82);
 
 /*
@@ -753,7 +746,7 @@ module.exports = {};
 /***/ 50:
 /***/ (function(module, exports, __webpack_require__) {
 
-var NATIVE_WEAK_MAP = __webpack_require__(109);
+var NATIVE_WEAK_MAP = __webpack_require__(110);
 var global = __webpack_require__(8);
 var isObject = __webpack_require__(23);
 var createNonEnumerableProperty = __webpack_require__(31);
@@ -913,6 +906,13 @@ module.exports = false;
 
 /***/ }),
 
+/***/ 591:
+/***/ (function(module, exports, __webpack_require__) {
+
+// extracted by mini-css-extract-plugin
+
+/***/ }),
+
 /***/ 60:
 /***/ (function(module, exports, __webpack_require__) {
 
@@ -928,26 +928,7 @@ module.exports = function (key) {
 
 /***/ }),
 
-/***/ 602:
-/***/ (function(module, exports, __webpack_require__) {
-
-// extracted by mini-css-extract-plugin
-
-/***/ }),
-
-/***/ 61:
-/***/ (function(module, exports) {
-
-module.exports = function (it) {
-  if (typeof it != 'function') {
-    throw TypeError(String(it) + ' is not a function');
-  } return it;
-};
-
-
-/***/ }),
-
-/***/ 615:
+/***/ 604:
 /***/ (function(module, __webpack_exports__, __webpack_require__) {
 
 "use strict";
@@ -1070,7 +1051,7 @@ var container_NavigationOptOutContainer = /*#__PURE__*/function (_Component) {
   return NavigationOptOutContainer;
 }(external_wp_element_["Component"]);
 // EXTERNAL MODULE: ./client/wp-admin-scripts/navigation-opt-out/style.scss
-var style = __webpack_require__(602);
+var style = __webpack_require__(591);
 
 // CONCATENATED MODULE: ./client/wp-admin-scripts/navigation-opt-out/index.js
 
@@ -1091,6 +1072,18 @@ Object(external_wp_element_["render"])(Object(external_wp_element_["createElemen
 
 /***/ }),
 
+/***/ 61:
+/***/ (function(module, exports) {
+
+module.exports = function (it) {
+  if (typeof it != 'function') {
+    throw TypeError(String(it) + ' is not a function');
+  } return it;
+};
+
+
+/***/ }),
+
 /***/ 62:
 /***/ (function(module, exports) {
 
@@ -1101,21 +1094,16 @@ function _typeof(obj) {
     module.exports = _typeof = function _typeof(obj) {
       return typeof obj;
     };
-
-    module.exports["default"] = module.exports, module.exports.__esModule = true;
   } else {
     module.exports = _typeof = function _typeof(obj) {
       return obj && typeof Symbol === "function" && obj.constructor === Symbol && obj !== Symbol.prototype ? "symbol" : typeof obj;
     };
-
-    module.exports["default"] = module.exports, module.exports.__esModule = true;
   }
 
   return _typeof(obj);
 }
 
 module.exports = _typeof;
-module.exports["default"] = module.exports, module.exports.__esModule = true;
 
 /***/ }),
 
@@ -1187,7 +1175,7 @@ module.exports = function (key) {
 /***/ (function(module, exports, __webpack_require__) {
 
 var anObject = __webpack_require__(19);
-var defineProperties = __webpack_require__(105);
+var defineProperties = __webpack_require__(106);
 var enumBugKeys = __webpack_require__(56);
 var hiddenKeys = __webpack_require__(47);
 var html = __webpack_require__(97);
@@ -1275,12 +1263,10 @@ function _getPrototypeOf(o) {
   module.exports = _getPrototypeOf = Object.setPrototypeOf ? Object.getPrototypeOf : function _getPrototypeOf(o) {
     return o.__proto__ || Object.getPrototypeOf(o);
   };
-  module.exports["default"] = module.exports, module.exports.__esModule = true;
   return _getPrototypeOf(o);
 }
 
 module.exports = _getPrototypeOf;
-module.exports["default"] = module.exports, module.exports.__esModule = true;
 
 /***/ }),
 
@@ -1376,7 +1362,7 @@ module.exports =
   // eslint-disable-next-line no-new-func -- fallback
   (function () { return this; })() || Function('return this')();
 
-/* WEBPACK VAR INJECTION */}.call(this, __webpack_require__(93)))
+/* WEBPACK VAR INJECTION */}.call(this, __webpack_require__(88)))
 
 /***/ }),
 
@@ -1491,14 +1477,6 @@ module.exports = {
 /***/ 88:
 /***/ (function(module, exports) {
 
-exports.f = Object.getOwnPropertySymbols;
-
-
-/***/ }),
-
-/***/ 93:
-/***/ (function(module, exports) {
-
 var g;
 
 // This works in non-strict mode
@@ -1519,6 +1497,14 @@ try {
 // easier to handle this case. if(!global) { ...}
 
 module.exports = g;
+
+
+/***/ }),
+
+/***/ 89:
+/***/ (function(module, exports) {
+
+exports.f = Object.getOwnPropertySymbols;
 
 
 /***/ }),

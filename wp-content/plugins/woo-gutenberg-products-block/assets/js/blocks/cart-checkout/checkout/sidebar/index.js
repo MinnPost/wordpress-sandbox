@@ -1,6 +1,7 @@
 /**
  * External dependencies
  */
+
 import {
 	OrderSummary,
 	TotalsCoupon,
@@ -13,7 +14,9 @@ import {
 	TotalsFees,
 	TotalsTaxes,
 	ExperimentalOrderMeta,
+	ExperimentalDiscountsMeta,
 } from '@woocommerce/blocks-checkout';
+
 import { getCurrencyFromPriceResponse } from '@woocommerce/price-format';
 import { useShippingDataContext } from '@woocommerce/base-context';
 import {
@@ -27,6 +30,7 @@ const CheckoutSidebar = ( {
 	cartItems = [],
 	cartFees = [],
 	cartTotals = {},
+	showRateAfterTaxName = false,
 } ) => {
 	const {
 		applyCoupon,
@@ -47,6 +51,11 @@ const CheckoutSidebar = ( {
 		cart,
 	};
 
+	const discountsSlotFillProps = {
+		extensions,
+		cart,
+	};
+
 	return (
 		<>
 			<OrderSummary cartItems={ cartItems } />
@@ -59,6 +68,14 @@ const CheckoutSidebar = ( {
 				removeCoupon={ removeCoupon }
 				values={ cartTotals }
 			/>
+			{ getSetting( 'couponsEnabled', true ) && (
+				<TotalsCoupon
+					onSubmit={ applyCoupon }
+					initialOpen={ false }
+					isLoading={ isApplyingCoupon }
+				/>
+			) }
+			<ExperimentalDiscountsMeta.Slot { ...discountsSlotFillProps } />
 			{ needsShipping && (
 				<TotalsShipping
 					showCalculator={ false }
@@ -70,14 +87,8 @@ const CheckoutSidebar = ( {
 			{ ! getSetting( 'displayCartPricesIncludingTax', false ) && (
 				<TotalsTaxes
 					currency={ totalsCurrency }
+					showRateAfterTaxName={ showRateAfterTaxName }
 					values={ cartTotals }
-				/>
-			) }
-			{ getSetting( 'couponsEnabled', true ) && (
-				<TotalsCoupon
-					onSubmit={ applyCoupon }
-					initialOpen={ false }
-					isLoading={ isApplyingCoupon }
 				/>
 			) }
 			<TotalsFooterItem

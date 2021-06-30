@@ -82,7 +82,7 @@ this["wc"] = this["wc"] || {}; this["wc"]["onboardingProductImportNotice"] =
 /******/
 /******/
 /******/ 	// Load entry module and return exports
-/******/ 	return __webpack_require__(__webpack_require__.s = 605);
+/******/ 	return __webpack_require__(__webpack_require__.s = 594);
 /******/ })
 /************************************************************************/
 /******/ ({
@@ -111,7 +111,7 @@ module.exports = function (index, length) {
 
 var getBuiltIn = __webpack_require__(36);
 var getOwnPropertyNamesModule = __webpack_require__(74);
-var getOwnPropertySymbolsModule = __webpack_require__(88);
+var getOwnPropertySymbolsModule = __webpack_require__(89);
 var anObject = __webpack_require__(19);
 
 // all object keys, includes non-enumerable and symbols
@@ -124,7 +124,7 @@ module.exports = getBuiltIn('Reflect', 'ownKeys') || function ownKeys(it) {
 
 /***/ }),
 
-/***/ 105:
+/***/ 106:
 /***/ (function(module, exports, __webpack_require__) {
 
 var DESCRIPTORS = __webpack_require__(25);
@@ -147,14 +147,14 @@ module.exports = DESCRIPTORS ? Object.defineProperties : function defineProperti
 
 /***/ }),
 
-/***/ 107:
+/***/ 108:
 /***/ (function(module, exports, __webpack_require__) {
 
 "use strict";
 
 var $ = __webpack_require__(26);
 var $includes = __webpack_require__(85).includes;
-var addToUnscopables = __webpack_require__(118);
+var addToUnscopables = __webpack_require__(120);
 
 // `Array.prototype.includes` method
 // https://tc39.es/ecma262/#sec-array.prototype.includes
@@ -170,7 +170,7 @@ addToUnscopables('includes');
 
 /***/ }),
 
-/***/ 108:
+/***/ 109:
 /***/ (function(module, exports, __webpack_require__) {
 
 var has = __webpack_require__(22);
@@ -191,7 +191,7 @@ module.exports = function (target, source) {
 
 /***/ }),
 
-/***/ 109:
+/***/ 110:
 /***/ (function(module, exports, __webpack_require__) {
 
 var global = __webpack_require__(8);
@@ -204,7 +204,7 @@ module.exports = typeof WeakMap === 'function' && /native code/.test(inspectSour
 
 /***/ }),
 
-/***/ 110:
+/***/ 111:
 /***/ (function(module, exports, __webpack_require__) {
 
 var NATIVE_SYMBOL = __webpack_require__(76);
@@ -217,7 +217,21 @@ module.exports = NATIVE_SYMBOL
 
 /***/ }),
 
-/***/ 118:
+/***/ 12:
+/***/ (function(module, exports) {
+
+module.exports = function (exec) {
+  try {
+    return !!exec();
+  } catch (error) {
+    return true;
+  }
+};
+
+
+/***/ }),
+
+/***/ 120:
 /***/ (function(module, exports, __webpack_require__) {
 
 var wellKnownSymbol = __webpack_require__(18);
@@ -244,20 +258,6 @@ module.exports = function (key) {
 
 /***/ }),
 
-/***/ 12:
-/***/ (function(module, exports) {
-
-module.exports = function (exec) {
-  try {
-    return !!exec();
-  } catch (error) {
-    return true;
-  }
-};
-
-
-/***/ }),
-
 /***/ 172:
 /***/ (function(module, exports) {
 
@@ -273,7 +273,7 @@ var shared = __webpack_require__(70);
 var has = __webpack_require__(22);
 var uid = __webpack_require__(68);
 var NATIVE_SYMBOL = __webpack_require__(76);
-var USE_SYMBOL_AS_UID = __webpack_require__(110);
+var USE_SYMBOL_AS_UID = __webpack_require__(111);
 
 var WellKnownSymbolsStore = shared('wks');
 var Symbol = global.Symbol;
@@ -356,7 +356,7 @@ var getOwnPropertyDescriptor = __webpack_require__(45).f;
 var createNonEnumerableProperty = __webpack_require__(31);
 var redefine = __webpack_require__(37);
 var setGlobal = __webpack_require__(54);
-var copyConstructorProperties = __webpack_require__(108);
+var copyConstructorProperties = __webpack_require__(109);
 var isForced = __webpack_require__(82);
 
 /*
@@ -575,7 +575,7 @@ module.exports = function (it) {
 /* harmony import */ var _babel_runtime_helpers_typeof__WEBPACK_IMPORTED_MODULE_0___default = /*#__PURE__*/__webpack_require__.n(_babel_runtime_helpers_typeof__WEBPACK_IMPORTED_MODULE_0__);
 /* harmony import */ var core_js_modules_es_object_keys_js__WEBPACK_IMPORTED_MODULE_1__ = __webpack_require__(83);
 /* harmony import */ var core_js_modules_es_object_keys_js__WEBPACK_IMPORTED_MODULE_1___default = /*#__PURE__*/__webpack_require__.n(core_js_modules_es_object_keys_js__WEBPACK_IMPORTED_MODULE_1__);
-/* harmony import */ var core_js_modules_es_array_includes_js__WEBPACK_IMPORTED_MODULE_2__ = __webpack_require__(107);
+/* harmony import */ var core_js_modules_es_array_includes_js__WEBPACK_IMPORTED_MODULE_2__ = __webpack_require__(108);
 /* harmony import */ var core_js_modules_es_array_includes_js__WEBPACK_IMPORTED_MODULE_2___default = /*#__PURE__*/__webpack_require__.n(core_js_modules_es_array_includes_js__WEBPACK_IMPORTED_MODULE_2__);
 /* harmony import */ var _wordpress_i18n__WEBPACK_IMPORTED_MODULE_3__ = __webpack_require__(2);
 /* harmony import */ var _wordpress_i18n__WEBPACK_IMPORTED_MODULE_3___default = /*#__PURE__*/__webpack_require__.n(_wordpress_i18n__WEBPACK_IMPORTED_MODULE_3__);
@@ -757,7 +757,7 @@ module.exports = function (argument) {
 /***/ 50:
 /***/ (function(module, exports, __webpack_require__) {
 
-var NATIVE_WEAK_MAP = __webpack_require__(109);
+var NATIVE_WEAK_MAP = __webpack_require__(110);
 var global = __webpack_require__(8);
 var isObject = __webpack_require__(23);
 var createNonEnumerableProperty = __webpack_require__(31);
@@ -917,22 +917,7 @@ module.exports = false;
 
 /***/ }),
 
-/***/ 60:
-/***/ (function(module, exports, __webpack_require__) {
-
-var shared = __webpack_require__(70);
-var uid = __webpack_require__(68);
-
-var keys = shared('keys');
-
-module.exports = function (key) {
-  return keys[key] || (keys[key] = uid(key));
-};
-
-
-/***/ }),
-
-/***/ 605:
+/***/ 594:
 /***/ (function(module, __webpack_exports__, __webpack_require__) {
 
 "use strict";
@@ -970,6 +955,21 @@ _wordpress_dom_ready__WEBPACK_IMPORTED_MODULE_1___default()(function () {
 
 /***/ }),
 
+/***/ 60:
+/***/ (function(module, exports, __webpack_require__) {
+
+var shared = __webpack_require__(70);
+var uid = __webpack_require__(68);
+
+var keys = shared('keys');
+
+module.exports = function (key) {
+  return keys[key] || (keys[key] = uid(key));
+};
+
+
+/***/ }),
+
 /***/ 62:
 /***/ (function(module, exports) {
 
@@ -980,21 +980,16 @@ function _typeof(obj) {
     module.exports = _typeof = function _typeof(obj) {
       return typeof obj;
     };
-
-    module.exports["default"] = module.exports, module.exports.__esModule = true;
   } else {
     module.exports = _typeof = function _typeof(obj) {
       return obj && typeof Symbol === "function" && obj.constructor === Symbol && obj !== Symbol.prototype ? "symbol" : typeof obj;
     };
-
-    module.exports["default"] = module.exports, module.exports.__esModule = true;
   }
 
   return _typeof(obj);
 }
 
 module.exports = _typeof;
-module.exports["default"] = module.exports, module.exports.__esModule = true;
 
 /***/ }),
 
@@ -1066,7 +1061,7 @@ module.exports = function (key) {
 /***/ (function(module, exports, __webpack_require__) {
 
 var anObject = __webpack_require__(19);
-var defineProperties = __webpack_require__(105);
+var defineProperties = __webpack_require__(106);
 var enumBugKeys = __webpack_require__(56);
 var hiddenKeys = __webpack_require__(47);
 var html = __webpack_require__(97);
@@ -1255,7 +1250,7 @@ module.exports = classof(global.process) == 'process';
 /***/ (function(module, exports, __webpack_require__) {
 
 var global = __webpack_require__(8);
-var userAgent = __webpack_require__(89);
+var userAgent = __webpack_require__(90);
 
 var process = global.process;
 var versions = process && process.versions;
@@ -1295,7 +1290,7 @@ module.exports =
   // eslint-disable-next-line no-new-func -- fallback
   (function () { return this; })() || Function('return this')();
 
-/* WEBPACK VAR INJECTION */}.call(this, __webpack_require__(93)))
+/* WEBPACK VAR INJECTION */}.call(this, __webpack_require__(88)))
 
 /***/ }),
 
@@ -1431,24 +1426,6 @@ module.exports = {
 /***/ 88:
 /***/ (function(module, exports) {
 
-exports.f = Object.getOwnPropertySymbols;
-
-
-/***/ }),
-
-/***/ 89:
-/***/ (function(module, exports, __webpack_require__) {
-
-var getBuiltIn = __webpack_require__(36);
-
-module.exports = getBuiltIn('navigator', 'userAgent') || '';
-
-
-/***/ }),
-
-/***/ 93:
-/***/ (function(module, exports) {
-
 var g;
 
 // This works in non-strict mode
@@ -1469,6 +1446,24 @@ try {
 // easier to handle this case. if(!global) { ...}
 
 module.exports = g;
+
+
+/***/ }),
+
+/***/ 89:
+/***/ (function(module, exports) {
+
+exports.f = Object.getOwnPropertySymbols;
+
+
+/***/ }),
+
+/***/ 90:
+/***/ (function(module, exports, __webpack_require__) {
+
+var getBuiltIn = __webpack_require__(36);
+
+module.exports = getBuiltIn('navigator', 'userAgent') || '';
 
 
 /***/ }),

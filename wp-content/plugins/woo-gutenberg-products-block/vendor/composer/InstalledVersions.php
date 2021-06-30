@@ -20,6 +20,8 @@ use Composer\Semver\VersionParser;
 
 
 
+
+
 class InstalledVersions
 {
 private static $installed = array (
@@ -30,7 +32,7 @@ private static $installed = array (
     'aliases' => 
     array (
     ),
-    'reference' => 'e78f5855b8ec80e32b265081f2286250074298dc',
+    'reference' => 'f06ffca19db1411f9a78d229238bda3c1358a96c',
     'name' => 'woocommerce/woocommerce-blocks',
   ),
   'versions' => 
@@ -74,7 +76,7 @@ private static $installed = array (
       'aliases' => 
       array (
       ),
-      'reference' => 'e78f5855b8ec80e32b265081f2286250074298dc',
+      'reference' => 'f06ffca19db1411f9a78d229238bda3c1358a96c',
     ),
   ),
 );
@@ -93,7 +95,6 @@ $packages = array();
 foreach (self::getInstalled() as $installed) {
 $packages[] = array_keys($installed['versions']);
 }
-
 
 if (1 === \count($packages)) {
 return $packages[0];
@@ -286,6 +287,7 @@ public static function reload($data)
 self::$installed = $data;
 self::$installedByVendor = array();
 }
+
 
 
 

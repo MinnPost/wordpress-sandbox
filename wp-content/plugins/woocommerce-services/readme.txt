@@ -3,8 +3,8 @@ Contributors: woocommerce, automattic, woothemes, allendav, kellychoffman, jkudi
 Tags: shipping, stamps, usps, woocommerce, taxes, payment, dhl, labels
 Requires at least: 4.6
 Requires PHP: 5.3
-Tested up to: 5.6
-Stable tag: 1.25.12
+Tested up to: 5.7
+Stable tag: 1.25.14
 License: GPLv2 or later
 License URI: http://www.gnu.org/licenses/gpl-2.0.html
 
@@ -75,6 +75,20 @@ The source code is freely available [in GitHub](https://github.com/Automattic/wo
 6. Checking and exporting the label purchase reports
 
 == Changelog ==
+
+= 1.25.14 - 2021-06-15 =
+* Fix   - Issue with printing blank label in Safari.
+* Fix   - DHL Express labels - require customs form when shipping to Puerto Rico.
+* Fix   - Update DHL Express pickup link.
+
+= 1.25.13 - 2021-05-20 =
+* Fix   - Prevent new sites from retrying failed connections.
+* Fix   - Data encoding when entities are part of order meta.
+* Tweak - Update WC version support in headers.
+* Fix   - Plugin deletion when WooCommerce core is not present.
+* Tweak - Rename automatic tax names for US.
+* Fix   - Check Jetpack constant defined by name.
+* Fix   - Sometimes taxes charged on shipping when they should not.
 
 = 1.25.12 - 2021-04-21 =
 * Fix   - UPS account connection form retry on invalid submission.
