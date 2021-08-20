@@ -69,11 +69,17 @@ if ( ! class_exists( 'um\admin\core\Admin_DragDrop' ) ) {
 
 					$row_id = str_replace( '_um_row_', '', $key );
 
+					if ( strstr( $_POST[ '_um_rowcols_' . $row_id . '_cols' ], ':' ) ) {
+						$cols = sanitize_text_field( $_POST[ '_um_rowcols_' . $row_id . '_cols' ] );
+					} else {
+						$cols = absint( $_POST[ '_um_rowcols_' . $row_id . '_cols' ] );
+					}
+
 					$row_array = array(
 						'type'     => 'row',
 						'id'       => sanitize_key( $value ),
 						'sub_rows' => absint( $_POST[ '_um_rowsub_' . $row_id . '_rows' ] ),
-						'cols'     => absint( $_POST[ '_um_rowcols_' . $row_id . '_cols' ] ),
+						'cols'     => $cols,
 						'origin'   => sanitize_key( $_POST[ '_um_roworigin_' . $row_id . '_val' ] ),
 					);
 
@@ -131,7 +137,7 @@ if ( ! class_exists( 'um\admin\core\Admin_DragDrop' ) ) {
 				if ( 0 === strpos( $key, 'um_group_' ) ) {
 					$field_key = str_replace( 'um_group_', '', $key );
 					if ( isset( $fields[ $field_key ] ) ) {
-						$fields[ $field_key ]['in_group'] = absint( $value );
+						$fields[ $field_key ]['in_group'] = ! empty( $value ) ? absint( $value ) : '';
 					}
 				}
 			}

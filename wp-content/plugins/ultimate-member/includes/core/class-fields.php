@@ -3919,13 +3919,17 @@ if ( ! class_exists( 'um\core\Fields' ) ) {
 						for ( $c = 0; $c < $sub_rows; $c++ ) {
 
 							// cols
-							$cols = ( isset( $row_array['cols'] ) ) ? $row_array['cols'] : 1;
-							if ( strstr( $cols, ':' ) ) {
-								$col_split = explode( ':', $cols );
+							$cols = isset( $row_array['cols'] ) ? $row_array['cols'] : 1;
+							if ( is_numeric( $cols ) ) {
+								$cols_num = (int) $cols;
 							} else {
-								$col_split = array( $cols );
+								if ( strstr( $cols, ':' ) ) {
+									$col_split = explode( ':', $cols );
+								} else {
+									$col_split = array( $cols );
+								}
+								$cols_num = $col_split[ $c ];
 							}
-							$cols_num = $col_split[ $c ];
 
 							// sub row fields
 							$subrow_fields = null;
@@ -4401,13 +4405,17 @@ if ( ! class_exists( 'um\core\Fields' ) ) {
 						for ( $c = 0; $c < $sub_rows; $c++ ) {
 
 							// cols
-							$cols = ( isset( $row_array['cols'] ) ) ? $row_array['cols'] : 1;
-							if ( strstr( $cols, ':' ) ) {
-								$col_split = explode( ':', $cols );
+							$cols = isset( $row_array['cols'] ) ? $row_array['cols'] : 1;
+							if ( is_numeric( $cols ) ) {
+								$cols_num = (int) $cols;
 							} else {
-								$col_split = array( $cols );
+								if ( strstr( $cols, ':' ) ) {
+									$col_split = explode( ':', $cols );
+								} else {
+									$col_split = array( $cols );
+								}
+								$cols_num = $col_split[ $c ];
 							}
-							$cols_num = $col_split[ $c ];
 
 							// sub row fields
 							$subrow_fields = null;

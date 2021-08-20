@@ -503,6 +503,12 @@ if ( ! class_exists( 'um\admin\core\Admin_Settings' ) ) {
 					'conditional' => array( 'accessible', '=', 2 ),
 				),
 				array(
+					'id'      => 'restricted_access_post_title',
+					'type'    => 'text',
+					'label'   => __( 'Restricted Access Post Title', 'ultimate-member' ),
+					'tooltip' => __( 'This is the post title shown to users that do not have permission to view the content', 'ultimate-member' ),
+				),
+				array(
 					'id'      => 'restricted_access_message',
 					'type'    => 'wp_editor',
 					'label'   => __( 'Restricted Access Message', 'ultimate-member' ),
@@ -513,22 +519,25 @@ if ( ! class_exists( 'um\admin\core\Admin_Settings' ) ) {
 			$settings_map = array_merge(
 				$settings_map,
 				array(
-					'accessible'                => array(
+					'accessible'                   => array(
 						'sanitize' => 'int',
 					),
-					'access_redirect'           => array(
+					'access_redirect'              => array(
 						'sanitize' => 'url',
 					),
-					'access_exclude_uris'       => array(
+					'access_exclude_uris'          => array(
 						'sanitize' => 'url',
 					),
-					'home_page_accessible'      => array(
+					'home_page_accessible'         => array(
 						'sanitize' => 'bool',
 					),
-					'category_page_accessible'  => array(
+					'category_page_accessible'     => array(
 						'sanitize' => 'bool',
 					),
-					'restricted_access_message' => array(
+					'restricted_access_post_title' => array(
+						'sanitize' => 'text',
+					),
+					'restricted_access_message'    => array(
 						'sanitize' => 'wp_kses',
 					),
 				)
@@ -542,12 +551,12 @@ if ( ! class_exists( 'um\admin\core\Admin_Settings' ) ) {
 						array(
 							'id'    => 'restricted_blocks',
 							'type'  => 'checkbox',
-							'label' => __( 'Allow Gutenberg Blocks restriction options', 'ultimate-member' ),
+							'label' => __( 'Enable the "Content Restriction" settings for the Gutenberg Blocks', 'ultimate-member' ),
 						),
 						array(
 							'id'          => 'restricted_block_message',
 							'type'        => 'textarea',
-							'label'       => __( 'Restricted Block Message', 'ultimate-member' ),
+							'label'       => __( 'Restricted Access Block Message', 'ultimate-member' ),
 							'tooltip'     => __( 'This is the message shown to users that do not have permission to view the block\'s content', 'ultimate-member' ),
 							'conditional' => array( 'restricted_blocks', '=', 1 ),
 						),
@@ -578,8 +587,8 @@ if ( ! class_exists( 'um\admin\core\Admin_Settings' ) ) {
 					array(
 						'id'      => 'restricted_access_post_metabox',
 						'type'    => 'multi_checkbox',
-						'label'   => __( 'Restricted Access to Posts', 'ultimate-member' ),
-						'tooltip' => __( 'Restriction content of the current Posts', 'ultimate-member' ),
+						'label'   => __( 'Enable the "Content Restriction" settings for post types', 'ultimate-member' ),
+						'tooltip' => __( 'Check post types for which you plan to use the "Content Restriction" settings', 'ultimate-member' ),
 						'options' => $post_types_options,
 						'columns' => 3,
 						'value'   => $restricted_access_post_metabox_value,
@@ -588,8 +597,8 @@ if ( ! class_exists( 'um\admin\core\Admin_Settings' ) ) {
 					array(
 						'id'      => 'restricted_access_taxonomy_metabox',
 						'type'    => 'multi_checkbox',
-						'label'   => __( 'Restricted Access to Taxonomies', 'ultimate-member' ),
-						'tooltip' => __( 'Restriction content of the current Taxonomies', 'ultimate-member' ),
+						'label'   => __( 'Enable the "Content Restriction" settings for taxonomies', 'ultimate-member' ),
+						'tooltip' => __( 'Check taxonomies for which you plan to use the "Content Restriction" settings', 'ultimate-member' ),
 						'options' => $taxonomies_options,
 						'columns' => 3,
 						'value'   => $restricted_access_taxonomy_metabox_value,
@@ -757,10 +766,10 @@ if ( ! class_exists( 'um\admin\core\Admin_Settings' ) ) {
 						'sanitize' => 'text',
 					),
 					'profile_max_width'                     => array(
-						'sanitize' => 'absint',
+						'sanitize' => 'text',
 					),
 					'profile_area_max_width'                => array(
-						'sanitize' => 'absint',
+						'sanitize' => 'text',
 					),
 					'profile_icons'                         => array(
 						'sanitize' => 'key',
@@ -826,7 +835,7 @@ if ( ! class_exists( 'um\admin\core\Admin_Settings' ) ) {
 						'sanitize' => 'text',
 					),
 					'register_max_width'                    => array(
-						'sanitize' => 'absint',
+						'sanitize' => 'text',
 					),
 					'register_align'                        => array(
 						'sanitize' => 'key',
@@ -853,7 +862,7 @@ if ( ! class_exists( 'um\admin\core\Admin_Settings' ) ) {
 						'sanitize' => 'text',
 					),
 					'login_max_width'                       => array(
-						'sanitize' => 'absint',
+						'sanitize' => 'text',
 					),
 					'login_align'                           => array(
 						'sanitize' => 'key',
