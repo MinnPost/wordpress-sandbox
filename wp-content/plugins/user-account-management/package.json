@@ -1,0 +1,50 @@
+{
+  "name": "user-account-management",
+  "title": "User Account Management",
+  "description": "",
+  "version": "0.0.19",
+  "main": "Gulpfile.js",
+  "repository": {
+    "type": "git",
+    "url": "git+https://github.com/MinnPost/user-account-management.git"
+  },
+  "author": "MinnPost",
+  "license": "GPL-2.0",
+  "bugs": {
+    "url": "https://github.com/MinnPost/user-account-management/issues"
+  },
+  "homepage": "https://github.com/MinnPost/user-account-management#readme",
+  "devDependencies": {
+    "@babel/core": "^7.11.6",
+    "@babel/preset-env": "^7.11.5",
+    "autoprefixer": "^9.8.6",
+    "browser-sync": "^2.26.12",
+    "css-mqpacker": "^7.0.0",
+    "cssnano": "^4.1.10",
+    "eslint-config-wordpress": "^2.0.0",
+    "fs": "0.0.2",
+    "gulp": "^4.0.2",
+    "gulp-babel": "^8.0.0",
+    "gulp-concat": "^2.6.1",
+    "gulp-eslint": "^6.0.0",
+    "gulp-plumber": "^1.2.1",
+    "gulp-postcss": "^8.0.0",
+    "gulp-rename": "^2.0.0",
+    "gulp-sass": "^4.1.0",
+    "gulp-sass-glob": "^1.1.0",
+    "gulp-sort": "~2",
+    "gulp-sourcemaps": "^2.6.5",
+    "gulp-stylelint": "^13.0.0",
+    "gulp-uglify": "^3.0.2",
+    "gulp-wp-pot": "^2.4.3",
+    "npm-check-updates": "^8.1.1",
+    "stylelint": "^13.7.0",
+    "stylelint-config-wordpress": "^17.0.0"
+  },
+  "browserslist": [
+    "last 2 version",
+    "> 1%",
+    "maintained node versions",
+    "not dead"
+  ]
+}

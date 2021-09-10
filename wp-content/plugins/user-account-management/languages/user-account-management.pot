@@ -1,0 +1,408 @@
+# Copyright (C) 2020 user-account-management
+# This file is distributed under the same license as the user-account-management package.
+msgid ""
+msgstr ""
+"Project-Id-Version: user-account-management\n"
+"MIME-Version: 1.0\n"
+"Content-Type: text/plain; charset=UTF-8\n"
+"Content-Transfer-Encoding: 8bit\n"
+"X-Poedit-Basepath: ..\n"
+"X-Poedit-KeywordsList: __;_e;_ex:1,2c;_n:1,2;_n_noop:1,2;_nx:1,2,4c;_nx_noop:1,2,3c;_x:1,2c;esc_attr__;esc_attr_e;esc_attr_x:1,2c;esc_html__;esc_html_e;esc_html_x:1,2c\n"
+"X-Poedit-SearchPath-0: .\n"
+"X-Poedit-SearchPathExcluded-0: *.js\n"
+"X-Poedit-SourceCharset: UTF-8\n"
+"Plural-Forms: nplurals=2; plural=(n != 1);\n"
+
+#: classes/class-user-account-management-account.php:124, classes/class-user-account-management-account.php:145, classes/class-user-account-management-login.php:214, classes/class-user-account-management-register.php:161
+msgid "You are already signed in."
+msgstr ""
+
+#: classes/class-user-account-management-account.php:164
+msgid "Invalid password reset link."
+msgstr ""
+
+#: classes/class-user-account-management-account.php:199, classes/class-user-account-management-account.php:234
+msgid "You do not have permission to access this page."
+msgstr ""
+
+#: classes/class-user-account-management-account.php:192
+msgid "reset your password"
+msgstr ""
+
+#: classes/class-user-account-management-account.php:247
+msgid "You are not signed in."
+msgstr ""
+
+#. translators: placeholder refers to site name
+#: classes/class-user-account-management-activate.php:60
+msgid "Your %1$s account"
+msgstr ""
+
+#. translators: placeholder refers to site name
+#: classes/class-user-account-management-activate.php:69
+msgid "Log in to %1$s"
+msgstr ""
+
+#. translators: placeholder refers to site name
+#: classes/class-user-account-management-activate.php:79
+msgid "Create your %1$s account"
+msgstr ""
+
+#: classes/class-user-account-management-activate.php:86
+msgid "Forgot Your Password?"
+msgstr ""
+
+#: classes/class-user-account-management-activate.php:91
+msgid "Set a New Password"
+msgstr ""
+
+#: classes/class-user-account-management-activate.php:96
+msgid "Change Your Password"
+msgstr ""
+
+#: classes/class-user-account-management-activate.php:101
+msgid "Account Settings"
+msgstr ""
+
+#: classes/class-user-account-management-admin.php:63
+msgid "Settings"
+msgstr ""
+
+#: classes/class-user-account-management-admin.php:75, classes/class-user-account-management-admin.php:75
+msgid "User Account Management Settings"
+msgstr ""
+
+#: classes/class-user-account-management-admin.php:204
+msgid "Cache data?"
+msgstr ""
+
+#: classes/class-user-account-management-admin.php:210
+msgid "Whether to cache data for this plugin (recommended)"
+msgstr ""
+
+#: classes/class-user-account-management-admin.php:215
+msgid "How long to cache data?"
+msgstr ""
+
+#: classes/class-user-account-management-admin.php:221
+msgid "How many seconds before the cache expires"
+msgstr ""
+
+#: classes/class-user-account-management-admin.php:226
+msgid "Default redirect URL after login"
+msgstr ""
+
+#: classes/class-user-account-management-admin.php:232
+msgid "Where to send users after they log in or register. The plugin will use /user/ if no value is here."
+msgstr ""
+
+#: classes/class-user-account-management-admin.php:236
+msgid "Remember user logins?"
+msgstr ""
+
+#: classes/class-user-account-management-admin.php:242
+msgid "Whether to remember users when they log in. If checked, users will stay logged in when they close their browsers."
+msgstr ""
+
+#: classes/class-user-account-management-admin.php:246
+msgid "Cookie expiration"
+msgstr ""
+
+#: classes/class-user-account-management-admin.php:252
+msgid "How long (in seconds) before the user authentication cookie expires. Maximum is one year."
+msgstr ""
+
+#: classes/class-user-account-management-admin.php:260
+msgid "Check for spam against Akismet API?"
+msgstr ""
+
+#: classes/class-user-account-management-admin.php:266
+msgid "Whether to check the user submitted data against the Akismet API."
+msgstr ""
+
+#: classes/class-user-account-management-admin.php:311
+msgid "Maximum length of first name"
+msgstr ""
+
+#: classes/class-user-account-management-admin.php:317
+msgid "A first name longer than this many characters will not be created"
+msgstr ""
+
+#: classes/class-user-account-management-admin.php:321
+msgid "Maximum length of last name"
+msgstr ""
+
+#: classes/class-user-account-management-admin.php:327
+msgid "A last name longer than this many characters will not be created"
+msgstr ""
+
+#: classes/class-user-account-management-admin.php:331
+msgid "Block names that contain a URL?"
+msgstr ""
+
+#: classes/class-user-account-management-admin.php:337
+msgid "Bots often put URLs into name fields. This will block values for first or last name that contain http(s)://"
+msgstr ""
+
+#: classes/class-user-account-management-admin.php:341
+msgid "Include country as user metadata?"
+msgstr ""
+
+#: classes/class-user-account-management-admin.php:347
+msgid "Whether to save country for user."
+msgstr ""
+
+#: classes/class-user-account-management-admin.php:351
+msgid "Include city/state as user metadata?"
+msgstr ""
+
+#: classes/class-user-account-management-admin.php:357
+msgid "Whether to save city/state for user."
+msgstr ""
+
+#: classes/class-user-account-management-admin.php:361
+msgid "Get city/state based on zip/country?"
+msgstr ""
+
+#: classes/class-user-account-management-admin.php:367
+msgid "Whether to load and save the city/state for the user, based on the zip/country."
+msgstr ""
+
+#: classes/class-user-account-management-admin.php:371
+msgid "Geonames API username"
+msgstr ""
+
+#: classes/class-user-account-management-admin.php:377
+msgid "API username from geonames.org for geocoding the city/state from country/zip"
+msgstr ""
+
+#: classes/class-user-account-management-admin.php:504, classes/class-user-account-management-admin.php:544, classes/class-user-account-management-admin.php:702
+msgid "Defined in wp-config.php"
+msgstr ""
+
+#: classes/class-user-account-management-login.php:175
+msgid "No account yet?"
+msgstr ""
+
+#: classes/class-user-account-management-login.php:177
+msgid "Register now"
+msgstr ""
+
+#: classes/class-user-account-management-login.php:201
+msgid "Need help or forgot your password?"
+msgstr ""
+
+#. translators: instructions on top of the form. placeholders are 1) login link, 2) login link text, 3) help link, 4) help link text
+#: classes/class-user-account-management-register.php:127
+msgid "Already have an account?"
+msgstr ""
+
+#: classes/class-user-account-management-register.php:127
+msgid "Do you need "
+msgstr ""
+
+#: classes/class-user-account-management-register.php:129
+msgid "Log in now"
+msgstr ""
+
+#: classes/class-user-account-management-register.php:131
+msgid "account help"
+msgstr ""
+
+#. translators: terms & conditions at bottom of the form. placeholders are 1) name of site, 2) terms of use link, 3) terms link text, 4) privacy link, 5) privacy link text
+#: classes/class-user-account-management-register.php:144
+msgid "By proceeding, you agree to "
+msgstr ""
+
+#: classes/class-user-account-management-register.php:144
+msgid "'s"
+msgstr ""
+
+#: classes/class-user-account-management-register.php:144
+msgid " and "
+msgstr ""
+
+#: classes/class-user-account-management-register.php:147
+msgid "Privacy Policy"
+msgstr ""
+
+#: classes/class-user-account-management-register.php:149
+msgid "Terms of Use"
+msgstr ""
+
+#: classes/class-user-account-management-register.php:163, classes/class-user-account-management.php:331
+msgid "Registering new users is currently not allowed."
+msgstr ""
+
+#: classes/class-user-account-management.php:303
+msgid "You did not enter an email address."
+msgstr ""
+
+#: classes/class-user-account-management.php:305
+msgid "You did not enter a password."
+msgstr ""
+
+#: classes/class-user-account-management.php:309
+msgid "We couldn't find an account with that email address. Maybe you used a different one when signing up?"
+msgstr ""
+
+#. translators: parameter is the wp_lostpassword_url() url
+#: classes/class-user-account-management.php:315
+msgid "The password you entered wasn't right. We can help you <a href='%s'>reset your password</a>."
+msgstr ""
+
+#: classes/class-user-account-management.php:321
+msgid "The email address you entered is not valid."
+msgstr ""
+
+#: classes/class-user-account-management.php:323
+msgid "An account already exists with this email address. Is it yours?"
+msgstr ""
+
+#: classes/class-user-account-management.php:325
+msgid "Your first name is too long for our system."
+msgstr ""
+
+#: classes/class-user-account-management.php:327
+msgid "Your last name is too long for our system."
+msgstr ""
+
+#: classes/class-user-account-management.php:329
+msgid "Your name contains characters our system does not allow."
+msgstr ""
+
+#: classes/class-user-account-management.php:333
+msgid "Our system flagged your account information as spam. You can try again."
+msgstr ""
+
+#: classes/class-user-account-management.php:337
+msgid "The password reset link you used is not valid anymore."
+msgstr ""
+
+#: classes/class-user-account-management.php:340
+msgid "Sorry, we don't accept empty passwords."
+msgstr ""
+
+#: classes/class-user-account-management.php:344
+msgid "An unknown error occurred. Please try again later."
+msgstr ""
+
+#: templates/admin/settings.php:6
+msgid "Save settings"
+msgstr ""
+
+#: templates/email/new-user-notification-email-admin.php:8
+msgid "A new user created an account. The following was sent to the new user.%2$s"
+msgstr ""
+
+#: templates/email/new-user-notification-email-admin.php:13, templates/email/new-user-notification-email.php:8
+msgid "Hi %1$s,%2$s"
+msgstr ""
+
+#: templates/email/new-user-notification-email-admin.php:19, templates/email/new-user-notification-email.php:14
+msgid "Thanks for creating an account on %1$s! You can log in with your email address, %4$s%2$s, and your password, at %3$s. %4$sThere you can manage your account information and preferences. %4$s%4$sWe do not have access to your password, but you can reset it %4$son our site if you lose access to it.%5$s"
+msgstr ""
+
+#: templates/email/new-user-notification-email-admin.php:28, templates/email/new-user-notification-email.php:23
+msgid "Thanks,%2$s%1$s%2$s"
+msgstr ""
+
+#: templates/email/retrieve-password-message.php:5
+msgid "Hello!"
+msgstr ""
+
+#: templates/email/retrieve-password-message.php:6
+msgid "You asked us to reset your password for your account using the email address %s."
+msgstr ""
+
+#: templates/email/retrieve-password-message.php:7
+msgid "If this was a mistake, or you didn't ask for a password reset, just ignore this email and nothing will happen."
+msgstr ""
+
+#: templates/email/retrieve-password-message.php:8
+msgid "To reset your password, visit the following address: %s"
+msgstr ""
+
+#: templates/email/retrieve-password-message.php:9
+msgid "Thanks!"
+msgstr ""
+
+#: templates/front-end/account-settings-form.php:34
+msgid "Your account settings were successfully updated."
+msgstr ""
+
+#: templates/front-end/account-settings-form.php:41, templates/front-end/login-form.php:57, templates/front-end/password-lost-form.php:23, templates/front-end/register-form.php:33
+msgid "Email Address:"
+msgstr ""
+
+#: templates/front-end/account-settings-form.php:41, templates/front-end/account-settings-form.php:46, templates/front-end/account-settings-form.php:51, templates/front-end/account-settings-form.php:57, templates/front-end/account-settings-form.php:61, templates/front-end/account-settings-form.php:67, templates/front-end/account-settings-form.php:73, templates/front-end/login-form.php:57, templates/front-end/login-form.php:61, templates/front-end/password-change-form.php:33, templates/front-end/password-lost-form.php:23, templates/front-end/password-reset-form.php:22, templates/front-end/register-form.php:33, templates/front-end/register-form.php:38, templates/front-end/register-form.php:43, templates/front-end/register-form.php:48, templates/front-end/register-form.php:54, templates/front-end/register-form.php:58, templates/front-end/register-form.php:64, templates/front-end/register-form.php:70
+msgid "This field is required."
+msgstr ""
+
+#: templates/front-end/account-settings-form.php:46, templates/front-end/register-form.php:43
+msgid "First Name:"
+msgstr ""
+
+#: templates/front-end/account-settings-form.php:51, templates/front-end/register-form.php:48
+msgid "Last Name:"
+msgstr ""
+
+#: templates/front-end/account-settings-form.php:57, templates/front-end/register-form.php:54
+msgid "City:"
+msgstr ""
+
+#: templates/front-end/account-settings-form.php:61, templates/front-end/register-form.php:58
+msgid "State:"
+msgstr ""
+
+#: templates/front-end/account-settings-form.php:67, templates/front-end/register-form.php:64
+msgid "Zip Code:"
+msgstr ""
+
+#: templates/front-end/account-settings-form.php:73, templates/front-end/register-form.php:70
+msgid "Country:"
+msgstr ""
+
+#: templates/front-end/account-settings-form.php:88
+msgid "Save Changes"
+msgstr ""
+
+#: templates/front-end/login-form.php:14
+msgid "You have logged out. You can log in again if necessary."
+msgstr ""
+
+#: templates/front-end/login-form.php:32
+msgid "Check your email for a link to reset your password. You will only be able to use this link one time (you can "
+msgstr ""
+
+#: templates/front-end/login-form.php:32
+msgid " if you need to)."
+msgstr ""
+
+#: templates/front-end/login-form.php:61, templates/front-end/register-form.php:38
+msgid "Password:"
+msgstr ""
+
+#: templates/front-end/login-form.php:65
+msgid "Log In"
+msgstr ""
+
+#: templates/front-end/password-change-form.php:26
+msgid "Your password was successfully changed."
+msgstr ""
+
+#: templates/front-end/password-change-form.php:33, templates/front-end/password-reset-form.php:22
+msgid "New password:"
+msgstr ""
+
+#: templates/front-end/password-change-form.php:38
+msgid "Change Password"
+msgstr ""
+
+#: templates/front-end/password-lost-form.php:27, templates/front-end/password-reset-form.php:27
+msgid "Reset Password"
+msgstr ""
+
+#: templates/front-end/register-form.php:87
+msgid "Create new account"
+msgstr ""
