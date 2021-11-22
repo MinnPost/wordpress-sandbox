@@ -130,11 +130,26 @@ function DefaultErrorResponsePlaceholder({
 }
 
 function DefaultLoadingResponsePlaceholder({
-  className
+  children,
+  showLoader
 }) {
-  return (0,external_wp_element_namespaceObject.createElement)(external_wp_components_namespaceObject.Placeholder, {
-    className: className
-  }, (0,external_wp_element_namespaceObject.createElement)(external_wp_components_namespaceObject.Spinner, null));
+  return (0,external_wp_element_namespaceObject.createElement)("div", {
+    style: {
+      position: 'relative'
+    }
+  }, showLoader && (0,external_wp_element_namespaceObject.createElement)("div", {
+    style: {
+      position: 'absolute',
+      top: '50%',
+      left: '50%',
+      marginTop: '-9px',
+      marginLeft: '-9px'
+    }
+  }, (0,external_wp_element_namespaceObject.createElement)(external_wp_components_namespaceObject.Spinner, null)), (0,external_wp_element_namespaceObject.createElement)("div", {
+    style: {
+      opacity: showLoader ? '0.3' : 1
+    }
+  }, children));
 }
 
 function ServerSideRender(props) {
@@ -149,18 +164,18 @@ function ServerSideRender(props) {
     LoadingResponsePlaceholder = DefaultLoadingResponsePlaceholder
   } = props;
   const isMountedRef = (0,external_wp_element_namespaceObject.useRef)(true);
+  const [showLoader, setShowLoader] = (0,external_wp_element_namespaceObject.useState)(false);
   const fetchRequestRef = (0,external_wp_element_namespaceObject.useRef)();
   const [response, setResponse] = (0,external_wp_element_namespaceObject.useState)(null);
   const prevProps = (0,external_wp_compose_namespaceObject.usePrevious)(props);
+  const [isLoading, setIsLoading] = (0,external_wp_element_namespaceObject.useState)(false);
 
   function fetchData() {
     if (!isMountedRef.current) {
       return;
     }
 
-    if (null !== response) {
-      setResponse(null);
-    }
+    setIsLoading(true);
 
     const sanitizedAttributes = attributes && (0,external_wp_blocks_namespaceObject.__experimentalSanitizeBlockAttributes)(block, attributes); // If httpMethod is 'POST', send the attributes in the request body instead of the URL.
     // This allows sending a larger attributes object than in a GET request, where the attributes are in the URL.
@@ -189,6 +204,10 @@ function ServerSideRender(props) {
           errorMsg: error.message
         });
       }
+    }).finally(() => {
+      if (isMountedRef.current && fetchRequest === fetchRequestRef.current) {
+        setIsLoading(false);
+      }
     });
     return fetchRequest;
   }
@@ -208,15 +227,42 @@ function ServerSideRender(props) {
       debouncedFetchData();
     }
   });
+  /**
+   * Effect to handle showing the loading placeholder.
+   * Show it only if there is no previous response or
+   * the request takes more than one second.
+   */
 
-  if (response === '') {
+  (0,external_wp_element_namespaceObject.useEffect)(() => {
+    if (!isLoading) {
+      return;
+    }
+
+    const timeout = setTimeout(() => {
+      setShowLoader(true);
+    }, 1000);
+    return () => clearTimeout(timeout);
+  }, [isLoading]);
+  const hasResponse = !!response;
+  const hasEmptyResponse = response === '';
+  const hasError = response === null || response === void 0 ? void 0 : response.error;
+
+  if (hasEmptyResponse || !hasResponse) {
     return (0,external_wp_element_namespaceObject.createElement)(EmptyResponsePlaceholder, props);
-  } else if (!response) {
-    return (0,external_wp_element_namespaceObject.createElement)(LoadingResponsePlaceholder, props);
-  } else if (response.error) {
+  }
+
+  if (hasError) {
     return (0,external_wp_element_namespaceObject.createElement)(ErrorResponsePlaceholder, _extends({
       response: response
     }, props));
+  }
+
+  if (isLoading) {
+    return (0,external_wp_element_namespaceObject.createElement)(LoadingResponsePlaceholder, _extends({}, props, {
+      showLoader: showLoader
+    }), hasResponse && (0,external_wp_element_namespaceObject.createElement)(external_wp_element_namespaceObject.RawHTML, {
+      className: className
+    }, response));
   }
 
   return (0,external_wp_element_namespaceObject.createElement)(external_wp_element_namespaceObject.RawHTML, {

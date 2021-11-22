@@ -91,7 +91,6 @@ class WC_Gateway_Stripe_Alipay extends WC_Stripe_Payment_Gateway {
 		}
 
 		add_action( 'woocommerce_update_options_payment_gateways_' . $this->id, [ $this, 'process_admin_options' ] );
-		add_action( 'admin_enqueue_scripts', [ $this, 'admin_scripts_for_banner' ] );
 		add_action( 'wp_enqueue_scripts', [ $this, 'payment_scripts' ] );
 	}
 
@@ -99,7 +98,7 @@ class WC_Gateway_Stripe_Alipay extends WC_Stripe_Payment_Gateway {
 	 * Returns all supported currencies for this payment method.
 	 *
 	 * @since 4.0.0
-	 * @version 4.0.0
+	 * @version 5.8.0
 	 * @return array
 	 */
 	public function get_supported_currency() {
@@ -116,6 +115,7 @@ class WC_Gateway_Stripe_Alipay extends WC_Stripe_Payment_Gateway {
 				'NZD',
 				'SGD',
 				'USD',
+				'MYR',
 			]
 		);
 	}

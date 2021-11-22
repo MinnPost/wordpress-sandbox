@@ -22,6 +22,19 @@ import { gridBlockPreview } from '@woocommerce/resource-previews';
 import { Icon, folder } from '@woocommerce/icons';
 import { getSetting } from '@woocommerce/settings';
 
+const EmptyPlaceholder = () => (
+	<Placeholder
+		icon={ <Icon srcElement={ folder } /> }
+		label={ __( 'Products by Category', 'woo-gutenberg-products-block' ) }
+		className="wc-block-products-grid wc-block-products-category"
+	>
+		{ __(
+			'No products were found that matched your selection.',
+			'woo-gutenberg-products-block'
+		) }
+	</Placeholder>
+);
+
 /**
  * Component to handle edit mode of "Products by Category".
  */
@@ -250,21 +263,7 @@ class ProductByCategoryBlock extends Component {
 					<ServerSideRender
 						block={ name }
 						attributes={ attributes }
-						EmptyResponsePlaceholder={ () => (
-							<Placeholder
-								icon={ <Icon srcElement={ folder } /> }
-								label={ __(
-									'Products by Category',
-									'woo-gutenberg-products-block'
-								) }
-								className="wc-block-products-grid wc-block-products-category"
-							>
-								{ __(
-									'No products were found that matched your selection.',
-									'woo-gutenberg-products-block'
-								) }
-							</Placeholder>
-						) }
+						EmptyResponsePlaceholder={ EmptyPlaceholder }
 					/>
 				) : (
 					__(
@@ -291,7 +290,10 @@ class ProductByCategoryBlock extends Component {
 						controls={ [
 							{
 								icon: 'edit',
-								title: __( 'Edit' ),
+								title: __(
+									'Edit selected categories',
+									'woo-gutenberg-products-block'
+								),
 								onClick: () =>
 									isEditing
 										? this.stopEditing()

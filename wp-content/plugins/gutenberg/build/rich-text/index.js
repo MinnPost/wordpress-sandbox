@@ -793,7 +793,6 @@ const ZWNBSP = '\ufeff';
 
 
 
-
 /**
  * @typedef {Object} RichTextFormat
  *
@@ -820,14 +819,6 @@ function createEmptyValue() {
     replacements: [],
     text: ''
   };
-}
-
-function simpleFindKey(object, value) {
-  for (const key in object) {
-    if (object[key] === value) {
-      return key;
-    }
-  }
 }
 
 function toFormat({
@@ -874,15 +865,28 @@ function toFormat({
 
   const registeredAttributes = {};
   const unregisteredAttributes = {};
+  const _attributes = { ...attributes
+  };
 
-  for (const name in attributes) {
-    const key = simpleFindKey(formatType.attributes, name);
+  for (const key in formatType.attributes) {
+    const name = formatType.attributes[key];
+    registeredAttributes[key] = _attributes[name];
 
-    if (key) {
-      registeredAttributes[key] = attributes[name];
-    } else {
-      unregisteredAttributes[name] = attributes[name];
+    if (formatType.__unstableFilterAttributeValue) {
+      registeredAttributes[key] = formatType.__unstableFilterAttributeValue(key, registeredAttributes[key]);
+    } // delete the attribute and what's left is considered
+    // to be unregistered.
+
+
+    delete _attributes[name];
+
+    if (typeof registeredAttributes[key] === 'undefined') {
+      delete registeredAttributes[key];
     }
+  }
+
+  for (const name in _attributes) {
+    unregisteredAttributes[name] = attributes[name];
   }
 
   return {
@@ -1084,16 +1088,16 @@ function filterRange(node, range, filter) {
 function collapseWhiteSpace(string) {
   return string.replace(/[\n\r\t]+/g, ' ');
 }
-
-const ZWNBSPRegExp = new RegExp(ZWNBSP, 'g');
 /**
- * Removes padding (zero width non breaking spaces) added by `toTree`.
+ * Removes reserved characters used by rich-text (zero width non breaking spaces added by `toTree` and object replacement characters).
  *
  * @param {string} string
  */
 
-function removePadding(string) {
-  return string.replace(ZWNBSPRegExp, '');
+
+function removeReservedCharacters(string) {
+  //with the global flag, note that we should create a new regex each time OR reset lastIndex state.
+  return string.replace(new RegExp(`[${ZWNBSP}${OBJECT_REPLACEMENT_CHARACTER}]`, 'gu'), '');
 }
 /**
  * Creates a Rich Text value from a DOM element and range.
@@ -1112,7 +1116,6 @@ function removePadding(string) {
  *
  * @return {RichTextValue} A rich text value.
  */
-
 
 function createFromElement({
   element,
@@ -1141,10 +1144,10 @@ function createFromElement({
     const type = node.nodeName.toLowerCase();
 
     if (node.nodeType === node.TEXT_NODE) {
-      let filter = removePadding;
+      let filter = removeReservedCharacters;
 
       if (!preserveWhiteSpace) {
-        filter = string => removePadding(collapseWhiteSpace(string));
+        filter = string => removeReservedCharacters(collapseWhiteSpace(string));
       }
 
       const text = filter(node.nodeValue);
@@ -1195,15 +1198,12 @@ function createFromElement({
       continue;
     }
 
-    const lastFormats = accumulator.formats[accumulator.formats.length - 1];
-    const lastFormat = lastFormats && lastFormats[lastFormats.length - 1];
-    const newFormat = toFormat({
+    const format = toFormat({
       type,
       attributes: getAttributes({
         element: node
       })
     });
-    const format = isFormatEqual(newFormat, lastFormat) ? lastFormat : newFormat;
 
     if (multilineWrapperTags && multilineWrapperTags.indexOf(type) !== -1) {
       const value = createFromMultilineElement({
@@ -1276,7 +1276,7 @@ function createFromElement({
  *                                            multiline.
  * @param {Array}   [$1.multilineWrapperTags] Tags where lines can be found if
  *                                            nesting is possible.
- * @param {boolean} [$1.currentWrapperTags]   Whether to prepend a line
+ * @param {Array}   [$1.currentWrapperTags]   Whether to prepend a line
  *                                            separator.
  * @param {boolean} [$1.preserveWhiteSpace]   Whether or not to collapse white
  *                                            space characters.
@@ -3148,10 +3148,20 @@ function createChildrenHTML(children = []) {
   }).join('');
 }
 //# sourceMappingURL=to-html-string.js.map
+;// CONCATENATED MODULE: external ["wp","a11y"]
+var external_wp_a11y_namespaceObject = window["wp"]["a11y"];
+;// CONCATENATED MODULE: external ["wp","i18n"]
+var external_wp_i18n_namespaceObject = window["wp"]["i18n"];
 ;// CONCATENATED MODULE: ./packages/rich-text/build-module/toggle-format.js
+/**
+ * WordPress dependencies
+ */
+
+
 /**
  * Internal dependencies
  */
+
 
 
 
@@ -3170,7 +3180,19 @@ function createChildrenHTML(children = []) {
 
 function toggleFormat(value, format) {
   if (getActiveFormat(value, format.type)) {
+    // For screen readers, will announce if formatting control is disabled.
+    if (format.title) {
+      // translators: %s: title of the formatting control
+      (0,external_wp_a11y_namespaceObject.speak)((0,external_wp_i18n_namespaceObject.sprintf)((0,external_wp_i18n_namespaceObject.__)('%s removed.'), format.title), 'assertive');
+    }
+
     return removeFormat(value, format.type);
+  } // For screen readers, will announce if formatting control is enabled.
+
+
+  if (format.title) {
+    // translators: %s: title of the formatting control
+    (0,external_wp_a11y_namespaceObject.speak)((0,external_wp_i18n_namespaceObject.sprintf)((0,external_wp_i18n_namespaceObject.__)('%s applied.'), format.title), 'assertive');
   }
 
   return applyFormat(value, format);
@@ -3781,6 +3803,7 @@ function useCopyHandler(props) {
       event.clipboardData.setData('text/plain', plainText);
       event.clipboardData.setData('text/html', html);
       event.clipboardData.setData('rich-text', 'true');
+      event.clipboardData.setData('rich-text-multi-line-tag', multilineTag || '');
       event.preventDefault();
     }
 
@@ -3872,39 +3895,24 @@ function useFormatBoundaries(props) {
 
       const formatsBefore = formats[start - 1] || EMPTY_ACTIVE_FORMATS;
       const formatsAfter = formats[start] || EMPTY_ACTIVE_FORMATS;
+      const destination = isReverse ? formatsBefore : formatsAfter;
+      const isIncreasing = currentActiveFormats.every((format, index) => format === destination[index]);
       let newActiveFormatsLength = currentActiveFormats.length;
-      let source = formatsAfter;
 
-      if (formatsBefore.length > formatsAfter.length) {
-        source = formatsBefore;
-      } // If the amount of formats before the caret and after the caret is
-      // different, the caret is at a format boundary.
-
-
-      if (formatsBefore.length < formatsAfter.length) {
-        if (!isReverse && currentActiveFormats.length < formatsAfter.length) {
-          newActiveFormatsLength++;
-        }
-
-        if (isReverse && currentActiveFormats.length > formatsBefore.length) {
-          newActiveFormatsLength--;
-        }
-      } else if (formatsBefore.length > formatsAfter.length) {
-        if (!isReverse && currentActiveFormats.length > formatsAfter.length) {
-          newActiveFormatsLength--;
-        }
-
-        if (isReverse && currentActiveFormats.length < formatsBefore.length) {
-          newActiveFormatsLength++;
-        }
+      if (!isIncreasing) {
+        newActiveFormatsLength--;
+      } else if (newActiveFormatsLength < destination.length) {
+        newActiveFormatsLength++;
       }
 
       if (newActiveFormatsLength === currentActiveFormats.length) {
-        record.current._newActiveFormats = isReverse ? formatsBefore : formatsAfter;
+        record.current._newActiveFormats = destination;
         return;
       }
 
       event.preventDefault();
+      const origin = isReverse ? formatsAfter : formatsBefore;
+      const source = isIncreasing ? destination : origin;
       const newActiveFormats = source.slice(0, newActiveFormatsLength);
       const newValue = { ...record.current,
         activeFormats: newActiveFormats
@@ -4049,8 +4057,11 @@ function updateFormats({
   end,
   formats
 }) {
-  const formatsBefore = value.formats[start - 1] || [];
-  const formatsAfter = value.formats[end] || []; // First, fix the references. If any format right before or after are
+  // Start and end may be switched in case of delete.
+  const min = Math.min(start, end);
+  const max = Math.max(start, end);
+  const formatsBefore = value.formats[min - 1] || [];
+  const formatsAfter = value.formats[max] || []; // First, fix the references. If any format right before or after are
   // equal, the replacement format should use the same reference.
 
   value.activeFormats = formats.map((format, index) => {
@@ -4574,7 +4585,22 @@ function useRichText({
   const hadSelectionUpdate = (0,external_wp_element_namespaceObject.useRef)(false);
 
   if (!record.current) {
-    setRecordFromProps();
+    var _record$current, _record$current$forma, _record$current$forma2;
+
+    setRecordFromProps(); // Sometimes formats are added programmatically and we need to make
+    // sure it's persisted to the block store / markup. If these formats
+    // are not applied, they could cause inconsistencies between the data
+    // in the visual editor and the frontend. Right now, it's only relevant
+    // to the `core/text-color` format, which is applied at runtime in
+    // certain circunstances. See the `__unstableFilterAttributeValue`
+    // function in `packages/format-library/src/text-color/index.js`.
+    // @todo find a less-hacky way of solving this.
+
+    const hasRelevantInitFormat = ((_record$current = record.current) === null || _record$current === void 0 ? void 0 : (_record$current$forma = _record$current.formats[0]) === null || _record$current$forma === void 0 ? void 0 : (_record$current$forma2 = _record$current$forma[0]) === null || _record$current$forma2 === void 0 ? void 0 : _record$current$forma2.type) === 'core/text-color';
+
+    if (hasRelevantInitFormat) {
+      handleChangesUponInit(record.current);
+    }
   } else if (selectionStart !== record.current.start || selectionEnd !== record.current.end) {
     hadSelectionUpdate.current = isSelected;
     record.current = { ...record.current,
@@ -4617,6 +4643,28 @@ function useRichText({
 
     registry.batch(() => {
       onSelectionChange(start, end);
+      onChange(_value.current, {
+        __unstableFormats: formats,
+        __unstableText: text
+      });
+    });
+    forceRender();
+  }
+
+  function handleChangesUponInit(newRecord) {
+    record.current = newRecord;
+    _value.current = toHTMLString({
+      value: __unstableBeforeSerialize ? { ...newRecord,
+        formats: __unstableBeforeSerialize(newRecord)
+      } : newRecord,
+      multilineTag,
+      preserveWhiteSpace
+    });
+    const {
+      formats,
+      text
+    } = newRecord;
+    registry.batch(() => {
       onChange(_value.current, {
         __unstableFormats: formats,
         __unstableText: text

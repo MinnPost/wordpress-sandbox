@@ -17,6 +17,7 @@ import Label from '@woocommerce/base-components/filter-element-label';
 import FilterSubmitButton from '@woocommerce/base-components/filter-submit-button';
 import isShallowEqual from '@wordpress/is-shallow-equal';
 import { decodeEntities } from '@wordpress/html-entities';
+import { Notice } from '@wordpress/components';
 
 /**
  * Internal dependencies
@@ -61,7 +62,7 @@ const AttributeFilterBlock = ( {
 	} = useCollection( {
 		namespace: '/wc/store',
 		resourceName: 'products/attributes/terms',
-		resourceValues: [ attributeObject.id ],
+		resourceValues: [ attributeObject?.id || 0 ],
 		shouldSelect: blockAttributes.attributeId > 0,
 	} );
 
@@ -73,7 +74,7 @@ const AttributeFilterBlock = ( {
 		isLoading: filteredCountsLoading,
 	} = useCollectionData( {
 		queryAttribute: {
-			taxonomy: attributeObject.taxonomy,
+			taxonomy: attributeObject?.taxonomy,
 			queryType: blockAttributes.queryType,
 		},
 		queryState: {
@@ -151,7 +152,7 @@ const AttributeFilterBlock = ( {
 
 		setDisplayedOptions( newOptions );
 	}, [
-		attributeObject.taxonomy,
+		attributeObject?.taxonomy,
 		attributeTerms,
 		attributeTermsLoading,
 		blockAttributes.showCounts,
@@ -164,10 +165,10 @@ const AttributeFilterBlock = ( {
 	const checkedQuery = useMemo( () => {
 		return productAttributesQuery
 			.filter(
-				( { attribute } ) => attribute === attributeObject.taxonomy
+				( { attribute } ) => attribute === attributeObject?.taxonomy
 			)
 			.flatMap( ( { slug } ) => slug );
-	}, [ productAttributesQuery, attributeObject.taxonomy ] );
+	}, [ productAttributesQuery, attributeObject?.taxonomy ] );
 
 	const currentCheckedQuery = useShallowEqual( checkedQuery );
 	const previousCheckedQuery = usePrevious( currentCheckedQuery );
@@ -178,8 +179,17 @@ const AttributeFilterBlock = ( {
 			! isShallowEqual( checked, currentCheckedQuery ) // checked query doesn't match the UI
 		) {
 			setChecked( currentCheckedQuery );
+			if ( ! blockAttributes.showFilterButton ) {
+				onSubmit( currentCheckedQuery );
+			}
 		}
-	}, [ checked, currentCheckedQuery, previousCheckedQuery ] );
+	}, [
+		checked,
+		currentCheckedQuery,
+		previousCheckedQuery,
+		onSubmit,
+		blockAttributes.showFilterButton,
+	] );
 
 	/**
 	 * Returns an array of term objects that have been chosen via the checkboxes.
@@ -219,13 +229,6 @@ const AttributeFilterBlock = ( {
 			blockAttributes.queryType,
 		]
 	);
-
-	// Track checked STATE changes - if state changes, update the query.
-	useEffect( () => {
-		if ( ! blockAttributes.showFilterButton ) {
-			onSubmit( checked );
-		}
-	}, [ blockAttributes.showFilterButton, checked, onSubmit ] );
 
 	const multiple =
 		blockAttributes.displayStyle !== 'dropdown' ||
@@ -312,11 +315,49 @@ const AttributeFilterBlock = ( {
 			}
 
 			setChecked( newChecked );
+			if ( ! blockAttributes.showFilterButton ) {
+				onSubmit( newChecked );
+			}
 		},
-		[ checked, displayedOptions, multiple ]
+		[
+			checked,
+			displayedOptions,
+			multiple,
+			onSubmit,
+			blockAttributes.showFilterButton,
+		]
 	);
 
+	// Short-circuit if no attribute is selected.
+	if ( ! attributeObject ) {
+		if ( isEditor ) {
+			return (
+				<Notice status="warning" isDismissible={ false }>
+					<p>
+						{ __(
+							'Please select an attribute to use this filter!',
+							'woo-gutenberg-products-block'
+						) }
+					</p>
+				</Notice>
+			);
+		}
+		return null;
+	}
+
 	if ( displayedOptions.length === 0 && ! attributeTermsLoading ) {
+		if ( isEditor ) {
+			return (
+				<Notice status="warning" isDismissible={ false }>
+					<p>
+						{ __(
+							'The selected attribute does not have any term assigned to products.',
+							'woo-gutenberg-products-block'
+						) }
+					</p>
+				</Notice>
+			);
+		}
 		return null;
 	}
 
@@ -326,10 +367,16 @@ const AttributeFilterBlock = ( {
 
 	return (
 		<>
-			{ ! isEditor && blockAttributes.heading && (
-				<TagName>{ blockAttributes.heading }</TagName>
-			) }
-			<div className="wc-block-attribute-filter">
+			{ ! isEditor &&
+				blockAttributes.heading &&
+				displayedOptions.length > 0 && (
+					<TagName className="wc-block-attribute-filter__title">
+						{ blockAttributes.heading }
+					</TagName>
+				) }
+			<div
+				className={ `wc-block-attribute-filter style-${ blockAttributes.displayStyle }` }
+			>
 				{ blockAttributes.displayStyle === 'dropdown' ? (
 					<DropdownSelector
 						attributeLabel={ attributeObject.label }

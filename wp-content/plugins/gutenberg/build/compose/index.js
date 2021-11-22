@@ -2172,6 +2172,7 @@ __webpack_require__.d(__webpack_exports__, {
   "__experimentalUseDialog": function() { return /* reexport */ use_dialog; },
   "__experimentalUseDragging": function() { return /* reexport */ useDragging; },
   "__experimentalUseDropZone": function() { return /* reexport */ useDropZone; },
+  "__experimentalUseFixedWindowList": function() { return /* reexport */ useFixedWindowList; },
   "__experimentalUseFocusOutside": function() { return /* reexport */ useFocusOutside; },
   "compose": function() { return /* reexport */ compose; },
   "createHigherOrderComponent": function() { return /* reexport */ create_higher_order_component; },
@@ -2184,6 +2185,7 @@ __webpack_require__.d(__webpack_exports__, {
   "useDebounce": function() { return /* reexport */ useDebounce; },
   "useFocusOnMount": function() { return /* reexport */ useFocusOnMount; },
   "useFocusReturn": function() { return /* reexport */ use_focus_return; },
+  "useFocusableIframe": function() { return /* reexport */ useFocusableIframe; },
   "useInstanceId": function() { return /* reexport */ useInstanceId; },
   "useIsomorphicLayoutEffect": function() { return /* reexport */ use_isomorphic_layout_effect; },
   "useKeyboardShortcut": function() { return /* reexport */ use_keyboard_shortcut; },
@@ -2710,11 +2712,56 @@ function withState(initialState = {}) {
 var external_wp_keycodes_namespaceObject = window["wp"]["keycodes"];
 ;// CONCATENATED MODULE: external ["wp","dom"]
 var external_wp_dom_namespaceObject = window["wp"]["dom"];
+;// CONCATENATED MODULE: ./packages/compose/build-module/hooks/use-ref-effect/index.js
+/**
+ * External dependencies
+ */
+// eslint-disable-next-line no-restricted-imports
+
+/**
+ * WordPress dependencies
+ */
+
+/**
+ * Effect-like ref callback. Just like with `useEffect`, this allows you to
+ * return a cleanup function to be run if the ref changes or one of the
+ * dependencies changes. The ref is provided as an argument to the callback
+ * functions. The main difference between this and `useEffect` is that
+ * the `useEffect` callback is not called when the ref changes, but this is.
+ * Pass the returned ref callback as the component's ref and merge multiple refs
+ * with `useMergeRefs`.
+ *
+ * It's worth noting that if the dependencies array is empty, there's not
+ * strictly a need to clean up event handlers for example, because the node is
+ * to be removed. It *is* necessary if you add dependencies because the ref
+ * callback will be called multiple times for the same node.
+ *
+ * @param  callback     Callback with ref as argument.
+ * @param  dependencies Dependencies of the callback.
+ *
+ * @return Ref callback.
+ */
+
+function useRefEffect(callback, dependencies) {
+  const cleanup = (0,external_wp_element_namespaceObject.useRef)();
+  return (0,external_wp_element_namespaceObject.useCallback)(node => {
+    if (node) {
+      cleanup.current = callback(node);
+    } else if (cleanup.current) {
+      cleanup.current();
+    }
+  }, dependencies);
+}
+//# sourceMappingURL=index.js.map
 ;// CONCATENATED MODULE: ./packages/compose/build-module/hooks/use-constrained-tabbing/index.js
 /**
  * WordPress dependencies
  */
 
+
+/**
+ * Internal dependencies
+ */
 
 
 /**
@@ -2740,58 +2787,55 @@ var external_wp_dom_namespaceObject = window["wp"]["dom"];
  */
 
 function useConstrainedTabbing() {
-  const ref = (0,external_wp_element_namespaceObject.useCallback)(
-  /** @type {Element} */
+  return useRefEffect(
+  /** @type {HTMLElement} */
   node => {
-    if (!node) {
-      return;
+    /** @type {number|undefined} */
+    let timeoutId;
+
+    function onKeyDown(
+    /** @type {KeyboardEvent} */
+    event) {
+      const {
+        keyCode,
+        shiftKey,
+        target
+      } = event;
+
+      if (keyCode !== external_wp_keycodes_namespaceObject.TAB) {
+        return;
+      }
+
+      const action = shiftKey ? 'findPrevious' : 'findNext';
+      const nextElement = external_wp_dom_namespaceObject.focus.tabbable[action](
+      /** @type {HTMLElement} */
+      target) || null; // If the element that is about to receive focus is outside the
+      // area, move focus to a div and insert it at the start or end of
+      // the area, depending on the direction. Without preventing default
+      // behaviour, the browser will then move focus to the next element.
+
+      if (node.contains(nextElement)) {
+        return;
+      }
+
+      const domAction = shiftKey ? 'append' : 'prepend';
+      const {
+        ownerDocument
+      } = node;
+      const trap = ownerDocument.createElement('div');
+      trap.tabIndex = -1;
+      node[domAction](trap);
+      trap.focus(); // Remove after the browser moves focus to the next element.
+
+      timeoutId = setTimeout(() => node.removeChild(trap));
     }
 
-    node.addEventListener('keydown',
-    /** @type {Event} */
-    event => {
-      if (!(event instanceof window.KeyboardEvent)) {
-        return;
-      }
-
-      if (event.keyCode !== external_wp_keycodes_namespaceObject.TAB) {
-        return;
-      }
-
-      const tabbables = external_wp_dom_namespaceObject.focus.tabbable.find(node);
-
-      if (!tabbables.length) {
-        return;
-      }
-
-      const firstTabbable = tabbables[0];
-      const lastTabbable = tabbables[tabbables.length - 1];
-
-      if (event.shiftKey && event.target === firstTabbable) {
-        event.preventDefault();
-        /** @type {HTMLElement} */
-
-        lastTabbable.focus();
-      } else if (!event.shiftKey && event.target === lastTabbable) {
-        event.preventDefault();
-        /** @type {HTMLElement} */
-
-        firstTabbable.focus();
-        /*
-         * When pressing Tab and none of the tabbables has focus, the keydown
-         * event happens on the wrapper div: move focus on the first tabbable.
-         */
-      } else if (!tabbables.includes(
-      /** @type {Element} */
-      event.target)) {
-        event.preventDefault();
-        /** @type {HTMLElement} */
-
-        firstTabbable.focus();
-      }
-    });
+    node.addEventListener('keydown', onKeyDown);
+    return () => {
+      node.removeEventListener('keydown', onKeyDown);
+      clearTimeout(timeoutId);
+    };
   }, []);
-  return ref;
 }
 
 /* harmony default export */ var use_constrained_tabbing = (useConstrainedTabbing);
@@ -2878,47 +2922,6 @@ function useCopyOnClick(ref, text, timeout = 4000) {
     };
   }, [text, timeout, setHasCopied]);
   return hasCopied;
-}
-//# sourceMappingURL=index.js.map
-;// CONCATENATED MODULE: ./packages/compose/build-module/hooks/use-ref-effect/index.js
-/**
- * External dependencies
- */
-// eslint-disable-next-line no-restricted-imports
-
-/**
- * WordPress dependencies
- */
-
-/**
- * Effect-like ref callback. Just like with `useEffect`, this allows you to
- * return a cleanup function to be run if the ref changes or one of the
- * dependencies changes. The ref is provided as an argument to the callback
- * functions. The main difference between this and `useEffect` is that
- * the `useEffect` callback is not called when the ref changes, but this is.
- * Pass the returned ref callback as the component's ref and merge multiple refs
- * with `useMergeRefs`.
- *
- * It's worth noting that if the dependencies array is empty, there's not
- * strictly a need to clean up event handlers for example, because the node is
- * to be removed. It *is* necessary if you add dependencies because the ref
- * callback will be called multiple times for the same node.
- *
- * @param  callback     Callback with ref as argument.
- * @param  dependencies Dependencies of the callback.
- *
- * @return Ref callback.
- */
-
-function useRefEffect(callback, dependencies) {
-  const cleanup = (0,external_wp_element_namespaceObject.useRef)();
-  return (0,external_wp_element_namespaceObject.useCallback)(node => {
-    if (node) {
-      cleanup.current = callback(node);
-    } else if (cleanup.current) {
-      cleanup.current();
-    }
-  }, dependencies);
 }
 //# sourceMappingURL=index.js.map
 ;// CONCATENATED MODULE: ./packages/compose/build-module/hooks/use-copy-to-clipboard/index.js
@@ -3776,24 +3779,13 @@ function useMediaQuery(query) {
  * Use something's value from the previous render.
  * Based on https://usehooks.com/usePrevious/.
  *
- * @template T
+ * @param  value The value to track.
  *
- * @param {T} value The value to track.
- *
- * @return {T | undefined} The value from the previous render.
+ * @return The value from the previous render.
  */
 
 function usePrevious(value) {
-  // Disable reason: without an explicit type detail, the type of ref will be
-  // inferred based on the initial useRef argument, which is undefined.
-  // https://github.com/WordPress/gutenberg/pull/22597#issuecomment-633588366
-
-  /* eslint-disable jsdoc/no-undefined-types */
-  const ref = (0,external_wp_element_namespaceObject.useRef)(
-  /** @type {T | undefined} */
-  undefined);
-  /* eslint-enable jsdoc/no-undefined-types */
-  // Store current value in ref.
+  const ref = (0,external_wp_element_namespaceObject.useRef)(); // Store current value in ref.
 
   (0,external_wp_element_namespaceObject.useEffect)(() => {
     ref.current = value;
@@ -4421,6 +4413,212 @@ function useDropZone({
   }, [isDisabled]);
 }
 //# sourceMappingURL=index.js.map
+;// CONCATENATED MODULE: ./packages/compose/build-module/hooks/use-focusable-iframe/index.js
+/**
+ * Internal dependencies
+ */
+
+/**
+ * Dispatches a bubbling focus event when the iframe receives focus. Use
+ * `onFocus` as usual on the iframe or a parent element.
+ *
+ * @return {Object} Ref to pass to the iframe.
+ */
+
+function useFocusableIframe() {
+  return useRefEffect(element => {
+    const {
+      ownerDocument
+    } = element;
+    if (!ownerDocument) return;
+    const {
+      defaultView
+    } = ownerDocument;
+    if (!defaultView) return;
+    /**
+     * Checks whether the iframe is the activeElement, inferring that it has
+     * then received focus, and dispatches a focus event.
+     */
+
+    function checkFocus() {
+      if (ownerDocument && ownerDocument.activeElement === element) {
+        /** @type {HTMLElement} */
+        element.focus();
+      }
+    }
+
+    defaultView.addEventListener('blur', checkFocus);
+    return () => {
+      defaultView.removeEventListener('blur', checkFocus);
+    };
+  }, []);
+}
+//# sourceMappingURL=index.js.map
+;// CONCATENATED MODULE: ./packages/compose/build-module/hooks/use-fixed-window-list/index.js
+/**
+ * External dependencies
+ */
+
+/**
+ * WordPress dependencies
+ */
+
+
+
+
+const DEFAULT_INIT_WINDOW_SIZE = 30;
+/**
+ * @typedef {Object} WPFixedWindowList
+ *
+ * @property {number}                  visibleItems Items visible in the current viewport
+ * @property {number}                  start        Start index of the window
+ * @property {number}                  end          End index of the window
+ * @property {(index:number)=>boolean} itemInView   Returns true if item is in the window
+ */
+
+/**
+ * @typedef {Object} WPFixedWindowListOptions
+ *
+ * @property {number}  [windowOverscan] Renders windowOverscan number of items before and after the calculated visible window.
+ * @property {boolean} [useWindowing]   When false avoids calculating the window size
+ * @property {number}  [initWindowSize] Initial window size to use on first render before we can calculate the window size.
+ */
+
+/**
+ *
+ * @param {import('react').RefObject<HTMLElement>} elementRef Used to find the closest scroll container that contains element.
+ * @param { number }                               itemHeight Fixed item height in pixels
+ * @param { number }                               totalItems Total items in list
+ * @param { WPFixedWindowListOptions }             [options]  Options object
+ * @return {[ WPFixedWindowList, setFixedListWindow:(nextWindow:WPFixedWindowList)=>void]} Array with the fixed window list and setter
+ */
+
+function useFixedWindowList(elementRef, itemHeight, totalItems, options) {
+  var _options$initWindowSi, _options$useWindowing;
+
+  const initWindowSize = (_options$initWindowSi = options === null || options === void 0 ? void 0 : options.initWindowSize) !== null && _options$initWindowSi !== void 0 ? _options$initWindowSi : DEFAULT_INIT_WINDOW_SIZE;
+  const useWindowing = (_options$useWindowing = options === null || options === void 0 ? void 0 : options.useWindowing) !== null && _options$useWindowing !== void 0 ? _options$useWindowing : true;
+  const [fixedListWindow, setFixedListWindow] = (0,external_wp_element_namespaceObject.useState)({
+    visibleItems: initWindowSize,
+    start: 0,
+    end: initWindowSize,
+    itemInView:
+    /** @type {number} */
+    index => {
+      return index >= 0 && index <= initWindowSize;
+    }
+  });
+  (0,external_wp_element_namespaceObject.useLayoutEffect)(() => {
+    var _scrollContainer$owne, _scrollContainer$owne2, _scrollContainer$owne3, _scrollContainer$owne4;
+
+    if (!useWindowing) {
+      return;
+    }
+
+    const scrollContainer = (0,external_wp_dom_namespaceObject.getScrollContainer)(elementRef.current);
+
+    const measureWindow =
+    /** @type {boolean | undefined} */
+    initRender => {
+      var _options$windowOversc;
+
+      if (!scrollContainer) {
+        return;
+      }
+
+      const visibleItems = Math.ceil(scrollContainer.clientHeight / itemHeight); // Aim to keep opening list view fast, afterward we can optimize for scrolling
+
+      const windowOverscan = initRender ? visibleItems : (_options$windowOversc = options === null || options === void 0 ? void 0 : options.windowOverscan) !== null && _options$windowOversc !== void 0 ? _options$windowOversc : visibleItems;
+      const firstViewableIndex = Math.floor(scrollContainer.scrollTop / itemHeight);
+      const start = Math.max(0, firstViewableIndex - windowOverscan);
+      const end = Math.min(totalItems - 1, firstViewableIndex + visibleItems + windowOverscan);
+      setFixedListWindow(lastWindow => {
+        const nextWindow = {
+          visibleItems,
+          start,
+          end,
+          itemInView:
+          /** @type {number} */
+          index => {
+            return start <= index && index <= end;
+          }
+        };
+
+        if (lastWindow.start !== nextWindow.start || lastWindow.end !== nextWindow.end || lastWindow.visibleItems !== nextWindow.visibleItems) {
+          return nextWindow;
+        }
+
+        return lastWindow;
+      });
+    };
+
+    measureWindow(true);
+    const debounceMeasureList = (0,external_lodash_namespaceObject.debounce)(() => {
+      measureWindow();
+    }, 16);
+    scrollContainer === null || scrollContainer === void 0 ? void 0 : scrollContainer.addEventListener('scroll', debounceMeasureList);
+    scrollContainer === null || scrollContainer === void 0 ? void 0 : (_scrollContainer$owne = scrollContainer.ownerDocument) === null || _scrollContainer$owne === void 0 ? void 0 : (_scrollContainer$owne2 = _scrollContainer$owne.defaultView) === null || _scrollContainer$owne2 === void 0 ? void 0 : _scrollContainer$owne2.addEventListener('resize', debounceMeasureList);
+    scrollContainer === null || scrollContainer === void 0 ? void 0 : (_scrollContainer$owne3 = scrollContainer.ownerDocument) === null || _scrollContainer$owne3 === void 0 ? void 0 : (_scrollContainer$owne4 = _scrollContainer$owne3.defaultView) === null || _scrollContainer$owne4 === void 0 ? void 0 : _scrollContainer$owne4.addEventListener('resize', debounceMeasureList);
+    return () => {
+      var _scrollContainer$owne5, _scrollContainer$owne6;
+
+      scrollContainer === null || scrollContainer === void 0 ? void 0 : scrollContainer.removeEventListener('scroll', debounceMeasureList);
+      scrollContainer === null || scrollContainer === void 0 ? void 0 : (_scrollContainer$owne5 = scrollContainer.ownerDocument) === null || _scrollContainer$owne5 === void 0 ? void 0 : (_scrollContainer$owne6 = _scrollContainer$owne5.defaultView) === null || _scrollContainer$owne6 === void 0 ? void 0 : _scrollContainer$owne6.removeEventListener('resize', debounceMeasureList);
+    };
+  }, [itemHeight, elementRef, totalItems]);
+  (0,external_wp_element_namespaceObject.useLayoutEffect)(() => {
+    var _scrollContainer$owne7, _scrollContainer$owne8;
+
+    if (!useWindowing) {
+      return;
+    }
+
+    const scrollContainer = (0,external_wp_dom_namespaceObject.getScrollContainer)(elementRef.current);
+
+    const handleKeyDown =
+    /** @type {KeyboardEvent} */
+    event => {
+      switch (event.keyCode) {
+        case external_wp_keycodes_namespaceObject.HOME:
+          {
+            return scrollContainer === null || scrollContainer === void 0 ? void 0 : scrollContainer.scrollTo({
+              top: 0
+            });
+          }
+
+        case external_wp_keycodes_namespaceObject.END:
+          {
+            return scrollContainer === null || scrollContainer === void 0 ? void 0 : scrollContainer.scrollTo({
+              top: totalItems * itemHeight
+            });
+          }
+
+        case external_wp_keycodes_namespaceObject.PAGEUP:
+          {
+            return scrollContainer === null || scrollContainer === void 0 ? void 0 : scrollContainer.scrollTo({
+              top: scrollContainer.scrollTop - fixedListWindow.visibleItems * itemHeight
+            });
+          }
+
+        case external_wp_keycodes_namespaceObject.PAGEDOWN:
+          {
+            return scrollContainer === null || scrollContainer === void 0 ? void 0 : scrollContainer.scrollTo({
+              top: scrollContainer.scrollTop + fixedListWindow.visibleItems * itemHeight
+            });
+          }
+      }
+    };
+
+    scrollContainer === null || scrollContainer === void 0 ? void 0 : (_scrollContainer$owne7 = scrollContainer.ownerDocument) === null || _scrollContainer$owne7 === void 0 ? void 0 : (_scrollContainer$owne8 = _scrollContainer$owne7.defaultView) === null || _scrollContainer$owne8 === void 0 ? void 0 : _scrollContainer$owne8.addEventListener('keydown', handleKeyDown);
+    return () => {
+      var _scrollContainer$owne9, _scrollContainer$owne10;
+
+      scrollContainer === null || scrollContainer === void 0 ? void 0 : (_scrollContainer$owne9 = scrollContainer.ownerDocument) === null || _scrollContainer$owne9 === void 0 ? void 0 : (_scrollContainer$owne10 = _scrollContainer$owne9.defaultView) === null || _scrollContainer$owne10 === void 0 ? void 0 : _scrollContainer$owne10.removeEventListener('keydown', handleKeyDown);
+    };
+  }, [totalItems, itemHeight, elementRef, fixedListWindow.visibleItems]);
+  return [fixedListWindow, setFixedListWindow];
+}
+//# sourceMappingURL=index.js.map
 ;// CONCATENATED MODULE: ./packages/compose/build-module/index.js
 // Utils
  // Compose helper (aliased flowRight from Lodash)
@@ -4433,6 +4631,8 @@ function useDropZone({
 
 
  // Hooks
+
+
 
 
 

@@ -316,41 +316,6 @@ class WC_Stripe_Helper {
 	}
 
 	/**
-	 * Gets the supported card brands, taking the store's base country and currency into account.
-	 * For more information, please see: https://stripe.com/docs/payments/cards/supported-card-brands.
-	 *
-	 * @since 4.9.0
-	 * @version 4.9.0
-	 * @return array
-	 */
-	public static function get_supported_card_brands() {
-		$base_country  = wc_get_base_location()['country'];
-		$base_currency = get_woocommerce_currency();
-
-		$supported_card_brands = [ 'visa', 'mastercard' ];
-
-		// American Express is not supported in Brazil and Malaysia (https://stripe.com/docs/payments/cards/supported-card-brands).
-		if ( ! in_array( $base_country, [ 'BR', 'MY' ] ) ) {
-			array_push( $supported_card_brands, 'amex' );
-		}
-
-		// Discover and Diners Club are only supported in the US and Canada. If the store is in the US, USD must be used. (https://stripe.com/docs/currencies#presentment-currencies).
-		if ( 'US' === $base_country && 'USD' === $base_currency || 'CA' === $base_country ) {
-			array_push( $supported_card_brands, 'discover', 'diners' );
-		}
-
-		// See: https://support.stripe.com/questions/accepting-japan-credit-bureau-(jcb)-payments.
-		if ( 'US' === $base_country && 'USD' === $base_currency ||
-			 'JP' === $base_country && 'JPY' === $base_currency ||
-			 in_array( $base_country, [ 'CA', 'AU', 'NZ' ] )
-		) {
-			array_push( $supported_card_brands, 'jcb' );
-		}
-
-		return $supported_card_brands;
-	}
-
-	/**
 	 * Gets all the saved setting options from a specific method.
 	 * If specific setting is passed, only return that.
 	 *
@@ -367,16 +332,6 @@ class WC_Stripe_Helper {
 		}
 
 		return isset( $all_settings[ $setting ] ) ? $all_settings[ $setting ] : '';
-	}
-
-	/**
-	 * Checks if Pre Orders is available.
-	 *
-	 * @since 4.1.0
-	 * @return bool
-	 */
-	public static function is_pre_orders_exists() {
-		return class_exists( 'WC_Pre_Orders_Order' );
 	}
 
 	/**
@@ -606,5 +561,44 @@ class WC_Stripe_Helper {
 	 */
 	public static function has_cart_or_checkout_on_current_page() {
 		return is_cart() || is_checkout();
+	}
+
+	/**
+	 * Return true if the current_tab and current_section match the ones we want to check against.
+	 *
+	 * @param string $tab
+	 * @param string $section
+	 * @return boolean
+	 */
+	public static function should_enqueue_in_current_tab_section( $tab, $section ) {
+		global $current_tab, $current_section;
+
+		if ( ! isset( $current_tab ) || $tab !== $current_tab ) {
+			return false;
+		}
+
+		if ( ! isset( $current_section ) || $section !== $current_section ) {
+			return false;
+		}
+
+		return true;
+	}
+
+	public static function should_load_scripts_on_product_page() {
+		$prb_locations = self::get_settings( null, 'payment_request_button_locations' ) ?? [ 'product', 'cart' ];
+		if ( ! in_array( 'product', $prb_locations, true ) ) {
+			return apply_filters( 'wc_stripe_load_scripts_on_product_page_when_prbs_disabled', true );
+		}
+
+		return true;
+	}
+
+	public static function should_load_scripts_on_cart_page() {
+		$prb_locations = self::get_settings( null, 'payment_request_button_locations' ) ?? [ 'product', 'cart' ];
+		if ( ! in_array( 'cart', $prb_locations, true ) ) {
+			return apply_filters( 'wc_stripe_load_scripts_on_cart_page_when_prbs_disabled', true );
+		}
+
+		return true;
 	}
 }

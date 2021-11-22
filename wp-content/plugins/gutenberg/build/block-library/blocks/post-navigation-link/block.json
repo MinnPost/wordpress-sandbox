@@ -19,10 +19,25 @@
 		"showTitle": {
 			"type": "boolean",
 			"default": false
+		},
+		"linkLabel": {
+			"type": "boolean",
+			"default": false
 		}
 	},
 	"supports": {
 		"reusable": false,
-		"html": false
+		"html": false,
+		"typography": {
+			"fontSize": true,
+			"lineHeight": true,
+			"__experimentalFontStyle": true,
+			"__experimentalFontWeight": true,
+			"__experimentalLetterSpacing": true,
+			"__experimentalTextTransform": true,
+			"__experimentalDefaultControls": {
+				"fontSize": true
+			}
+		}
 	}
 }
