@@ -5,20 +5,20 @@
         'type' => 'wordpress-plugin',
         'install_path' => __DIR__ . '/../../',
         'aliases' => array(),
-        'reference' => 'eb1c8adae75ddf2a0bb6a2fa3cd853e4af540a23',
+        'reference' => '9a9b6ecfe62b9e0faabd2e341d010c0222c04e4b',
         'name' => 'minnpost/object-sync-for-salesforce',
         'dev' => false,
     ),
     'versions' => array(
-        'developerforce/force.com-toolkit-for-php' => array(
+        'messageagency/force.com-toolkit-for-php' => array(
             'pretty_version' => 'dev-master',
             'version' => 'dev-master',
             'type' => 'library',
-            'install_path' => __DIR__ . '/../developerforce/force.com-toolkit-for-php',
+            'install_path' => __DIR__ . '/../messageagency/force.com-toolkit-for-php',
             'aliases' => array(
                 0 => '1.0.x-dev',
             ),
-            'reference' => 'a131708a0fbc488da039668115f9a0bd7f779e55',
+            'reference' => '5ce6687d38c312c4af34ee30ec90535a02c49947',
             'dev_requirement' => false,
         ),
         'minnpost/object-sync-for-salesforce' => array(
@@ -27,7 +27,7 @@
             'type' => 'wordpress-plugin',
             'install_path' => __DIR__ . '/../../',
             'aliases' => array(),
-            'reference' => 'eb1c8adae75ddf2a0bb6a2fa3cd853e4af540a23',
+            'reference' => '9a9b6ecfe62b9e0faabd2e341d010c0222c04e4b',
             'dev_requirement' => false,
         ),
         'pippinsplugins/wp-logging' => array(
@@ -42,12 +42,12 @@
             'dev_requirement' => false,
         ),
         'woocommerce/action-scheduler' => array(
-            'pretty_version' => '3.2.1',
-            'version' => '3.2.1.0',
+            'pretty_version' => '3.4.0',
+            'version' => '3.4.0.0',
             'type' => 'wordpress-plugin',
             'install_path' => __DIR__ . '/../woocommerce/action-scheduler',
             'aliases' => array(),
-            'reference' => '3c24064f115cd55e972d73d5d48f14133ac60b0d',
+            'reference' => '3218a33ff14b968f8cb05de9656c2efa1eeb1330',
             'dev_requirement' => false,
         ),
     ),

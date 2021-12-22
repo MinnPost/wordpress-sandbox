@@ -2,7 +2,7 @@
 /**
  * Plugin Name: Object Sync for Salesforce
  * Description: Object Sync for Salesforce maps and syncs data between Salesforce objects and WordPress objects.
- * Version: 2.0.3
+ * Version: 2.1.0
  * Author: MinnPost
  * Author URI: https://code.minnpost.com
  * License: GPL2+
@@ -35,7 +35,7 @@ define( 'OBJECT_SYNC_SF_FILE', __FILE__ );
  * @since 2.0.0
  * @var string
  */
-define( 'OBJECT_SYNC_SF_VERSION', '2.0.3' );
+define( 'OBJECT_SYNC_SF_VERSION', '2.1.0' );
 
 /**
  * The default Salesforce API version for new installs
@@ -43,7 +43,7 @@ define( 'OBJECT_SYNC_SF_VERSION', '2.0.3' );
  * @since 2.0.0
  * @var string
  */
-define( 'OBJECT_SYNC_SF_DEFAULT_API_VERSION', '52.0' );
+define( 'OBJECT_SYNC_SF_DEFAULT_API_VERSION', '53.0' );
 
 // Load the autoloader.
 require_once 'lib/autoloader.php';

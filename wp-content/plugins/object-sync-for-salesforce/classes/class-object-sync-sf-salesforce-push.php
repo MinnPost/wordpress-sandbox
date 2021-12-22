@@ -99,6 +99,13 @@ class Object_Sync_Sf_Salesforce_Push {
 	public $salesforce;
 
 	/**
+	 * Object_Sync_Sf_Sync_Transients class
+	 *
+	 * @var object
+	 */
+	public $sync_transients;
+
+	/**
 	 * Whether the plugin is in debug mode
 	 *
 	 * @var string
@@ -130,6 +137,8 @@ class Object_Sync_Sf_Salesforce_Push {
 		$this->wordpress  = object_sync_for_salesforce()->wordpress;
 		$this->salesforce = object_sync_for_salesforce()->salesforce;
 
+		$this->sync_transients = new Object_Sync_Sf_Sync_Transients();
+
 		$this->schedule_name = 'salesforce_push';
 
 		// Create action hooks for WordPress objects. We run this after plugins are loaded in case something depends on another plugin.
@@ -147,7 +156,7 @@ class Object_Sync_Sf_Salesforce_Push {
 	public function add_actions() {
 		$db_version = get_option( $this->option_prefix . 'db_version', false );
 		if ( $db_version === $this->version ) {
-			foreach ( $this->mappings->get_fieldmaps() as $mapping ) {
+			foreach ( $this->mappings->get_fieldmaps( null, $this->mappings->active_fieldmap_conditions ) as $mapping ) {
 				$object_type = $mapping['wordpress_object'];
 				if ( 'user' === $object_type ) {
 					if ( defined( 'ultimatemember_plugin_name' ) ) {
@@ -215,7 +224,7 @@ class Object_Sync_Sf_Salesforce_Push {
 		if ( isset( $trigger ) ) {
 			$results = $this->salesforce_push_object_crud( $object_type, $object, $trigger, true );
 			foreach ( $results as $result ) {
-				if ( 'success' === $result['status'] ) {
+				if ( isset( $result['status'] ) && 'success' === $result['status'] ) {
 					if ( 'POST' === $http_method || 'PUT' === $http_method ) {
 						$code = '201';
 					} elseif ( 'DELETE' === $http_method ) {
@@ -253,6 +262,13 @@ class Object_Sync_Sf_Salesforce_Push {
 	 * @param array  $form_data the data that was sent to create the user.
 	 */
 	public function um_add_user( $user_id, $form_data = array() ) {
+		// in at least some cases, the form data array does not have the ID field, and this can cause errors.
+		// if we don't have the ID field value in the form data, add it so it acts like the others.
+		$structure               = $this->wordpress->get_wordpress_table_structure( 'user' );
+		$wordpress_id_field_name = $structure['id_field'];
+		if ( ! isset( $form_data[ $wordpress_id_field_name ] ) ) {
+			$form_data[ $wordpress_id_field_name ] = $user_id;
+		}
 		$this->object_insert( $form_data, 'user' );
 	}
 
@@ -504,72 +520,120 @@ class Object_Sync_Sf_Salesforce_Push {
 		$structure               = $this->wordpress->get_wordpress_table_structure( $object_type );
 		$wordpress_id_field_name = $structure['id_field'];
 
-		// there is a WordPress object to push.
-		if ( isset( $object[ $wordpress_id_field_name ] ) ) {
-			// todo: we might want to loop through these?
-			$mapping_object = $this->mappings->load_all_by_wordpress( $object_type, $object[ $wordpress_id_field_name ] );
-			if ( ! empty( $mapping_object ) ) {
-				$mapping_object = $mapping_object[0];
-			}
-
-			// there is already a mapping object for this WordPress object.
-			if ( isset( $mapping_object['id'] ) ) {
-				$mapping_object_id_transient = $mapping_object['salesforce_id'];
-			} else {
-				// there is not a mapping object for this WordPress object id yet
-				// check for that transient with the currently pulling id.
-				$mapping_object_id_transient = get_transient( 'salesforce_pulling_object_id' );
-			}
-
-			$salesforce_pulling = (int) get_transient( 'salesforce_pulling_' . $mapping_object_id_transient );
-			if ( 1 === $salesforce_pulling ) {
-				delete_transient( 'salesforce_pulling_' . $mapping_object_id_transient );
-				$pulling_id = get_transient( 'salesforce_pulling_object_id' );
-				if ( $pulling_id === $mapping_object_id_transient ) {
-					delete_transient( 'salesforce_pulling_object_id' );
-				}
-				return false;
-			}
-		} else {
-			// if we don't have a WordPress object id, we've got no business doing stuff in Salesforce.
-			$status = 'error';
-			if ( isset( $this->logging ) ) {
-				$logging = $this->logging;
-			} elseif ( class_exists( 'Object_Sync_Sf_Logging' ) ) {
-				$logging = new Object_Sync_Sf_Logging( $this->wpdb, $this->version );
-			}
-
-			$title = sprintf(
-				// translators: placeholders are: 1) the log status, 2) the name of the WordPress id field.
-				esc_html__( '%1$s: Salesforce Push: unable to process queue item because it has no WordPress %2$s.', 'object-sync-for-salesforce' ),
-				ucfirst( esc_attr( $status ) ),
-				esc_attr( $wordpress_id_field_name )
-			);
-
-			$result = array(
-				'title'   => $title,
-				'message' => print_r( $object, true ), // phpcs:ignore WordPress.PHP.DevelopmentFunctions.error_log_print_r
-				'trigger' => $sf_sync_trigger,
-				'parent'  => 0, // parent id goes here but we don't have one, so make it 0.
-				'status'  => $status,
-			);
-
-			$logging->setup( $result );
-			return $result;
-		} // End if() statement.
+		$transients_to_delete = array();
 
 		// load mappings that match this criteria
 		// in this case, it's all mappings that correspond to the posted WordPress object.
 		$sf_mappings = $this->mappings->get_fieldmaps(
 			null, // id field must be null for multiples.
-			array(
-				'wordpress_object' => $object_type,
-			)
+			array_merge(
+				$this->mappings->active_fieldmap_conditions,
+				array(
+					'wordpress_object' => $object_type,
+				)
+			),
 		);
 
 		$results = array();
 
-		foreach ( $sf_mappings as $mapping ) { // for each mapping of this object.
+		foreach ( $sf_mappings as $fieldmap_key => $mapping ) { // for each mapping of this object.
+
+			$transients_to_delete[ $fieldmap_key ] = array(
+				'fieldmap'   => $mapping,
+				'transients' => array(),
+			);
+
+			// there is a WordPress object to push.
+			if ( isset( $object[ $wordpress_id_field_name ] ) ) {
+				// todo: we might want to loop through these?
+				$mapping_object = $this->mappings->load_all_by_wordpress( $object_type, $object[ $wordpress_id_field_name ] );
+				if ( ! empty( $mapping_object ) ) {
+					$mapping_object = $mapping_object[0];
+				}
+
+				// there is already a mapping object for this WordPress object.
+				if ( isset( $mapping_object['id'] ) ) {
+					$mapping_object_id_transient = $mapping_object['salesforce_id'];
+				} else {
+					// there is not a mapping object for this WordPress object id yet
+					// check for that transient with the currently pulling id.
+					// this value is a Salesforce record Id.
+					$mapping_object_id_transient = $this->sync_transients->get( 'salesforce_pulling_object_id', '', $mapping['id'] );
+				}
+
+				// if there's a transient created for pulling that specific Salesforce ID, the value will still be there.
+				$salesforce_pulling = (int) $this->sync_transients->get( 'salesforce_pulling_' . $mapping_object_id_transient, '', $mapping['id'] );
+
+				if ( 1 !== $salesforce_pulling ) {
+					// check if there is already a mapping object that contains the transient's Salesforce Id value.
+					if ( ! isset( $mapping_object['salesforce_id'] ) || $mapping_object_id_transient !== $mapping_object['salesforce_id'] ) {
+						$salesforce_pulling = 0;
+					} else {
+						$salesforce_pulling = 1;
+					}
+				}
+
+				if ( 1 === $salesforce_pulling ) {
+					// if it is pulling, delete the transient and continue on through the loop.
+					// we need to either do this for every individual mapping object, or only do it when all the mapping objects are done.
+					$transients_to_delete[ $fieldmap_key ]['transients'][] = $mapping_object_id_transient;
+					if ( true === $this->debug ) {
+						// create log entry for failed pull.
+						$status = 'debug';
+						$title  = sprintf(
+							// translators: placeholders are: 1) the log status, 2) the mapping object ID transient.
+							esc_html__( '%1$s: mapping object transient ID %2$s is currently pulling, so we do not push it.', 'object-sync-for-salesforce' ),
+							ucfirst( esc_attr( $status ) ),
+							$mapping_object_id_transient
+						);
+
+						if ( isset( $this->logging ) ) {
+							$logging = $this->logging;
+						} elseif ( class_exists( 'Object_Sync_Sf_Logging' ) ) {
+							$logging = new Object_Sync_Sf_Logging( $this->wpdb, $this->version );
+						}
+
+						$debug = array(
+							'title'   => $title,
+							'message' => '',
+							'trigger' => $sf_sync_trigger,
+							'parent'  => '',
+							'status'  => $status,
+						);
+
+						$logging->setup( $debug );
+					}
+
+					continue;
+				}
+			} else {
+				// if we don't have a WordPress object id, we've got no business doing stuff in Salesforce.
+				$status = 'error';
+				if ( isset( $this->logging ) ) {
+					$logging = $this->logging;
+				} elseif ( class_exists( 'Object_Sync_Sf_Logging' ) ) {
+					$logging = new Object_Sync_Sf_Logging( $this->wpdb, $this->version );
+				}
+
+				$title = sprintf(
+					// translators: placeholders are: 1) the log status, 2) the name of the WordPress id field.
+					esc_html__( '%1$s: Salesforce Push: unable to process queue item because it has no WordPress %2$s.', 'object-sync-for-salesforce' ),
+					ucfirst( esc_attr( $status ) ),
+					esc_attr( $wordpress_id_field_name )
+				);
+
+				$result = array(
+					'title'   => $title,
+					'message' => print_r( $object, true ), // phpcs:ignore WordPress.PHP.DevelopmentFunctions.error_log_print_r
+					'trigger' => $sf_sync_trigger,
+					'parent'  => 0, // parent id goes here but we don't have one, so make it 0.
+					'status'  => $status,
+				);
+
+				$logging->setup( $result );
+				return $result;
+			} // End if() statement.
+
 			$map_sync_triggers = $mapping['sync_triggers'];
 
 			$push_allowed = $this->is_push_allowed( $object_type, $object, $sf_sync_trigger, $mapping, $map_sync_triggers );
@@ -707,6 +771,20 @@ class Object_Sync_Sf_Salesforce_Push {
 				$results[] = $push;
 			} // End if() statement.
 		} // End foreach() on fieldmaps.
+
+		// delete transients that we've already processed for this WordPress object.
+		foreach ( $transients_to_delete as $key => $value ) {
+			$fieldmap_id = $value['fieldmap']['id'];
+			$transients  = $value['transients'];
+			foreach ( $transients as $transient_end ) {
+				$this->sync_transients->delete( 'salesforce_pulling_' . $transient_end, '', $fieldmap_id );
+			}
+			$pulling_id = $this->sync_transients->get( 'salesforce_pulling_object_id', '', $fieldmap_id );
+			if ( in_array( $pulling_id, $transients, true ) ) {
+				$this->sync_transients->delete( 'salesforce_pulling_object_id', '', $fieldmap_id );
+			}
+		}
+
 		return $results;
 	}
 
@@ -804,7 +882,7 @@ class Object_Sync_Sf_Salesforce_Push {
 			if ( isset( $mapping_object['id'] ) ) {
 				$op = 'Delete';
 
-				$mapping_objects = $this->mappings->load_all_by_salesforce( $mapping_object['salesforce_id'] );
+				$mapping_objects = $this->mappings->load_object_maps_by_salesforce_id( $mapping_object['salesforce_id'], $mapping );
 
 				// only delete if there are no additional mapping objects for this record.
 				if ( 1 === count( $mapping_objects ) ) {
@@ -813,8 +891,8 @@ class Object_Sync_Sf_Salesforce_Push {
 					$seconds     = reset( $frequencies )['frequency'] + 60;
 
 					// right here we should set the pushing transient.
-					set_transient( 'salesforce_pushing_' . $mapping_object['salesforce_id'], 1, $seconds );
-					set_transient( 'salesforce_pushing_object_id', $mapping_object['salesforce_id'] );
+					$this->sync_transients->set( 'salesforce_pushing_' . $mapping_object['salesforce_id'], '', $mapping['id'], 1, $seconds );
+					$this->sync_transients->set( 'salesforce_pushing_object_id', '', $mapping['id'], $mapping_object['salesforce_id'] );
 
 					try {
 						$api_result = $sfapi->object_delete( $mapping['salesforce_object'], $mapping_object['salesforce_id'] );
@@ -932,8 +1010,8 @@ class Object_Sync_Sf_Salesforce_Push {
 
 				// right here we should change the pushing_object_id transient to the Salesforce Id value.
 				if ( isset( $api_result['code'] ) && (int) 204 === $api_result['code'] ) {
-					set_transient( 'salesforce_pushing_' . $mapping_object['salesforce_id'], 1 );
-					set_transient( 'salesforce_pushing_object_id', $mapping_object['salesforce_id'] );
+					$this->sync_transients->set( 'salesforce_pushing_' . $mapping_object['salesforce_id'], '', $mapping['id'], 1 );
+					$this->sync_transients->set( 'salesforce_pushing_object_id', '', $mapping['id'], $mapping_object['salesforce_id'] );
 				}
 
 				// delete the map row from WordPress after the Salesforce row has been deleted
@@ -962,8 +1040,72 @@ class Object_Sync_Sf_Salesforce_Push {
 
 		// if we don't get any params, there are no fields that should be sent to Salesforce.
 		if ( empty( $params ) ) {
+
+			// if the parameters array is empty at this point, we should create a log entry to that effect.
+			// I think it should be a debug message, unless we learn from users that it should be raised to an error.
+			if ( true === $this->debug ) {
+				$status = 'debug';
+				if ( isset( $this->logging ) ) {
+					$logging = $this->logging;
+				} elseif ( class_exists( 'Object_Sync_Sf_Logging' ) ) {
+					$logging = new Object_Sync_Sf_Logging( $this->wpdb, $this->version );
+				}
+
+				$title = sprintf(
+					// translators: %1$s is the log status.
+					esc_html__( '%1$s Mapping: according to the current plugin settings, there are no parameters in the current dataset that can be pushed to Salesforce.', 'object-sync-for-salesforce' ),
+					ucfirst( esc_attr( $status ) )
+				);
+
+				$body = '';
+
+				$body .= sprintf(
+					// translators: placeholders are: 1) the fieldmap row ID, 2) the name of the WordPress object, 3) the name of the Salesforce object.
+					'<p>' . esc_html__( 'There is a fieldmap with ID of %1$s and it maps the WordPress %2$s object to the Salesforce %3$s object.', 'object-sync-for-salesforce' ) . '</p>',
+					absint( $mapping['id'] ),
+					esc_attr( $mapping['wordpress_object'] ),
+					esc_attr( $mapping['salesforce_object'] )
+				);
+
+				// whether it's a new mapping object or not.
+				if ( false === $is_new ) {
+					// this one is not new.
+					$body .= sprintf(
+						// translators: placeholders are: 1) the mapping object row ID, 2) the name of the WordPress object, 3) the ID of the WordPress object, 4) the ID of the Salesforce object it was trying to map.
+						'<p>' . esc_html__( 'There is an existing object map with ID of %1$s and it is mapped to the WordPress %2$s with ID of %3$s and the Salesforce object with ID of %4$s.', 'object-sync-for-salesforce' ) . '</p>',
+						absint( $mapping_object['id'] ),
+						esc_attr( $mapping_object['wordpress_object'] ),
+						esc_attr( $mapping_object['wordpress_id'] ),
+						esc_attr( $mapping_object['salesforce_id'] )
+					);
+				} else {
+					// this one is new.
+					$body .= sprintf(
+						// translators: placeholders are: 1) the name of the WordPress object, 2) the ID of the WordPress object, 3) the Salesforce object type.
+						'<p>' . esc_html__( 'The plugin was trying to push the WordPress %1$s with ID of %2$s to the Salesforce %3$s object type.', 'object-sync-for-salesforce' ) . '</p>',
+						esc_attr( $mapping['wordpress_object'] ),
+						esc_attr( $object[ $wordpress_id_field_name ] ),
+						esc_attr( $mapping['salesforce_object'] )
+					);
+				}
+
+				$body .= sprintf(
+					// translators: placeholders are 1) the object's data that was attempted.
+					'<p>' . esc_html__( 'The WordPress object data that was attempted: %1$s', 'object-sync-for-salesforce' ) . '</p>',
+					print_r( $object, true ) // phpcs:ignore WordPress.PHP.DevelopmentFunctions.error_log_print_r
+				);
+
+				$logging->setup(
+					$title,
+					$body,
+					$sf_sync_trigger,
+					0,
+					$status
+				);
+			} // end debug mode check.
+
 			return;
-		}
+		} // end if params are empty.
 
 		// if there is a prematch WordPress field - ie email - on the fieldmap object.
 		if ( isset( $params['prematch'] ) && is_array( $params['prematch'] ) ) {
@@ -995,8 +1137,8 @@ class Object_Sync_Sf_Salesforce_Push {
 			// create the mapping object between the rows.
 			$temporary_map_id  = $this->mappings->generate_temporary_id( 'push' );
 			$mapping_object_id = $this->create_object_map( $object, $wordpress_id_field_name, $temporary_map_id, $mapping, true );
-			set_transient( 'salesforce_pushing_' . $temporary_map_id, 1, $seconds );
-			set_transient( 'salesforce_pushing_object_id', $temporary_map_id );
+			$this->sync_transients->set( 'salesforce_pushing_' . $temporary_map_id, '', $mapping['id'], 1, $seconds );
+			$this->sync_transients->set( 'salesforce_pushing_object_id', '', $mapping['id'], $temporary_map_id );
 			$mapping_object  = array();
 			$mapping_objects = $this->mappings->get_all_object_maps(
 				array(
@@ -1184,8 +1326,8 @@ class Object_Sync_Sf_Salesforce_Push {
 
 				// right here we should change the pushing transient to the LastModifiedDate for the Salesforce object.
 				if ( isset( $salesforce_data['LastModifiedDate'] ) ) {
-					set_transient( 'salesforce_pushing_' . $salesforce_id, strtotime( $salesforce_data['LastModifiedDate'] ) );
-					set_transient( 'salesforce_pushing_object_id', $salesforce_id );
+					$this->sync_transients->set( 'salesforce_pushing_' . $salesforce_id, '', $mapping['id'], strtotime( $salesforce_data['LastModifiedDate'] ) );
+					$this->sync_transients->set( 'salesforce_pushing_object_id', '', $mapping['id'], $salesforce_id );
 				}
 
 				// update that mapping object.
@@ -1256,8 +1398,8 @@ class Object_Sync_Sf_Salesforce_Push {
 			// $is_new is false here; we are updating an already mapped object
 
 			// right here we should set the pushing transient.
-			set_transient( 'salesforce_pushing_' . $mapping_object['salesforce_id'], 1, $seconds );
-			set_transient( 'salesforce_pushing_object_id', $mapping_object['salesforce_id'] );
+			$this->sync_transients->set( 'salesforce_pushing_' . $mapping_object['salesforce_id'], '', $mapping['id'], 1, $seconds );
+			$this->sync_transients->set( 'salesforce_pushing_object_id', '', $mapping['id'], $mapping_object['salesforce_id'] );
 
 			// there is an existing object link
 			// if the last sync is greater than the last time this object was updated, skip it
@@ -1404,8 +1546,8 @@ class Object_Sync_Sf_Salesforce_Push {
 
 			// right here we should change the pushing transient to the LastModifiedDate for the Salesforce object.
 			if ( isset( $salesforce_data['LastModifiedDate'] ) ) {
-				set_transient( 'salesforce_pushing_' . $mapping_object['salesforce_id'], strtotime( $salesforce_data['LastModifiedDate'] ) );
-				set_transient( 'salesforce_pushing_object_id', $mapping_object['salesforce_id'] );
+				$this->sync_transients->set( 'salesforce_pushing_' . $mapping_object['salesforce_id'], '', $mapping['id'], strtotime( $salesforce_data['LastModifiedDate'] ) );
+				$this->sync_transients->set( 'salesforce_pushing_object_id', '', $mapping['id'], $mapping_object['salesforce_id'] );
 			}
 
 			// tell the mapping object - whether it is new or already existed - how we just used it.
