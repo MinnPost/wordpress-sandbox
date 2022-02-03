@@ -17630,7 +17630,6 @@ function Dashicon(_ref) {
 /**
  * External dependencies
  */
-// eslint-disable-next-line no-restricted-imports
 
 /**
  * WordPress dependencies
@@ -22704,9 +22703,12 @@ const G2 = {
     600: '#949494',
     // Meets 3:1 UI or large text contrast against white.
     400: '#ccc',
-    200: '#ddd',
+    300: '#ddd',
     // Used for most borders.
-    100: '#f0f0f0'
+    200: '#e0e0e0',
+    // Used sparingly for light borders.
+    100: '#f0f0f0' // Used for light gray backgrounds.
+
   },
   darkGray: {
     primary: '#1e1e1e',
@@ -22827,7 +22829,7 @@ const UI = {
   borderHover: G2.gray[700],
   borderFocus: ADMIN.themeDark10,
   borderDisabled: G2.gray[400],
-  borderLight: G2.gray[200],
+  borderLight: G2.gray[300],
   label: DARK_GRAY[500],
   textDisabled: DARK_GRAY[150],
   textDark: BASE.white,
@@ -34543,9 +34545,6 @@ const CONTROL_PROPS = {
 const TOGGLE_GROUP_CONTROL_PROPS = {
   toggleGroupControlBackgroundColor: CONTROL_PROPS.controlBackgroundColor,
   toggleGroupControlBorderColor: COLORS.ui.border,
-  toggleGroupControlBackdropBackgroundColor: CONTROL_PROPS.controlSurfaceColor,
-  toggleGroupControlBackdropBorderColor: COLORS.ui.border,
-  toggleGroupControlBackdropBoxShadow: 'transparent',
   toggleGroupControlButtonColorActive: CONTROL_PROPS.controlBackgroundColor
 };
 /* harmony default export */ var config_values = ({ ...CONTROL_PROPS,
@@ -34771,7 +34770,6 @@ function createHighlighterText(_ref) {
 /**
  * External dependencies
  */
-// eslint-disable-next-line no-restricted-imports
 
 /**
  * Internal dependencies
@@ -34818,7 +34816,6 @@ function getHeadingFontSize() {
 /**
  * External dependencies
  */
-// eslint-disable-next-line no-restricted-imports
 
 /**
  * Internal dependencies
@@ -35256,25 +35253,27 @@ const Input = emotion_styled_base_browser_esm("input",  true ? {
   target: "em5sgkm5"
 } : 0)("&&&{background-color:transparent;box-sizing:border-box;border:none;box-shadow:none!important;color:", COLORS.black, ";display:block;margin:0;outline:none;width:100%;", dragStyles, " ", disabledStyles, " ", fontSizeStyles, " ", sizeStyles, " &::-webkit-input-placeholder{line-height:normal;}}" + ( true ? "" : 0));
 
-const labelPadding = _ref16 => {
+const labelMargin = _ref16 => {
   let {
     labelPosition
   } = _ref16;
-  let paddingBottom = 4;
+  let marginBottom = 8;
 
   if (labelPosition === 'edge' || labelPosition === 'side') {
-    paddingBottom = 0;
+    marginBottom = 0;
   }
 
   return /*#__PURE__*/emotion_react_browser_esm_css({
-    paddingTop: 0,
-    paddingBottom
+    marginTop: 0,
+    marginRight: 0,
+    marginBottom,
+    marginLeft: 0
   },  true ? "" : 0,  true ? "" : 0);
 };
 
 const BaseLabel = /*#__PURE__*/emotion_styled_base_browser_esm(text_component,  true ? {
   target: "em5sgkm4"
-} : 0)("&&&{box-sizing:border-box;color:currentColor;display:block;margin:0;max-width:100%;z-index:1;", labelPadding, " overflow:hidden;text-overflow:ellipsis;white-space:nowrap;}" + ( true ? "" : 0));
+} : 0)("&&&{box-sizing:border-box;color:currentColor;display:block;padding-top:0;padding-bottom:0;max-width:100%;z-index:1;", labelMargin, " overflow:hidden;text-overflow:ellipsis;white-space:nowrap;}" + ( true ? "" : 0));
 
 const Label = props => (0,external_wp_element_namespaceObject.createElement)(BaseLabel, extends_extends({}, props, {
   as: "label"
@@ -35394,7 +35393,6 @@ function label_Label(_ref) {
 /**
  * External dependencies
  */
-// eslint-disable-next-line no-restricted-imports
 
 /**
  * WordPress dependencies
@@ -38387,7 +38385,6 @@ function useDragCursor(isDragging, dragDirection) {
 /**
  * External dependencies
  */
-// eslint-disable-next-line no-restricted-imports
 
 /**
  * Internal dependencies
@@ -38408,7 +38405,6 @@ const initialInputControlState = {
 /**
  * External dependencies
  */
-// eslint-disable-next-line no-restricted-imports
 
 /**
  * Internal dependencies
@@ -38429,7 +38425,7 @@ const UPDATE = 'UPDATE';
 /**
  * External dependencies
  */
- // eslint-disable-next-line no-restricted-imports
+
 
 /**
  * WordPress dependencies
@@ -38815,7 +38811,7 @@ function use_update_effect_useUpdateEffect(effect, deps) {
  * External dependencies
  */
 
- // eslint-disable-next-line no-restricted-imports
+
 
 /**
  * WordPress dependencies
@@ -39056,7 +39052,7 @@ const ForwardedComponent = (0,external_wp_element_namespaceObject.forwardRef)(In
  * External dependencies
  */
 
- // eslint-disable-next-line no-restricted-imports
+
 
 /**
  * WordPress dependencies
@@ -39323,7 +39319,6 @@ function useSpacer(props) {
 /**
  * External dependencies
  */
-// eslint-disable-next-line no-restricted-imports
 
 /**
  * Internal dependencies
@@ -40044,18 +40039,23 @@ function font(value) {
  */
 
 
+
 const base_control_styles_Wrapper = emotion_styled_base_browser_esm("div",  true ? {
-  target: "e1puf3u3"
+  target: "e1puf3u4"
 } : 0)("font-family:", font('default.fontFamily'), ";font-size:", font('default.fontSize'), ";" + ( true ? "" : 0));
 const StyledField = emotion_styled_base_browser_esm("div",  true ? {
-  target: "e1puf3u2"
+  target: "e1puf3u3"
 } : 0)("margin-bottom:", space(2), ";.components-panel__row &{margin-bottom:inherit;}" + ( true ? "" : 0));
+const labelStyles = /*#__PURE__*/emotion_react_browser_esm_css("display:inline-block;margin-bottom:", space(2), ";" + ( true ? "" : 0),  true ? "" : 0);
 const StyledLabel = emotion_styled_base_browser_esm("label",  true ? {
-  target: "e1puf3u1"
-} : 0)("display:inline-block;margin-bottom:", space(2), ";" + ( true ? "" : 0));
+  target: "e1puf3u2"
+} : 0)(labelStyles, ";" + ( true ? "" : 0));
 const StyledHelp = emotion_styled_base_browser_esm("p",  true ? {
-  target: "e1puf3u0"
+  target: "e1puf3u1"
 } : 0)("font-size:", font('helpText.fontSize'), ";font-style:normal;color:", COLORS.mediumGray.text, ";" + ( true ? "" : 0));
+const StyledVisualLabel = emotion_styled_base_browser_esm("span",  true ? {
+  target: "e1puf3u0"
+} : 0)(labelStyles, ";" + ( true ? "" : 0));
 //# sourceMappingURL=base-control-styles.js.map
 ;// CONCATENATED MODULE: ./packages/components/build-module/base-control/index.js
 
@@ -40134,9 +40134,8 @@ BaseControl.VisualLabel = _ref2 => {
     className,
     children
   } = _ref2;
-  className = classnames_default()('components-base-control__label', className);
-  return (0,external_wp_element_namespaceObject.createElement)("span", {
-    className: className
+  return (0,external_wp_element_namespaceObject.createElement)(StyledVisualLabel, {
+    className: classnames_default()('components-base-control__label', className)
   }, children);
 };
 
@@ -40834,7 +40833,6 @@ function getUnitsWithCurrentUnit(currentValue, legacyUnit) {
  * External dependencies
  */
 
- // eslint-disable-next-line no-restricted-imports
 
 
 
@@ -40976,7 +40974,6 @@ function useControlledState(currentState) {
 /**
  * External dependencies
  */
-// eslint-disable-next-line no-restricted-imports
 
 
 /**
@@ -41208,7 +41205,7 @@ const box_control_styles_Root = emotion_styled_base_browser_esm("div",  true ? {
 } : 0);
 const Header = /*#__PURE__*/emotion_styled_base_browser_esm(flex_component,  true ? {
   target: "e7pk0lh5"
-} : 0)("color:", COLORS.ui.label, ";padding-bottom:8px;" + ( true ? "" : 0));
+} : 0)("color:", COLORS.ui.label, ";margin-bottom:8px;" + ( true ? "" : 0));
 const HeaderControlWrapper = /*#__PURE__*/emotion_styled_base_browser_esm(flex_component,  true ? {
   target: "e7pk0lh4"
 } : 0)( true ? {
@@ -43361,7 +43358,7 @@ const DividerView = emotion_styled_base_browser_esm("hr",  true ? {
  * External dependencies
  */
 // eslint-disable-next-line no-restricted-imports
- // eslint-disable-next-line no-restricted-imports
+
 
 /**
  * Internal dependencies
@@ -44060,7 +44057,6 @@ function getAlignmentProps(alignment) {
 /**
  * External dependencies
  */
-// eslint-disable-next-line no-restricted-imports
 
 /**
  * WordPress dependencies
@@ -44613,7 +44609,7 @@ const BeforeIconWrapper = emotion_styled_base_browser_esm("span",  true ? {
 const AfterIconWrapper = emotion_styled_base_browser_esm("span",  true ? {
   target: "exqw8y211"
 } : 0)("margin-top:", railHeight, "px;", rtl({
-  marginLeft: 16
+  marginLeft: 6
 }), ";" + ( true ? "" : 0));
 
 const railBackgroundColor = _ref6 => {
@@ -48054,7 +48050,6 @@ var Tooltip_Tooltip = createComponent({
 /**
  * External dependencies
  */
-// eslint-disable-next-line no-restricted-imports
 
 /**
  * Internal dependencies
@@ -48820,8 +48815,6 @@ function useControlledValue(_ref) {
 /**
  * External dependencies
  */
-// eslint-disable-next-line no-restricted-imports
-
 
 
 /**
@@ -48875,7 +48868,7 @@ const ColorPicker = (props, forwardedRef) => {
     return w(color);
   }, [color]);
   const debouncedSetColor = (0,external_wp_compose_namespaceObject.useDebounce)(setColor);
-  const handleChange = (0,external_React_.useCallback)(nextValue => {
+  const handleChange = (0,external_wp_element_namespaceObject.useCallback)(nextValue => {
     debouncedSetColor(nextValue.toHex());
   }, [debouncedSetColor]);
   const [showInputs, setShowInputs] = (0,external_wp_element_namespaceObject.useState)(false);
@@ -48921,7 +48914,6 @@ const ConnectedColorPicker = contextConnect(ColorPicker, 'ColorPicker');
 /**
  * External dependencies
  */
- // eslint-disable-next-line no-restricted-imports
 
 
 /**
@@ -49099,7 +49091,6 @@ const useItemGroupContext = () => (0,external_wp_element_namespaceObject.useCont
 /**
  * External dependencies
  */
-// eslint-disable-next-line no-restricted-imports
 
 /**
  * Internal dependencies
@@ -49461,7 +49452,6 @@ function useHeading(props) {
 /**
  * External dependencies
  */
-// eslint-disable-next-line no-restricted-imports
 
 /**
  * Internal dependencies
@@ -49638,7 +49628,7 @@ function ColorPalette(_ref6) {
     __experimentalIsRenderedInSidebar = false
   } = _ref6;
   const clearColor = (0,external_wp_element_namespaceObject.useCallback)(() => onChange(undefined), [onChange]);
-  const Component = __experimentalHasMultipleOrigins ? MultiplePalettes : SinglePalette;
+  const Component = __experimentalHasMultipleOrigins && colors !== null && colors !== void 0 && colors.length ? MultiplePalettes : SinglePalette;
 
   const renderCustomColorPicker = () => (0,external_wp_element_namespaceObject.createElement)(LegacyAdapter, {
     color: value,
@@ -49649,7 +49639,7 @@ function ColorPalette(_ref6) {
   let dropdownPosition;
 
   if (__experimentalIsRenderedInSidebar) {
-    dropdownPosition = (0,external_wp_i18n_namespaceObject.isRTL)() ? 'bottom right' : 'bottom left';
+    dropdownPosition = 'bottom left';
   }
 
   const colordColor = w(value);
@@ -49948,7 +49938,7 @@ function GradientColorPickerDropdown(_ref2) {
 
     if (isRenderedInSidebar) {
       result.anchorRef = gradientPickerDomRef.current;
-      result.position = (0,external_wp_i18n_namespaceObject.isRTL)() ? 'bottom right' : 'bottom left';
+      result.position = 'bottom left';
     }
 
     return result;
@@ -51224,84 +51214,6 @@ function DropdownMenu(dropdownMenuProps) {
 
 /* harmony default export */ var dropdown_menu = (DropdownMenu);
 //# sourceMappingURL=index.js.map
-;// CONCATENATED MODULE: ./packages/components/build-module/item-group/item/hook.js
-/**
- * External dependencies
- */
-// eslint-disable-next-line no-restricted-imports
-
-/**
- * WordPress dependencies
- */
-
-/**
- * Internal dependencies
- */
-
-
-
-
-
-function hook_useItem(props) {
-  const {
-    as: asProp,
-    className,
-    onClick,
-    role = 'listitem',
-    size: sizeProp,
-    ...otherProps
-  } = useContextSystem(props, 'Item');
-  const {
-    spacedAround,
-    size: contextSize
-  } = useItemGroupContext();
-  const size = sizeProp || contextSize;
-  const as = asProp || (typeof onClick !== 'undefined' ? 'button' : 'div');
-  const cx = useCx();
-  const classes = (0,external_wp_element_namespaceObject.useMemo)(() => cx(as === 'button' && unstyledButton, itemSizes[size] || itemSizes.medium, item, spacedAround && styles_spacedAround, className), [as, className, size, spacedAround]);
-  const wrapperClassName = cx(itemWrapper);
-  return {
-    as,
-    className: classes,
-    onClick,
-    wrapperClassName,
-    role,
-    ...otherProps
-  };
-}
-//# sourceMappingURL=hook.js.map
-;// CONCATENATED MODULE: ./packages/components/build-module/item-group/item/component.js
-
-
-
-/**
- * External dependencies
- */
-// eslint-disable-next-line no-restricted-imports
-
-/**
- * Internal dependencies
- */
-
-
-
-
-function component_Item(props, forwardedRef) {
-  const {
-    role,
-    wrapperClassName,
-    ...otherProps
-  } = hook_useItem(props);
-  return (0,external_wp_element_namespaceObject.createElement)("div", {
-    role: role,
-    className: wrapperClassName
-  }, (0,external_wp_element_namespaceObject.createElement)(component, extends_extends({}, otherProps, {
-    ref: forwardedRef
-  })));
-}
-
-/* harmony default export */ var item_component = (contextConnect(component_Item, 'Item'));
-//# sourceMappingURL=component.js.map
 ;// CONCATENATED MODULE: ./packages/components/build-module/palette-edit/styles.js
 
 
@@ -51323,19 +51235,18 @@ function palette_edit_styles_EMOTION_STRINGIFIED_CSS_ERROR_() { return "You have
 
 
 
-
 const IndicatorStyled = /*#__PURE__*/emotion_styled_base_browser_esm(CircularOptionPicker.Option,  true ? {
   target: "e5bw3229"
 } : 0)("width:", space(6), ";height:", space(6), ";pointer-events:none;" + ( true ? "" : 0));
 const NameInputControl = /*#__PURE__*/emotion_styled_base_browser_esm(input_control,  true ? {
   target: "e5bw3228"
-} : 0)(Container, "{background:", COLORS.gray[100], ";border-radius:2px;", Input, Input, Input, Input, "{height:", space(8), ";}", BackdropUI, BackdropUI, BackdropUI, "{border-color:transparent;box-shadow:none;}}" + ( true ? "" : 0));
-const PaletteItem = /*#__PURE__*/emotion_styled_base_browser_esm(item_component,  true ? {
+} : 0)(Container, "{background:", COLORS.gray[100], ";border-radius:", config_values.controlBorderRadius, ";}", Input, Input, Input, Input, "{height:", space(8), ";}", BackdropUI, BackdropUI, BackdropUI, "{border-color:transparent;box-shadow:none;}" + ( true ? "" : 0));
+const PaletteItem = /*#__PURE__*/emotion_styled_base_browser_esm(component,  true ? {
   target: "e5bw3227"
-} : 0)("padding:3px 0 3px ", space(3), ";height:calc( 40px - ", config_values.borderWidth, " );" + ( true ? "" : 0));
+} : 0)("padding:3px 0 3px ", space(3), ";height:calc( 40px - ", config_values.borderWidth, " );border:1px solid ", config_values.surfaceBorderColor, ";border-bottom-color:transparent;&:first-of-type{border-top-left-radius:", config_values.controlBorderRadius, ";border-top-right-radius:", config_values.controlBorderRadius, ";}&:last-of-type{border-bottom-left-radius:", config_values.controlBorderRadius, ";border-bottom-right-radius:", config_values.controlBorderRadius, ";border-bottom-color:", config_values.surfaceBorderColor, ";}&.is-selected+&{border-top-color:transparent;}&.is-selected{border-color:", COLORS.blue.wordpress[700], ";}" + ( true ? "" : 0));
 const NameContainer = emotion_styled_base_browser_esm("div",  true ? {
   target: "e5bw3226"
-} : 0)("line-height:", space(8), ";margin-left:", space(2), ";margin-right:", space(2), ";white-space:nowrap;overflow:hidden;" + ( true ? "" : 0));
+} : 0)("line-height:", space(8), ";margin-left:", space(2), ";margin-right:", space(2), ";white-space:nowrap;overflow:hidden;", PaletteItem, ":hover &{color:var( --wp-admin-theme-color, ", COLORS.blue.wordpress[700], " );}" + ( true ? "" : 0));
 const PaletteHeading = /*#__PURE__*/emotion_styled_base_browser_esm(heading_component,  true ? {
   target: "e5bw3225"
 } : 0)("text-transform:uppercase;line-height:", space(6), ";font-weight:500;&&&{font-size:11px;margin-bottom:0;}" + ( true ? "" : 0));
@@ -51429,9 +51340,15 @@ function palette_edit_Option(_ref2) {
   const focusOutsideProps = (0,external_wp_compose_namespaceObject.__experimentalUseFocusOutside)(onStopEditing);
   const value = isGradient ? element.gradient : element.color;
   return (0,external_wp_element_namespaceObject.createElement)(PaletteItem, extends_extends({
+    className: isEditing ? 'is-selected' : undefined,
     as: "div",
     onClick: onStartEditing
-  }, isEditing ? focusOutsideProps : {}), (0,external_wp_element_namespaceObject.createElement)(h_stack_component, {
+  }, isEditing ? { ...focusOutsideProps
+  } : {
+    style: {
+      cursor: 'pointer'
+    }
+  }), (0,external_wp_element_namespaceObject.createElement)(h_stack_component, {
     justify: "flex-start"
   }, (0,external_wp_element_namespaceObject.createElement)(flex_item_component, null, (0,external_wp_element_namespaceObject.createElement)(IndicatorStyled, {
     style: {
@@ -51502,8 +51419,7 @@ function PaletteEditListView(_ref4) {
   return (0,external_wp_element_namespaceObject.createElement)(v_stack_component, {
     spacing: 3
   }, (0,external_wp_element_namespaceObject.createElement)(item_group_component, {
-    isBordered: true,
-    isSeparated: true
+    isRounded: true
   }, elements.map((element, index) => (0,external_wp_element_namespaceObject.createElement)(palette_edit_Option, {
     isGradient: isGradient,
     canOnlyChangeValues: canOnlyChangeValues,
@@ -51775,110 +51691,104 @@ var lib_default = /*#__PURE__*/__webpack_require__.n(lib);
 
 
 
+const emptyList = Object.freeze([]);
 
-class SuggestionsList extends external_wp_element_namespaceObject.Component {
-  constructor() {
-    super(...arguments);
-    this.handleMouseDown = this.handleMouseDown.bind(this);
-    this.bindList = this.bindList.bind(this);
-  }
+const handleMouseDown = e => {
+  // By preventing default here, we will not lose focus of <input> when clicking a suggestion
+  e.preventDefault();
+};
 
-  componentDidUpdate() {
+function SuggestionsList(_ref) {
+  let {
+    selectedIndex,
+    scrollIntoView,
+    match = '',
+    onHover,
+    onSelect,
+    suggestions = emptyList,
+    displayTransform,
+    instanceId,
+    setTimeout
+  } = _ref;
+  const [scrollingIntoView, setScrollingIntoView] = (0,external_wp_element_namespaceObject.useState)(false);
+  const listRef = (0,external_wp_compose_namespaceObject.useRefEffect)(listNode => {
     // only have to worry about scrolling selected suggestion into view
     // when already expanded
-    if (this.props.selectedIndex > -1 && this.props.scrollIntoView && this.list.children[this.props.selectedIndex]) {
-      this.scrollingIntoView = true;
-      lib_default()(this.list.children[this.props.selectedIndex], this.list, {
+    if (selectedIndex > -1 && scrollIntoView && listNode.children[selectedIndex]) {
+      setScrollingIntoView(true);
+      lib_default()(listNode.children[selectedIndex], listNode, {
         onlyScrollIfNeeded: true
       });
-      this.props.setTimeout(() => {
-        this.scrollingIntoView = false;
+      setTimeout(() => {
+        setScrollingIntoView(false);
       }, 100);
     }
-  }
+  }, [selectedIndex, scrollIntoView]);
 
-  bindList(ref) {
-    this.list = ref;
-  }
-
-  handleHover(suggestion) {
+  const handleHover = suggestion => {
     return () => {
-      if (!this.scrollingIntoView) {
-        this.props.onHover(suggestion);
+      if (!scrollingIntoView) {
+        onHover === null || onHover === void 0 ? void 0 : onHover(suggestion);
       }
     };
-  }
+  };
 
-  handleClick(suggestion) {
+  const handleClick = suggestion => {
     return () => {
-      this.props.onSelect(suggestion);
+      onSelect === null || onSelect === void 0 ? void 0 : onSelect(suggestion);
     };
-  }
+  };
 
-  handleMouseDown(e) {
-    // By preventing default here, we will not lose focus of <input> when clicking a suggestion
-    e.preventDefault();
-  }
+  const computeSuggestionMatch = suggestion => {
+    const matchText = displayTransform(match || '').toLocaleLowerCase();
 
-  computeSuggestionMatch(suggestion) {
-    const match = this.props.displayTransform(this.props.match || '').toLocaleLowerCase();
-
-    if (match.length === 0) {
+    if (matchText.length === 0) {
       return null;
     }
 
-    suggestion = this.props.displayTransform(suggestion);
-    const indexOfMatch = suggestion.toLocaleLowerCase().indexOf(match);
+    suggestion = displayTransform(suggestion);
+    const indexOfMatch = suggestion.toLocaleLowerCase().indexOf(matchText);
     return {
       suggestionBeforeMatch: suggestion.substring(0, indexOfMatch),
-      suggestionMatch: suggestion.substring(indexOfMatch, indexOfMatch + match.length),
-      suggestionAfterMatch: suggestion.substring(indexOfMatch + match.length)
+      suggestionMatch: suggestion.substring(indexOfMatch, indexOfMatch + matchText.length),
+      suggestionAfterMatch: suggestion.substring(indexOfMatch + matchText.length)
     };
-  }
+  }; // We set `tabIndex` here because otherwise Firefox sets focus on this
+  // div when tabbing off of the input in `TokenField` -- not really sure
+  // why, since usually a div isn't focusable by default
+  // TODO does this still apply now that it's a <ul> and not a <div>?
 
-  render() {
-    // We set `tabIndex` here because otherwise Firefox sets focus on this
-    // div when tabbing off of the input in `TokenField` -- not really sure
-    // why, since usually a div isn't focusable by default
-    // TODO does this still apply now that it's a <ul> and not a <div>?
-    return (0,external_wp_element_namespaceObject.createElement)("ul", {
-      ref: this.bindList,
-      className: "components-form-token-field__suggestions-list",
-      id: `components-form-token-suggestions-${this.props.instanceId}`,
-      role: "listbox"
-    }, (0,external_lodash_namespaceObject.map)(this.props.suggestions, (suggestion, index) => {
-      const match = this.computeSuggestionMatch(suggestion);
-      const classeName = classnames_default()('components-form-token-field__suggestion', {
-        'is-selected': index === this.props.selectedIndex
-      });
-      /* eslint-disable jsx-a11y/click-events-have-key-events */
 
-      return (0,external_wp_element_namespaceObject.createElement)("li", {
-        id: `components-form-token-suggestions-${this.props.instanceId}-${index}`,
-        role: "option",
-        className: classeName,
-        key: suggestion !== null && suggestion !== void 0 && suggestion.value ? suggestion.value : this.props.displayTransform(suggestion),
-        onMouseDown: this.handleMouseDown,
-        onClick: this.handleClick(suggestion),
-        onMouseEnter: this.handleHover(suggestion),
-        "aria-selected": index === this.props.selectedIndex
-      }, match ? (0,external_wp_element_namespaceObject.createElement)("span", {
-        "aria-label": this.props.displayTransform(suggestion)
-      }, match.suggestionBeforeMatch, (0,external_wp_element_namespaceObject.createElement)("strong", {
-        className: "components-form-token-field__suggestion-match"
-      }, match.suggestionMatch), match.suggestionAfterMatch) : this.props.displayTransform(suggestion));
-      /* eslint-enable jsx-a11y/click-events-have-key-events */
-    }));
-  }
+  return (0,external_wp_element_namespaceObject.createElement)("ul", {
+    ref: listRef,
+    className: "components-form-token-field__suggestions-list",
+    id: `components-form-token-suggestions-${instanceId}`,
+    role: "listbox"
+  }, (0,external_lodash_namespaceObject.map)(suggestions, (suggestion, index) => {
+    const matchText = computeSuggestionMatch(suggestion);
+    const className = classnames_default()('components-form-token-field__suggestion', {
+      'is-selected': index === selectedIndex
+    });
+    /* eslint-disable jsx-a11y/click-events-have-key-events */
 
+    return (0,external_wp_element_namespaceObject.createElement)("li", {
+      id: `components-form-token-suggestions-${instanceId}-${index}`,
+      role: "option",
+      className: className,
+      key: suggestion !== null && suggestion !== void 0 && suggestion.value ? suggestion.value : displayTransform(suggestion),
+      onMouseDown: handleMouseDown,
+      onClick: handleClick(suggestion),
+      onMouseEnter: handleHover(suggestion),
+      "aria-selected": index === selectedIndex
+    }, matchText ? (0,external_wp_element_namespaceObject.createElement)("span", {
+      "aria-label": displayTransform(suggestion)
+    }, matchText.suggestionBeforeMatch, (0,external_wp_element_namespaceObject.createElement)("strong", {
+      className: "components-form-token-field__suggestion-match"
+    }, matchText.suggestionMatch), matchText.suggestionAfterMatch) : displayTransform(suggestion));
+    /* eslint-enable jsx-a11y/click-events-have-key-events */
+  }));
 }
 
-SuggestionsList.defaultProps = {
-  match: '',
-  onHover: () => {},
-  onSelect: () => {},
-  suggestions: Object.freeze([])
-};
 /* harmony default export */ var suggestions_list = ((0,external_wp_compose_namespaceObject.withSafeTimeout)(SuggestionsList));
 //# sourceMappingURL=suggestions-list.js.map
 ;// CONCATENATED MODULE: ./packages/components/build-module/higher-order/with-focus-outside/index.js
@@ -52483,6 +52393,27 @@ function Modal(props, forwardedRef) {
 
 /* harmony default export */ var modal = ((0,external_wp_element_namespaceObject.forwardRef)(Modal));
 //# sourceMappingURL=index.js.map
+;// CONCATENATED MODULE: ./packages/components/build-module/confirm-dialog/styles.js
+function confirm_dialog_styles_EMOTION_STRINGIFIED_CSS_ERROR_() { return "You have tried to stringify object returned from `css` function. It isn't supposed to be used directly (e.g. as value of the `className` prop), but rather handed to emotion so it can handle it (e.g. as value of `css` prop)."; }
+
+/**
+ * External dependencies
+ */
+
+/**
+ * The z-index for ConfirmDialog is being set here instead of in
+ * packages/base-styles/_z-index.scss, because this component uses
+ * emotion instead of sass.
+ *
+ * ConfirmDialog needs this higher z-index to ensure it renders on top of
+ * any parent Popover component.
+ */
+
+const wrapper =  true ? {
+  name: "7g5ii0",
+  styles: "&&{z-index:1000001;}"
+} : 0;
+//# sourceMappingURL=styles.js.map
 ;// CONCATENATED MODULE: ./packages/components/build-module/confirm-dialog/component.js
 
 
@@ -52490,8 +52421,6 @@ function Modal(props, forwardedRef) {
 /**
  * External dependencies
  */
-// eslint-disable-next-line no-restricted-imports
- // eslint-disable-next-line no-restricted-imports
 
 /**
  * WordPress dependencies
@@ -52509,6 +52438,8 @@ function Modal(props, forwardedRef) {
 
 
 
+
+
 function ConfirmDialog(props, forwardedRef) {
   const {
     isOpen: isOpenProp,
@@ -52517,9 +52448,11 @@ function ConfirmDialog(props, forwardedRef) {
     children,
     ...otherProps
   } = useContextSystem(props, 'ConfirmDialog');
-  const [isOpen, setIsOpen] = (0,external_React_.useState)();
-  const [shouldSelfClose, setShouldSelfClose] = (0,external_React_.useState)();
-  (0,external_React_.useEffect)(() => {
+  const cx = useCx();
+  const wrapperClassName = cx(wrapper);
+  const [isOpen, setIsOpen] = (0,external_wp_element_namespaceObject.useState)();
+  const [shouldSelfClose, setShouldSelfClose] = (0,external_wp_element_namespaceObject.useState)();
+  (0,external_wp_element_namespaceObject.useEffect)(() => {
     // We only allow the dialog to close itself if `isOpenProp` is *not* set.
     // If `isOpenProp` is set, then it (probably) means it's controlled by a
     // parent component. In that case, `shouldSelfClose` might do more harm than
@@ -52551,6 +52484,7 @@ function ConfirmDialog(props, forwardedRef) {
     closeButtonLabel: cancelLabel,
     isDismissible: true,
     ref: forwardedRef,
+    overlayClassName: wrapperClassName,
     __experimentalHideHeader: true
   }, otherProps), (0,external_wp_element_namespaceObject.createElement)(v_stack_component, {
     spacing: 8
@@ -56682,6 +56616,7 @@ function useMultipleSelection(userProps) {
 
 
 
+
 /**
  * Internal dependencies
  */
@@ -56773,7 +56708,13 @@ function CustomSelectControl(_ref3) {
   const menuProps = getMenuProps({
     className: 'components-custom-select-control__menu',
     'aria-hidden': !isOpen
-  }); // We need this here, because the null active descendant is not fully ARIA compliant.
+  });
+  const onKeyDownHandler = (0,external_wp_element_namespaceObject.useCallback)(e => {
+    var _menuProps$onKeyDown;
+
+    e.stopPropagation();
+    menuProps === null || menuProps === void 0 ? void 0 : (_menuProps$onKeyDown = menuProps.onKeyDown) === null || _menuProps$onKeyDown === void 0 ? void 0 : _menuProps$onKeyDown.call(menuProps, e);
+  }, [menuProps]); // We need this here, because the null active descendant is not fully ARIA compliant.
 
   if ((_menuProps$ariaActiv = menuProps['aria-activedescendant']) !== null && _menuProps$ariaActiv !== void 0 && _menuProps$ariaActiv.startsWith('downshift-null')) {
     delete menuProps['aria-activedescendant'];
@@ -56797,7 +56738,9 @@ function CustomSelectControl(_ref3) {
   }), custom_select_control_itemToString(selectedItem), (0,external_wp_element_namespaceObject.createElement)(icons_build_module_icon, {
     icon: chevron_down,
     className: "components-custom-select-control__button-icon"
-  })), (0,external_wp_element_namespaceObject.createElement)("ul", menuProps, isOpen && items.map((item, index) => // eslint-disable-next-line react/jsx-key
+  })), (0,external_wp_element_namespaceObject.createElement)("ul", extends_extends({}, menuProps, {
+    onKeyDown: onKeyDownHandler
+  }), isOpen && items.map((item, index) => // eslint-disable-next-line react/jsx-key
   (0,external_wp_element_namespaceObject.createElement)("li", getItemProps({
     item,
     index,
@@ -58726,8 +58669,8 @@ function external_link_styles_EMOTION_STRINGIFIED_CSS_ERROR_() { return "You hav
 const StyledIcon = /*#__PURE__*/emotion_styled_base_browser_esm(icons_build_module_icon,  true ? {
   target: "etxm6pv0"
 } : 0)( true ? {
-  name: "bqq7t3",
-  styles: "width:1.4em;height:1.4em;margin:-0.2em 0.1em 0;vertical-align:middle;fill:currentColor"
+  name: "rvs7bx",
+  styles: "width:1em;height:1em;margin:0;vertical-align:middle;fill:currentColor"
 } : 0);
 //# sourceMappingURL=external-link-styles.js.map
 ;// CONCATENATED MODULE: ./packages/components/build-module/external-link/index.js
@@ -61397,116 +61340,6 @@ var RadioGroup = createComponent({
 
 
 
-;// CONCATENATED MODULE: ./packages/components/build-module/toggle-group-control/toggle-group-control/styles.js
-
-
-function toggle_group_control_styles_EMOTION_STRINGIFIED_CSS_ERROR_() { return "You have tried to stringify object returned from `css` function. It isn't supposed to be used directly (e.g. as value of the `className` prop), but rather handed to emotion so it can handle it (e.g. as value of `css` prop)."; }
-
-/**
- * External dependencies
- */
-
-
-/**
- * Internal dependencies
- */
-
-const ToggleGroupControl = /*#__PURE__*/emotion_react_browser_esm_css("background:", COLORS.ui.background, ";border:1px solid;border-color:", COLORS.ui.border, ";border-radius:", config_values.controlBorderRadius, ";display:inline-flex;min-height:", config_values.controlHeight, ";min-width:0;padding:2px;position:relative;transition:transform ", config_values.transitionDurationFastest, " linear;", reduceMotion('transition'), " &:hover{border-color:", COLORS.ui.borderHover, ";}&:focus-within{border-color:", COLORS.ui.borderFocus, ";box-shadow:", config_values.controlBoxShadowFocus, ";outline:none;z-index:1;}" + ( true ? "" : 0),  true ? "" : 0);
-const toggle_group_control_styles_block =  true ? {
-  name: "7whenc",
-  styles: "display:flex;width:100%"
-} : 0;
-const BackdropView = emotion_styled_base_browser_esm("div",  true ? {
-  target: "eakva830"
-} : 0)("background:", COLORS.gray[900], ";border-radius:", config_values.controlBorderRadius, ";box-shadow:", config_values.toggleGroupControlBackdropBoxShadow, ";left:0;position:absolute;top:2px;bottom:2px;transition:transform ", config_values.transitionDurationFast, " ease;", reduceMotion('transition'), " z-index:1;" + ( true ? "" : 0));
-//# sourceMappingURL=styles.js.map
-;// CONCATENATED MODULE: ./packages/components/build-module/toggle-group-control/toggle-group-control/toggle-group-control-backdrop.js
-
-
-/**
- * WordPress dependencies
- */
-
-/**
- * Internal dependencies
- */
-
-
-
-function ToggleGroupControlBackdrop(_ref) {
-  let {
-    containerRef,
-    containerWidth,
-    isAdaptiveWidth,
-    state
-  } = _ref;
-  const [left, setLeft] = (0,external_wp_element_namespaceObject.useState)(0);
-  const [width, setWidth] = (0,external_wp_element_namespaceObject.useState)(0);
-  const [canAnimate, setCanAnimate] = (0,external_wp_element_namespaceObject.useState)(false);
-  const [renderBackdrop, setRenderBackdrop] = (0,external_wp_element_namespaceObject.useState)(false);
-  (0,external_wp_element_namespaceObject.useEffect)(() => {
-    const containerNode = containerRef === null || containerRef === void 0 ? void 0 : containerRef.current;
-    if (!containerNode) return;
-    /**
-     * Workaround for Reakit
-     */
-
-    const targetNode = containerNode.querySelector(`[data-value="${state}"]`);
-    setRenderBackdrop(!!targetNode);
-
-    if (!targetNode) {
-      return;
-    }
-
-    const computeDimensions = () => {
-      const {
-        width: offsetWidth,
-        x
-      } = targetNode.getBoundingClientRect();
-      const {
-        x: parentX
-      } = containerNode.getBoundingClientRect();
-      const borderWidth = 1;
-      const offsetLeft = x - parentX - borderWidth;
-      setLeft(offsetLeft);
-      setWidth(offsetWidth);
-    }; // Fix to make the component appear as expected inside popovers.
-    // If the targetNode width is 0 it means the element was not yet rendered we should allow
-    // some time for the render to happen.
-    // requestAnimationFrame instead of setTimeout with a small time does not seems to work.
-
-
-    const dimensionsRequestId = window.setTimeout(computeDimensions, 100);
-    let animationRequestId;
-
-    if (!canAnimate) {
-      animationRequestId = window.requestAnimationFrame(() => {
-        setCanAnimate(true);
-      });
-    }
-
-    return () => {
-      window.clearTimeout(dimensionsRequestId);
-      window.cancelAnimationFrame(animationRequestId);
-    };
-  }, [canAnimate, containerRef, containerWidth, state, isAdaptiveWidth]);
-
-  if (!renderBackdrop) {
-    return null;
-  }
-
-  return (0,external_wp_element_namespaceObject.createElement)(BackdropView, {
-    role: "presentation",
-    style: {
-      transform: `translateX(${left}px)`,
-      transition: canAnimate ? undefined : 'none',
-      width
-    }
-  });
-}
-
-/* harmony default export */ var toggle_group_control_backdrop = ((0,external_wp_element_namespaceObject.memo)(ToggleGroupControlBackdrop));
-//# sourceMappingURL=toggle-group-control-backdrop.js.map
 ;// CONCATENATED MODULE: ./packages/components/build-module/toggle-group-control/context.js
 /**
  * WordPress dependencies
@@ -61520,6 +61353,24 @@ const ToggleGroupControlContext = (0,external_wp_element_namespaceObject.createC
 const useToggleGroupControlContext = () => (0,external_wp_element_namespaceObject.useContext)(ToggleGroupControlContext);
 /* harmony default export */ var toggle_group_control_context = (ToggleGroupControlContext);
 //# sourceMappingURL=context.js.map
+;// CONCATENATED MODULE: ./packages/components/build-module/toggle-group-control/toggle-group-control/styles.js
+function toggle_group_control_styles_EMOTION_STRINGIFIED_CSS_ERROR_() { return "You have tried to stringify object returned from `css` function. It isn't supposed to be used directly (e.g. as value of the `className` prop), but rather handed to emotion so it can handle it (e.g. as value of `css` prop)."; }
+
+/**
+ * External dependencies
+ */
+
+/**
+ * Internal dependencies
+ */
+
+
+const ToggleGroupControl = /*#__PURE__*/emotion_react_browser_esm_css("background:", COLORS.ui.background, ";border:1px solid;border-color:", COLORS.ui.border, ";border-radius:", config_values.controlBorderRadius, ";display:inline-flex;min-height:", config_values.controlHeight, ";min-width:0;padding:2px;position:relative;transition:transform ", config_values.transitionDurationFastest, " linear;", reduceMotion('transition'), " &:hover{border-color:", COLORS.ui.borderHover, ";}&:focus-within{border-color:", COLORS.ui.borderFocus, ";box-shadow:", config_values.controlBoxShadowFocus, ";outline:none;z-index:1;}" + ( true ? "" : 0),  true ? "" : 0);
+const toggle_group_control_styles_block =  true ? {
+  name: "7whenc",
+  styles: "display:flex;width:100%"
+} : 0;
+//# sourceMappingURL=styles.js.map
 ;// CONCATENATED MODULE: ./packages/components/build-module/toggle-group-control/toggle-group-control/component.js
 
 
@@ -61528,8 +61379,6 @@ const useToggleGroupControlContext = () => (0,external_wp_element_namespaceObjec
  * External dependencies
  */
 // eslint-disable-next-line no-restricted-imports
-// eslint-disable-next-line no-restricted-imports
-
 
 /**
  * WordPress dependencies
@@ -61540,7 +61389,6 @@ const useToggleGroupControlContext = () => (0,external_wp_element_namespaceObjec
 /**
  * Internal dependencies
  */
-
 
 
 
@@ -61566,7 +61414,6 @@ function component_ToggleGroupControl(props, forwardedRef) {
   } = useContextSystem(props, 'ToggleGroupControl');
   const cx = useCx();
   const containerRef = (0,external_wp_element_namespaceObject.useRef)();
-  const [resizeListener, sizes] = react_resize_aware_dist_default()();
   const baseId = (0,external_wp_compose_namespaceObject.useInstanceId)(component_ToggleGroupControl, 'toggle-group-control').toString();
   const radio = useRadioState({
     baseId,
@@ -61600,11 +61447,7 @@ function component_ToggleGroupControl(props, forwardedRef) {
     className: classes
   }, otherProps, {
     ref: (0,external_wp_compose_namespaceObject.useMergeRefs)([containerRef, forwardedRef])
-  }), resizeListener, (0,external_wp_element_namespaceObject.createElement)(toggle_group_control_backdrop, extends_extends({}, radio, {
-    containerRef: containerRef,
-    containerWidth: sizes.width,
-    isAdaptiveWidth: isAdaptiveWidth
-  })), children)));
+  }), children)));
 }
 /**
  * `ToggleGroupControl` is a form component that lets users choose options
@@ -61836,7 +61679,7 @@ const labelBlock =  true ? {
   styles: "flex:1"
 } : 0;
 const buttonView = /*#__PURE__*/emotion_react_browser_esm_css("align-items:center;appearance:none;background:transparent;border:none;border-radius:", config_values.controlBorderRadius, ";color:", COLORS.gray[700], ";cursor:pointer;display:flex;height:100%;justify-content:center;line-height:100%;outline:none;padding:0 12px;position:relative;text-align:center;transition:background ", config_values.transitionDurationFast, " linear,color ", config_values.transitionDurationFast, " linear,font-weight 60ms linear;", reduceMotion('transition'), " user-select:none;width:100%;z-index:2;&::-moz-focus-inner{border:0;}&:active{background:", config_values.toggleGroupControlBackgroundColor, ";}" + ( true ? "" : 0),  true ? "" : 0);
-const buttonActive = /*#__PURE__*/emotion_react_browser_esm_css("color:", COLORS.white, ";&:active{background:transparent;}" + ( true ? "" : 0),  true ? "" : 0);
+const buttonActive = /*#__PURE__*/emotion_react_browser_esm_css("color:", COLORS.white, ";background-color:", COLORS.gray[900], ";" + ( true ? "" : 0),  true ? "" : 0);
 const ButtonContentView = emotion_styled_base_browser_esm("div",  true ? {
   target: "eu1cvm71"
 } : 0)("font-size:", config_values.fontSize, ";line-height:1;position:absolute;top:50%;left:50%;transform:translate( -50%, -50% );" + ( true ? "" : 0));
@@ -61856,7 +61699,6 @@ const medium = /*#__PURE__*/emotion_react_browser_esm_css("min-height:", config_
 /**
  * External dependencies
  */
-// eslint-disable-next-line no-restricted-imports
 // eslint-disable-next-line no-restricted-imports
 
 /**
@@ -63540,6 +63382,82 @@ function IconButton(_ref, ref) {
 
 /* harmony default export */ var deprecated = ((0,external_wp_element_namespaceObject.forwardRef)(IconButton));
 //# sourceMappingURL=deprecated.js.map
+;// CONCATENATED MODULE: ./packages/components/build-module/item-group/item/hook.js
+/**
+ * External dependencies
+ */
+
+/**
+ * WordPress dependencies
+ */
+
+/**
+ * Internal dependencies
+ */
+
+
+
+
+
+function hook_useItem(props) {
+  const {
+    as: asProp,
+    className,
+    onClick,
+    role = 'listitem',
+    size: sizeProp,
+    ...otherProps
+  } = useContextSystem(props, 'Item');
+  const {
+    spacedAround,
+    size: contextSize
+  } = useItemGroupContext();
+  const size = sizeProp || contextSize;
+  const as = asProp || (typeof onClick !== 'undefined' ? 'button' : 'div');
+  const cx = useCx();
+  const classes = (0,external_wp_element_namespaceObject.useMemo)(() => cx(as === 'button' && unstyledButton, itemSizes[size] || itemSizes.medium, item, spacedAround && styles_spacedAround, className), [as, className, size, spacedAround]);
+  const wrapperClassName = cx(itemWrapper);
+  return {
+    as,
+    className: classes,
+    onClick,
+    wrapperClassName,
+    role,
+    ...otherProps
+  };
+}
+//# sourceMappingURL=hook.js.map
+;// CONCATENATED MODULE: ./packages/components/build-module/item-group/item/component.js
+
+
+
+/**
+ * External dependencies
+ */
+
+/**
+ * Internal dependencies
+ */
+
+
+
+
+function component_Item(props, forwardedRef) {
+  const {
+    role,
+    wrapperClassName,
+    ...otherProps
+  } = hook_useItem(props);
+  return (0,external_wp_element_namespaceObject.createElement)("div", {
+    role: role,
+    className: wrapperClassName
+  }, (0,external_wp_element_namespaceObject.createElement)(component, extends_extends({}, otherProps, {
+    ref: forwardedRef
+  })));
+}
+
+/* harmony default export */ var item_component = (contextConnect(component_Item, 'Item'));
+//# sourceMappingURL=component.js.map
 ;// CONCATENATED MODULE: ./packages/components/build-module/keyboard-shortcuts/index.js
 
 
@@ -63880,7 +63798,6 @@ const search = (0,external_wp_element_namespaceObject.createElement)(external_wp
 /**
  * External dependencies
  */
-// eslint-disable-next-line no-restricted-imports
 
 function useCombinedRef() {
   for (var _len = arguments.length, refs = new Array(_len), _key = 0; _key < _len; _key++) {
@@ -64986,7 +64903,11 @@ function NavigationMenu(props) {
  * Internal dependencies
  */
 
-const initialContextValue = [{}, () => {}];
+const initialContextValue = {
+  location: {},
+  push: () => {},
+  pop: () => {}
+};
 const NavigatorContext = (0,external_wp_element_namespaceObject.createContext)(initialContextValue);
 //# sourceMappingURL=context.js.map
 ;// CONCATENATED MODULE: ./packages/components/build-module/navigator/navigator-provider/component.js
@@ -64998,7 +64919,6 @@ function component_EMOTION_STRINGIFIED_CSS_ERROR_() { return "You have tried to 
 /**
  * External dependencies
  */
-// eslint-disable-next-line no-restricted-imports
 
 /**
  * WordPress dependencies
@@ -65026,9 +64946,37 @@ function NavigatorProvider(props, forwardedRef) {
     className,
     ...otherProps
   } = useContextSystem(props, 'NavigatorProvider');
-  const [path, setPath] = (0,external_wp_element_namespaceObject.useState)({
-    path: initialPath
-  });
+  const [locationHistory, setLocationHistory] = (0,external_wp_element_namespaceObject.useState)([{
+    path: initialPath,
+    isBack: false,
+    isInitial: true
+  }]);
+  const push = (0,external_wp_element_namespaceObject.useCallback)((path, options) => {
+    // Force the `isBack` flag to `false` when navigating forward on both the
+    // previous and the new location.
+    // Also force the `isInitial` flag to `false` for the new location, to make
+    // sure it doesn't get overridden by mistake.
+    setLocationHistory([...locationHistory.slice(0, -1), { ...locationHistory[locationHistory.length - 1],
+      isBack: false
+    }, { ...options,
+      path,
+      isBack: false,
+      isInitial: false
+    }]);
+  }, [locationHistory]);
+  const pop = (0,external_wp_element_namespaceObject.useCallback)(() => {
+    if (locationHistory.length > 1) {
+      // Force the `isBack` flag to `true` when navigating back.
+      setLocationHistory([...locationHistory.slice(0, -2), { ...locationHistory[locationHistory.length - 2],
+        isBack: true
+      }]);
+    }
+  }, [locationHistory]);
+  const navigatorContextValue = (0,external_wp_element_namespaceObject.useMemo)(() => ({
+    location: locationHistory[locationHistory.length - 1],
+    push,
+    pop
+  }), [locationHistory, push, pop]);
   const cx = useCx();
   const classes = (0,external_wp_element_namespaceObject.useMemo)( // Prevents horizontal overflow while animating screen transitions
   () => cx(component_ref, className), [className]);
@@ -65036,12 +64984,11 @@ function NavigatorProvider(props, forwardedRef) {
     ref: forwardedRef,
     className: classes
   }, otherProps), (0,external_wp_element_namespaceObject.createElement)(NavigatorContext.Provider, {
-    value: [path, setPath]
+    value: navigatorContextValue
   }, children));
 }
 /**
  * The `NavigatorProvider` component allows rendering nested panels or menus (via the `NavigatorScreen` component) and navigate between these different states (via the `useNavigator` hook).
- * The Global Styles sidebar is an example of this. The `Navigator*` family of components is _not_ opinionated in terms of UI, and can be composed with any UI components to navigate between the nested screens.
  *
  * @example
  * ```jsx
@@ -65051,34 +64998,34 @@ function NavigatorProvider(props, forwardedRef) {
  *   __experimentalUseNavigator as useNavigator,
  * } from '@wordpress/components';
  *
- * function NavigatorButton( {
- *   path,
- *   isBack = false,
- *   ...props
- * } ) {
- *   const navigator = useNavigator();
- *   return (
- *   	<Button
- *   	  onClick={ () => navigator.push( path, { isBack } ) }
- *   	  { ...props }
- *   	/>
- *   );
+ * function NavigatorButton( { path, ...props } ) {
+ *  const { push } = useNavigator();
+ *  return (
+ *    <Button
+ *      variant="primary"
+ *      onClick={ () => push( path ) }
+ *      { ...props }
+ *    />
+ *  );
+ * }
+ *
+ * function NavigatorBackButton( props ) {
+ *   const { pop } = useNavigator();
+ *   return <Button variant="secondary" onClick={ () => pop() } { ...props } />;
  * }
  *
  * const MyNavigation = () => (
  *   <NavigatorProvider initialPath="/">
  *     <NavigatorScreen path="/">
  *       <p>This is the home screen.</p>
- *   	   <NavigatorButton isPrimary path="/child">
+ *   	   <NavigatorButton path="/child">
  *          Navigate to child screen.
  *       </NavigatorButton>
  *     </NavigatorScreen>
  *
  *     <NavigatorScreen path="/child">
  *       <p>This is the child screen.</p>
- *       <NavigatorButton isPrimary path="/" isBack>
- *         Go back
- *       </NavigatorButton>
+ *       <NavigatorBackButton>Go back</NavigatorBackButton>
  *     </NavigatorScreen>
  *   </NavigatorProvider>
  * );
@@ -65098,7 +65045,6 @@ function navigator_screen_component_EMOTION_STRINGIFIED_CSS_ERROR_() { return "Y
 /**
  * External dependencies
  */
-// eslint-disable-next-line no-restricted-imports
 // eslint-disable-next-line no-restricted-imports
 
 
@@ -65136,8 +65082,10 @@ function NavigatorScreen(props, forwardedRef) {
     ...otherProps
   } = useContextSystem(props, 'NavigatorScreen');
   const prefersReducedMotion = (0,external_wp_compose_namespaceObject.useReducedMotion)();
-  const [currentPath] = (0,external_wp_element_namespaceObject.useContext)(NavigatorContext);
-  const isMatch = currentPath.path === path;
+  const {
+    location
+  } = (0,external_wp_element_namespaceObject.useContext)(NavigatorContext);
+  const isMatch = location.path === path;
   const ref = (0,external_wp_compose_namespaceObject.useFocusOnMount)();
   const cx = useCx();
   const classes = (0,external_wp_element_namespaceObject.useMemo)(() => cx(navigator_screen_component_ref, className), [className]); // This flag is used to only apply the focus on mount when the actual path changes.
@@ -65170,12 +65118,12 @@ function NavigatorScreen(props, forwardedRef) {
   };
   const initial = {
     opacity: 0,
-    x: (0,external_wp_i18n_namespaceObject.isRTL)() && currentPath.isBack || !(0,external_wp_i18n_namespaceObject.isRTL)() && !currentPath.isBack ? 50 : -50
+    x: (0,external_wp_i18n_namespaceObject.isRTL)() && location.isBack || !(0,external_wp_i18n_namespaceObject.isRTL)() && !location.isBack ? 50 : -50
   };
   const exit = {
     delay: animationExitDelay,
     opacity: 0,
-    x: !(0,external_wp_i18n_namespaceObject.isRTL)() && currentPath.isBack || (0,external_wp_i18n_namespaceObject.isRTL)() && !currentPath.isBack ? 50 : -50,
+    x: !(0,external_wp_i18n_namespaceObject.isRTL)() && location.isBack || (0,external_wp_i18n_namespaceObject.isRTL)() && !location.isBack ? 50 : -50,
     transition: {
       duration: animationExitDuration,
       ease: 'easeInOut'
@@ -65202,34 +65150,34 @@ function NavigatorScreen(props, forwardedRef) {
  *   __experimentalUseNavigator as useNavigator,
  * } from '@wordpress/components';
  *
- * function NavigatorButton( {
- *   path,
- *   isBack = false,
- *   ...props
- * } ) {
- *   const navigator = useNavigator();
- *   return (
- *   	<Button
- *   	  onClick={ () => navigator.push( path, { isBack } ) }
- *   	  { ...props }
- *   	/>
- *   );
+ * function NavigatorButton( { path, ...props } ) {
+ *  const { push } = useNavigator();
+ *  return (
+ *    <Button
+ *      variant="primary"
+ *      onClick={ () => push( path ) }
+ *      { ...props }
+ *    />
+ *  );
+ * }
+ *
+ * function NavigatorBackButton( props ) {
+ *   const { pop } = useNavigator();
+ *   return <Button variant="secondary" onClick={ () => pop() } { ...props } />;
  * }
  *
  * const MyNavigation = () => (
  *   <NavigatorProvider initialPath="/">
  *     <NavigatorScreen path="/">
  *       <p>This is the home screen.</p>
- *   	   <NavigatorButton isPrimary path="/child">
+ *   	   <NavigatorButton path="/child">
  *          Navigate to child screen.
  *       </NavigatorButton>
  *     </NavigatorScreen>
  *
  *     <NavigatorScreen path="/child">
  *       <p>This is the child screen.</p>
- *       <NavigatorButton isPrimary path="/" isBack>
- *         Go back
- *       </NavigatorButton>
+ *       <NavigatorBackButton>Go back</NavigatorBackButton>
  *     </NavigatorScreen>
  *   </NavigatorProvider>
  * );
@@ -65255,15 +65203,15 @@ const ConnectedNavigatorScreen = contextConnect(NavigatorScreen, 'NavigatorScree
  * Retrieves a `navigator` instance.
  */
 function useNavigator() {
-  const [, setPath] = (0,external_wp_element_namespaceObject.useContext)(NavigatorContext);
+  const {
+    location,
+    push,
+    pop
+  } = (0,external_wp_element_namespaceObject.useContext)(NavigatorContext);
   return {
-    push(path, options) {
-      setPath({
-        path,
-        ...options
-      });
-    }
-
+    location,
+    push,
+    pop
   };
 }
 
@@ -67289,7 +67237,6 @@ const LabelText = /*#__PURE__*/emotion_styled_base_browser_esm(text_component,  
 /**
  * External dependencies
  */
-// eslint-disable-next-line no-restricted-imports
 
 /**
  * WordPress dependencies
@@ -67368,15 +67315,15 @@ const label_ForwardedComponent = (0,external_wp_element_namespaceObject.forwardR
  */
 
 
+
 /**
  * WordPress dependencies
  */
 
- // eslint-disable-next-line no-restricted-imports
-
 /**
  * Internal dependencies
  */
+
 
 
 
@@ -69130,7 +69077,7 @@ const toolsPanelGrid = {
     } : 0
   }
 };
-const ToolsPanel = /*#__PURE__*/emotion_react_browser_esm_css(toolsPanelGrid.spacing, ";border-top:", config_values.borderWidth, " solid ", COLORS.gray[200], ";margin-top:-1px;padding:", space(4), ";" + ( true ? "" : 0),  true ? "" : 0);
+const ToolsPanel = /*#__PURE__*/emotion_react_browser_esm_css(toolsPanelGrid.spacing, ";border-top:", config_values.borderWidth, " solid ", COLORS.gray[300], ";margin-top:-1px;padding:", space(4), ";" + ( true ? "" : 0),  true ? "" : 0);
 /**
  * Items injected into a ToolsPanel via a virtual bubbling slot will require
  * an inner dom element to be injected. The following rule allows for the
@@ -69149,7 +69096,7 @@ const ToolsPanelHeading =  true ? {
   name: "1pmxm02",
   styles: "font-size:inherit;font-weight:500;line-height:normal;&&{margin:0;}"
 } : 0;
-const ToolsPanelItem = /*#__PURE__*/emotion_react_browser_esm_css(toolsPanelGrid.item.fullWidth, "&>div,&>fieldset{padding-bottom:0;margin-bottom:0;max-width:100%;}&& ", base_control_styles_Wrapper, "{margin-bottom:0;", StyledField, ":last-child{margin-bottom:0;}}", StyledHelp, "{margin-bottom:0;}&& ", LabelWrapper, "{label{margin-bottom:", space(2), ";padding-bottom:0;line-height:1.4em;}}.components-custom-select-control__label,", StyledLabel, "{line-height:1.4em;}" + ( true ? "" : 0),  true ? "" : 0);
+const ToolsPanelItem = /*#__PURE__*/emotion_react_browser_esm_css(toolsPanelGrid.item.fullWidth, "&>div,&>fieldset{padding-bottom:0;margin-bottom:0;max-width:100%;}&& ", base_control_styles_Wrapper, "{margin-bottom:0;", StyledField, ":last-child{margin-bottom:0;}}", StyledHelp, "{margin-bottom:0;}&& ", LabelWrapper, "{label{line-height:1.4em;}}.components-custom-select-control__label,", StyledLabel, "{line-height:1.4em;}" + ( true ? "" : 0),  true ? "" : 0);
 const ToolsPanelItemPlaceholder =  true ? {
   name: "eivff4",
   styles: "display:none"
@@ -69235,7 +69182,6 @@ function useToolsPanelHeader(props) {
 /**
  * External dependencies
  */
-// eslint-disable-next-line no-restricted-imports
 
 /**
  * WordPress dependencies
@@ -69427,6 +69373,8 @@ function useToolsPanel(props) {
     panelId,
     hasInnerWrapper,
     shouldRenderPlaceholderItems,
+    __experimentalFirstVisibleItemClass,
+    __experimentalLastVisibleItemClass,
     ...otherProps
   } = useContextSystem(props, 'ToolsPanel');
   const isResetting = (0,external_wp_element_namespaceObject.useRef)(false);
@@ -69442,12 +69390,11 @@ function useToolsPanel(props) {
   }, [wasResetting]); // Allow panel items to register themselves.
 
   const [panelItems, setPanelItems] = (0,external_wp_element_namespaceObject.useState)([]);
-
-  const registerPanelItem = item => {
+  const registerPanelItem = (0,external_wp_element_namespaceObject.useCallback)(item => {
     setPanelItems(items => {
-      const newItems = [...items]; // If an item with this label is already registered, remove it first.
-      // This can happen when an item is moved between the default and optional
-      // groups.
+      const newItems = [...items]; // If an item with this label has already been registered, remove it
+      // first. This can happen when an item is moved between the default
+      // and optional groups.
 
       const existingIndex = newItems.findIndex(oldItem => oldItem.label === item.label);
 
@@ -69457,11 +69404,10 @@ function useToolsPanel(props) {
 
       return [...newItems, item];
     });
-  }; // Panels need to deregister on unmount to avoid orphans in menu state.
+  }, [setPanelItems]); // Panels need to deregister on unmount to avoid orphans in menu state.
   // This is an issue when panel items are being injected via SlotFills.
 
-
-  const deregisterPanelItem = label => {
+  const deregisterPanelItem = (0,external_wp_element_namespaceObject.useCallback)(label => {
     // When switching selections between components injecting matching
     // controls, e.g. both panels have a "padding" control, the
     // deregistration of the first panel doesn't occur until after the
@@ -69476,8 +69422,7 @@ function useToolsPanel(props) {
 
       return newItems;
     });
-  }; // Manage and share display state of menu items representing child controls.
-
+  }, [setPanelItems]); // Manage and share display state of menu items representing child controls.
 
   const [menuItems, setMenuItems] = (0,external_wp_element_namespaceObject.useState)({
     default: {},
@@ -69493,12 +69438,12 @@ function useToolsPanel(props) {
       });
       return items;
     });
-  }, [panelItems]); // Force a menu item to be checked.
+  }, [generateMenuItems, panelItems, setMenuItems]); // Force a menu item to be checked.
   // This is intended for use with default panel items. They are displayed
   // separately to optional items and have different display states,
   // we need to update that when their value is customized.
 
-  const flagItemCustomization = function (label) {
+  const flagItemCustomization = (0,external_wp_element_namespaceObject.useCallback)(function (label) {
     let group = arguments.length > 1 && arguments[1] !== undefined ? arguments[1] : 'default';
     setMenuItems(items => {
       const newState = { ...items,
@@ -69508,11 +69453,10 @@ function useToolsPanel(props) {
       };
       return newState;
     });
-  }; // Whether all optional menu items are hidden or not must be tracked
+  }, [setMenuItems]); // Whether all optional menu items are hidden or not must be tracked
   // in order to later determine if the panel display is empty and handle
   // conditional display of a plus icon to indicate the presence of further
   // menu items.
-
 
   const [areAllOptionalControlsHidden, setAreAllOptionalControlsHidden] = (0,external_wp_element_namespaceObject.useState)(false);
   (0,external_wp_element_namespaceObject.useEffect)(() => {
@@ -69524,17 +69468,17 @@ function useToolsPanel(props) {
       });
       setAreAllOptionalControlsHidden(allControlsHidden);
     }
-  }, [menuItems.optional]);
+  }, [menuItems.optional, setAreAllOptionalControlsHidden]);
   const cx = useCx();
   const classes = (0,external_wp_element_namespaceObject.useMemo)(() => {
     const hasDefaultMenuItems = (menuItems === null || menuItems === void 0 ? void 0 : menuItems.default) && !!Object.keys(menuItems === null || menuItems === void 0 ? void 0 : menuItems.default).length;
     const wrapperStyle = hasInnerWrapper && ToolsPanelWithInnerWrapper(DEFAULT_COLUMNS);
     const emptyStyle = !hasDefaultMenuItems && areAllOptionalControlsHidden && ToolsPanelHiddenInnerWrapper;
     return cx(ToolsPanel, wrapperStyle, emptyStyle, className);
-  }, [className, hasInnerWrapper, menuItems, areAllOptionalControlsHidden]); // Toggle the checked state of a menu item which is then used to determine
+  }, [areAllOptionalControlsHidden, className, hasInnerWrapper, menuItems]); // Toggle the checked state of a menu item which is then used to determine
   // display of the item within the panel.
 
-  const toggleItem = label => {
+  const toggleItem = (0,external_wp_element_namespaceObject.useCallback)(label => {
     const currentItem = panelItems.find(item => item.label === label);
 
     if (!currentItem) {
@@ -69548,23 +69492,19 @@ function useToolsPanel(props) {
       }
     };
     setMenuItems(newMenuItems);
-  };
+  }, [menuItems, panelItems, setMenuItems]); // Resets display of children and executes resetAll callback if available.
 
-  const getResetAllFilters = () => {
-    const filters = [];
-    panelItems.forEach(item => {
-      if (item.resetAllFilter) {
-        filters.push(item.resetAllFilter);
-      }
-    });
-    return filters;
-  }; // Resets display of children and executes resetAll callback if available.
-
-
-  const resetAllItems = () => {
+  const resetAllItems = (0,external_wp_element_namespaceObject.useCallback)(() => {
     if (typeof resetAll === 'function') {
-      isResetting.current = true;
-      resetAll(getResetAllFilters());
+      isResetting.current = true; // Collect available reset filters from panel items.
+
+      const filters = [];
+      panelItems.forEach(item => {
+        if (item.resetAllFilter) {
+          filters.push(item.resetAllFilter);
+        }
+      });
+      resetAll(filters);
     } // Turn off display of all non-default items.
 
 
@@ -69573,19 +69513,32 @@ function useToolsPanel(props) {
       shouldReset: true
     });
     setMenuItems(resetMenuItems);
+  }, [generateMenuItems, isResetting.current, panelItems, resetAll, setMenuItems]); // Assist ItemGroup styling when there are potentially hidden placeholder
+  // items by identifying first & last items that are toggled on for display.
+
+  const getFirstVisibleItemLabel = items => {
+    const optionalItems = menuItems.optional || {};
+    const firstItem = items.find(item => item.isShownByDefault || !!optionalItems[item.label]);
+    return firstItem === null || firstItem === void 0 ? void 0 : firstItem.label;
   };
 
-  const panelContext = {
-    panelId,
-    menuItems,
-    registerPanelItem,
-    deregisterPanelItem,
-    flagItemCustomization,
+  const firstDisplayedItem = getFirstVisibleItemLabel(panelItems);
+  const lastDisplayedItem = getFirstVisibleItemLabel([...panelItems].reverse());
+  const panelContext = (0,external_wp_element_namespaceObject.useMemo)(() => ({
     areAllOptionalControlsHidden,
+    deregisterPanelItem,
+    firstDisplayedItem,
+    flagItemCustomization,
     hasMenuItems: !!panelItems.length,
     isResetting: isResetting.current,
-    shouldRenderPlaceholderItems
-  };
+    lastDisplayedItem,
+    menuItems,
+    panelId,
+    registerPanelItem,
+    shouldRenderPlaceholderItems,
+    __experimentalFirstVisibleItemClass,
+    __experimentalLastVisibleItemClass
+  }), [areAllOptionalControlsHidden, deregisterPanelItem, firstDisplayedItem, flagItemCustomization, isResetting.current, lastDisplayedItem, menuItems, panelId, panelItems, registerPanelItem, shouldRenderPlaceholderItems, __experimentalFirstVisibleItemClass, __experimentalLastVisibleItemClass]);
   return { ...otherProps,
     panelContext,
     resetAllItems,
@@ -69601,7 +69554,6 @@ function useToolsPanel(props) {
 /**
  * External dependencies
  */
-// eslint-disable-next-line no-restricted-imports
 
 /**
  * Internal dependencies
@@ -69671,7 +69623,11 @@ function useToolsPanelItem(props) {
     deregisterPanelItem,
     flagItemCustomization,
     isResetting,
-    shouldRenderPlaceholderItems: shouldRenderPlaceholder
+    shouldRenderPlaceholderItems: shouldRenderPlaceholder,
+    firstDisplayedItem,
+    lastDisplayedItem,
+    __experimentalFirstVisibleItemClass,
+    __experimentalLastVisibleItemClass
   } = useToolsPanelContext();
   const hasValueCallback = (0,external_wp_element_namespaceObject.useCallback)(hasValue, [panelId]);
   const resetAllFilterCallback = (0,external_wp_element_namespaceObject.useCallback)(resetAllFilter, [panelId]);
@@ -69732,8 +69688,10 @@ function useToolsPanelItem(props) {
   const cx = useCx();
   const classes = (0,external_wp_element_namespaceObject.useMemo)(() => {
     const placeholderStyle = shouldRenderPlaceholder && !isShown && ToolsPanelItemPlaceholder;
-    return cx(ToolsPanelItem, placeholderStyle, className);
-  }, [isShown, shouldRenderPlaceholder, className]);
+    const firstItemStyle = firstDisplayedItem === label && __experimentalFirstVisibleItemClass;
+    const lastItemStyle = lastDisplayedItem === label && __experimentalLastVisibleItemClass;
+    return cx(ToolsPanelItem, placeholderStyle, className, firstItemStyle, lastItemStyle);
+  }, [isShown, shouldRenderPlaceholder, className, firstDisplayedItem, lastDisplayedItem, __experimentalFirstVisibleItemClass, __experimentalLastVisibleItemClass]);
   return { ...otherProps,
     isShown,
     shouldRenderPlaceholder,
@@ -69748,7 +69706,6 @@ function useToolsPanelItem(props) {
 /**
  * External dependencies
  */
-// eslint-disable-next-line no-restricted-imports
 
 /**
  * Internal dependencies
@@ -69938,7 +69895,7 @@ function TreeGrid(_ref, ref) {
 
           // Left:
           // If a row is focused, and it is expanded, collapses the current row.
-          if ((activeRow === null || activeRow === void 0 ? void 0 : activeRow.ariaExpanded) === 'true') {
+          if (activeRow.getAttribute('aria-expanded') === 'true') {
             onCollapseRow(activeRow);
             event.preventDefault();
             return;
@@ -69958,10 +69915,12 @@ function TreeGrid(_ref, ref) {
           }
 
           (_getRowFocusables = getRowFocusables(parentRow)) === null || _getRowFocusables === void 0 ? void 0 : (_getRowFocusables$ = _getRowFocusables[0]) === null || _getRowFocusables$ === void 0 ? void 0 : _getRowFocusables$.focus();
-        } else {
+        }
+
+        if (keyCode === external_wp_keycodes_namespaceObject.RIGHT) {
           // Right:
           // If a row is focused, and it is collapsed, expands the current row.
-          if ((activeRow === null || activeRow === void 0 ? void 0 : activeRow.ariaExpanded) === 'false') {
+          if (activeRow.getAttribute('aria-expanded') === 'false') {
             onExpandRow(activeRow);
             event.preventDefault();
             return;
@@ -70028,7 +69987,7 @@ function TreeGrid(_ref, ref) {
 
       event.preventDefault();
     }
-  }, []);
+  }, [onExpandRow, onCollapseRow]);
   /* Disable reason: A treegrid is implemented using a table element. */
 
   /* eslint-disable jsx-a11y/no-noninteractive-element-to-interactive-role */
@@ -70321,7 +70280,6 @@ const positionRelative =  true ? {
 /**
  * External dependencies
  */
-// eslint-disable-next-line no-restricted-imports
 
 /**
  * WordPress dependencies

@@ -44,14 +44,14 @@ function gutenberg_render_block_core_query_pagination_next( $attributes, $conten
 		$content = get_next_posts_link( $label, $max_page );
 		remove_filter( 'next_posts_link_attributes', $filter_link_attributes );
 	} elseif ( ! $max_page || $max_page > $page ) {
-		$custom_query           = new WP_Query( build_query_vars_from_query_block( $block, $page ) );
+		$custom_query           = new WP_Query( gutenberg_build_query_vars_from_query_block( $block, $page ) );
 		$custom_query_max_pages = (int) $custom_query->max_num_pages;
 		if ( $custom_query_max_pages && $custom_query_max_pages !== $page ) {
 			$content = sprintf(
 				'<a href="%1$s" %2$s>%3$s</a>',
 				esc_url( add_query_arg( $page_key, $page + 1 ) ),
 				$wrapper_attributes,
-				$label
+				esc_html( $label )
 			);
 		}
 		wp_reset_postdata(); // Restore original Post Data.

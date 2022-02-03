@@ -15,8 +15,6 @@ class WC_Connect_TaxJar_Integration {
 	public $wc_connect_base_url;
 
 	private $expected_options = array(
-		// If automated taxes are enabled and user disables taxes we re-enable them
-		'woocommerce_calc_taxes'            => 'yes',
 		// Users can set either billing or shipping address for tax rates but not shop
 		'woocommerce_tax_based_on'          => 'shipping',
 		// Rate calculations assume tax not included
@@ -714,6 +712,9 @@ class WC_Connect_TaxJar_Integration {
 						WC_Subscriptions_Synchroniser::maybe_set_free_trial();
 					}
 					$unit_price = WC_Subscriptions_Cart::set_subscription_prices_for_calculation( $unit_price, $product );
+					if ( class_exists( 'WC_Subscriptions_Synchroniser' ) ) {
+						WC_Subscriptions_Synchroniser::maybe_unset_free_trial();
+					}
 				}
 			}
 
@@ -955,11 +956,23 @@ class WC_Connect_TaxJar_Integration {
 			'plugin'       => 'woo',
 		);
 
-		// Either `amount` or `line_items` parameters are required to perform tax calculations.
+		// Filter the line items to find the taxable items and use empty array if line items is NULL.
 		if ( empty( $line_items ) ) {
+			$taxable_line_items = array();
+		} else {
+			$taxable_line_items = array_filter(
+				$line_items,
+				function( $line_item ) {
+					return ( isset( $line_item['product_tax_code'] ) && '99999' !== $line_item['product_tax_code'] ) ? true : false;
+				}
+			);
+		}
+
+		// Either `amount` or `line_items` parameters are required to perform tax calculations.
+		if ( empty( $taxable_line_items ) ) {
 			$body['amount'] = 0.0;
 		} else {
-			$body['line_items'] = $line_items;
+			$body['line_items'] = $taxable_line_items;
 		}
 
 		$response = $this->smartcalcs_cache_request( wp_json_encode( $body ) );
