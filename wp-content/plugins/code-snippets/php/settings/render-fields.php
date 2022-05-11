@@ -18,22 +18,23 @@ function code_snippets_checkbox_field( $atts ) {
 	$saved_value = code_snippets_get_setting( $atts['section'], $atts['id'] );
 	$input_name = sprintf( 'code_snippets_settings[%s][%s]', $atts['section'], $atts['id'] );
 
-	$output = sprintf(
+	if ( ! empty( $atts['label'] ) ) {
+		printf( '<label for="%s">', esc_attr( $input_name ) );
+	}
+
+	printf(
 		'<input type="checkbox" name="%s"%s>',
 		esc_attr( $input_name ),
 		checked( $saved_value, true, false )
 	);
 
-	// Output the checkbox field, optionally with label
-	if ( isset( $atts['label'] ) ) {
-		printf( '<label for="%s">%s %s</label>', esc_attr( $input_name ), $output, $atts['label'] );
-	} else {
-		echo $output;
+	if ( ! empty( $atts['label'] ) ) {
+		echo esc_html( $atts['label'] ), '</label>';
 	}
 
 	// Add field description if it is set
 	if ( ! empty( $atts['desc'] ) ) {
-		echo '<p class="description">' . $atts['desc'] . '</p>';
+		echo '<p class="description">' . esc_html( $atts['desc'] ) . '</p>';
 	}
 }
 
@@ -54,21 +55,21 @@ function code_snippets_number_field( $atts ) {
 	);
 
 	if ( isset( $atts['min'] ) ) {
-		printf( ' min="%d"', $atts['min'] );
+		printf( ' min="%d"', esc_attr( $atts['min'] ) );
 	}
 
 	if ( isset( $atts['max'] ) ) {
-		printf( ' max="%d"', $atts['max'] );
+		printf( ' max="%d"', esc_attr( $atts['max'] ) );
 	}
 
 	echo '>';
 
 	if ( ! empty( $atts['label'] ) ) {
-		echo ' ' . $atts['label'];
+		echo ' ' . esc_html( $atts['label'] );
 	}
 
 	// Add field description if it is set
 	if ( ! empty( $atts['desc'] ) ) {
-		echo '<p class="description">' . $atts['desc'] . '</p>';
+		echo '<p class="description">' . esc_html( $atts['desc'] ) . '</p>';
 	}
 }

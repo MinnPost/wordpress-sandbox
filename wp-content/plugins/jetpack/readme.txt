@@ -1,7 +1,7 @@
 === Jetpack - WP Security, Backup, Speed, & Growth ===
 Contributors: automattic, adamkheckler, adrianmoldovanwp, aduth, akirk, allendav, alternatekev, andy, annamcphee, annezazu, apeatling, arcangelini, azaozz, batmoo, barry, beaulebens, biskobe, blobaugh, bjorsch, brbrr, cainm, cena, cfinke, chaselivingston, chellycat, clickysteve, csonnek, danielbachhuber, davoraltman, daniloercoli, delawski, designsimply, dllh, drawmyface, dsmart, dzver, ebinnion, egregor, eliorivero, enej, eoigal, erania-pinnera, ethitter, fgiannar, gcorne, georgestephanis, gibrown, goldsounds, hew, hugobaeta, hypertextranch, iammattthomas, iandunn, jblz, jasmussen, jeffgolenski, jeherve, jenhooks, jenia, jessefriedman, jgs, jkudish, jmdodd, joanrho, johnjamesjacoby, jshreve, kbrownkd, keoshi, koke, kraftbj, lancewillett, leogermani, lschuyler, macmanx, martinremy, matt, matveb, mattwiebe, maverick3x6, mcsf, mdawaffe, mdbitz, MichaelArestad, migueluy, mikeyarce, mkaz, nancythanki, nickmomrik, obenland, oskosk, pento, professor44, rachelsquirrel, rdcoll, ryancowles, richardmuscat, richardmtl, robertbpugh, roccotripaldi, samhotchkiss, samiff, scarstocea, scottsweb, sdixon194, sdquirk, sermitr, simison, stephdau, tmoorewp, tyxla, Viper007Bond, westi, yoavf, zinigor
 Tags: Security, backup, Woo, malware, scan, spam, CDN, search, social
-Stable tag: 10.6
+Stable tag: 10.9
 Requires at least: 5.8
 Requires PHP: 5.6
 Tested up to: 5.9
@@ -242,35 +242,47 @@ Jetpack Backup can do a full website migration to a new host, migrate theme file
 4. Promote your newest posts, pages, and products across your social media channels.
 
 == Changelog ==
-### 10.6 - 2022-02-01
+### 10.9 - 2022-05-03
+#### Major Enhancements
+- VideoPress: add settings for controlling VideoPress video privacy.
+
 #### Enhancements
-- Contact Info and Markdown Blocks: add color, typography and spacing features.
-- Dashboard: support Beta versions of Automattic plugins in plugin cards.
-- Embeds: add support for Descript.com embeds.
-- Image Compare Block: Add `wide` and `full` alignment options
-- Pay with PayPal Block: do not display the block on the frontend if PayPal is misconfigured.
-- Search: improve accessibility via headings hierarchy and aria roles.
-- Stats: add new filter allowing site owners to exclude IP addresses from being tracked in stats.
-- Tiled Gallery Block: improve the block so it can be used within the mobile applications.
+- Connection: preventing other Jetpack-connected plugins from disconnecting when deactivating Jetpack from the plugins screen.
+- Dashboard: update the recommendation flow to include recommendations for VideoPress as well as discounts.
+- Google Fonts: update the Google Fonts module to be compatible with the most recent version of the WP_Webfonts API.
+- Payments Block: add additional features to the payment management control block (ability to mark as donation, and enabling customers to pick own amount).
+- Payments Block: add new property that establishes if the membership is editable by the site editor.
+- Payments Block: improves block selection behavior.
+- Payments Block: re-loading the page will not cause payment form to open again.
+- Protect: renamed to 'Brute Force Protection' in the UI.
+- Recommendations: add recommendation for anti-spam.
+- VideoPress: enable the resumable uploader.
+- VideoPress: improve upload speed, by increasing chunk size to 10MB for resumable uploads.
 
 #### Improved compatibility
-- Instant Search: synchronize more meta data so the search feature can be used with more third-party plugins.
-- Sharing / AMP plugin: avoid adding sharing's CSS on AMP pages when the sharing feature is not active.
-- Subscription form: update the placeholder color to be the same as the text color of the site.
+- Custom CSS: improve saving for legacy Custom CSS.
+- Dashboard: display block settings even when the Classic Editor plugin is active.
+- Improvements to backwards compatibility with other Jetpack plugins.
+- Mailchimp Popup widget: widget deprecation.
+- WordAds: change Jetpack Ads wording to be WordAds.
+- WordAds: remove the suggestion to use the ad widget from the dashboard.
 
 #### Bug fixes
-- Backups: hide backup preparation message for sites without backup.
-- Connection: correctly request list of active features so they can be activated on a reconnection.
-- Donations block: add a missing closing div for the front-end rendering.
-- Donations block: don't display the donations block to visitors unless Stripe is connected.
-- Donations block: fixed an issue which was invalidating existing blocks if they were edited by non-plan owners.
-- Donations block: tweak currency display for the edit control.
-- Pay with Paypal Block: properly display the card icons below the button.
-- Protect: fixed math fallback's input accessibility and display.
-- Scan: avoid PHP notice when non-admin users access the dashboard.
-- Search: Initialize debug bar using correct class
-- Subscription form: adding a default line-height to avoid differences using different font-faces on input and button elements
-- Widget Visibility: ensure it remains possible to edit visibility for legacy widgets in the block-based widget editor.
+- Assistant: style and CTA changes plus introductory offer fixes.
+- Button Block: remove default CSS that would overwrite core and theme styles.
+- Comments: check that Jetpack comments are supported before requiring nonce verification.
+- Contact Form: ensure the form's input fields inherit a default font size.
+- Payments Block: change the sidebar display when clicking 'add new subscription', as well as using an external link in the Customizer.
+- Payments Block: fix bug regarding creation of new Payment blocks.
+- Payments Block: make the 'one time' subscription recurrence always available.
+- Payments Block: remove the dropdown icon from the product management control subscription selector.
+- Pay with PayPal: fix issue with saving widget in Customizer.
+- Publicize: ensure bulk publishing posts won’t publicize those posts.
+- Random Redirect: fix 'set author name' functionality on author archives.
+- Slideshow Block: fix grid blowout when Slideshow block is inserted inside a Layout Grid block (in editor).
+- Subscribe Block: fix default styles block setting selection to 'Split'.
+- Top Posts Widget: ensure hooks retain existing behavior when adding extra data before or after each post.
+- VideoPress: fix issue adding video descriptions and metadata via the WordPress.com dashboard.
 
 --------
 

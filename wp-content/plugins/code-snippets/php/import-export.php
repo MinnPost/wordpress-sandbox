@@ -61,15 +61,15 @@ function _code_snippets_save_imported_snippets( $snippets, $multisite = null, $d
 /**f
  * Imports snippets from a JSON file
  *
- * @since 2.9.7
- *
- * @uses  save_snippet() to add the snippets to the database
- *
  * @param string    $file       The path to the file to import
  * @param bool|null $multisite  Import into network-wide table or site-wide table?
  * @param string    $dup_action Action to take if duplicate snippets are detected. Can be 'skip', 'ignore', or 'replace'
  *
  * @return array|bool An array of imported snippet IDs on success, false on failure
+ * @since 2.9.7
+ *
+ * @uses  save_snippet() to add the snippets to the database
+ *
  */
 function import_snippets_json( $file, $multisite = null, $dup_action = 'ignore' ) {
 
@@ -77,6 +77,7 @@ function import_snippets_json( $file, $multisite = null, $dup_action = 'ignore' 
 		return false;
 	}
 
+	/** @phpcs:disable WordPress.WP.AlternativeFunctions.file_get_contents_file_get_contents */
 	$raw_data = file_get_contents( $file );
 	$data = json_decode( $raw_data, true );
 	$snippets = array();
@@ -97,15 +98,15 @@ function import_snippets_json( $file, $multisite = null, $dup_action = 'ignore' 
 /**
  * Imports snippets from an XML file
  *
- * @since 2.0
- *
- * @uses  save_snippet() to add the snippets to the database
- *
  * @param string    $file       The path to the file to import
  * @param bool|null $multisite  Import into network-wide table or site-wide table?
  * @param string    $dup_action Action to take if duplicate snippets are detected. Can be 'skip', 'ignore', or 'replace'
  *
  * @return array|bool An array of imported snippet IDs on success, false on failure
+ * @since 2.0
+ *
+ * @uses  save_snippet() to add the snippets to the database
+ *
  */
 function import_snippets_xml( $file, $multisite = null, $dup_action = 'ignore' ) {
 
@@ -172,19 +173,11 @@ function code_snippets_prepare_export( $format, $ids, $table_name = '', $mime_ty
 	global $wpdb;
 
 	/* Fetch the snippets from the database */
-	if ( '' === $table_name ) {
-		$table_name = code_snippets()->db->get_table_name();
-	}
-
 	if ( count( $ids ) ) {
+		$table_name = '' === $table_name ? code_snippets()->db->get_table_name() : $table_name;
 
-		$sql = sprintf(
-			'SELECT * FROM %s WHERE id IN (%s)', $table_name,
-			implode( ',', array_fill( 0, count( $ids ), '%d' ) )
-		);
-
-		$snippets = $wpdb->get_results( $wpdb->prepare( $sql, $ids ), ARRAY_A );
-
+		$sql_in_format = implode( ',', array_fill( 0, count( $ids ), '%d' ) );
+		$snippets = $wpdb->get_results( $wpdb->prepare( "SELECT * FROM $table_name WHERE id IN ($sql_in_format)", $ids ), ARRAY_A );
 	} else {
 		$snippets = array();
 	}
@@ -219,6 +212,8 @@ function code_snippets_prepare_export( $format, $ids, $table_name = '', $mime_ty
  *
  * @param $ids
  * @param $table_name
+ *
+ * @phpcs:disable WordPress.Security.EscapeOutput.OutputNotEscaped
  */
 function download_snippets( $ids, $table_name = '' ) {
 	$snippets = code_snippets_prepare_export( 'php', $ids, $table_name );
@@ -234,7 +229,7 @@ function download_snippets( $ids, $table_name = '' ) {
 		if ( ! empty( $snippet->desc ) ) {
 
 			/* Convert description to PhpDoc */
-			$desc = strip_tags( str_replace( "\n", "\n * ", $snippet->desc ) );
+			$desc = wp_strip_all_tags( str_replace( "\n", "\n * ", $snippet->desc ) );
 
 			echo " *\n * $desc\n";
 		}

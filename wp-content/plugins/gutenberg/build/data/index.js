@@ -1,7 +1,7 @@
 /******/ (function() { // webpackBootstrap
 /******/ 	var __webpack_modules__ = ({
 
-/***/ 3909:
+/***/ 2167:
 /***/ (function(module) {
 
 "use strict";
@@ -316,7 +316,7 @@ module.exports = EquivalentKeyMap;
 
 /***/ }),
 
-/***/ 9884:
+/***/ 9125:
 /***/ (function(module) {
 
 function combineReducers( reducers ) {
@@ -484,7 +484,10 @@ __webpack_require__.r(selectors_namespaceObject);
 __webpack_require__.d(selectors_namespaceObject, {
   "getCachedResolvers": function() { return getCachedResolvers; },
   "getIsResolving": function() { return getIsResolving; },
+  "getResolutionError": function() { return getResolutionError; },
+  "getResolutionState": function() { return getResolutionState; },
   "hasFinishedResolution": function() { return hasFinishedResolution; },
+  "hasResolutionFailed": function() { return hasResolutionFailed; },
   "hasStartedResolution": function() { return hasStartedResolution; },
   "isResolving": function() { return isResolving; }
 });
@@ -493,6 +496,8 @@ __webpack_require__.d(selectors_namespaceObject, {
 var actions_namespaceObject = {};
 __webpack_require__.r(actions_namespaceObject);
 __webpack_require__.d(actions_namespaceObject, {
+  "failResolution": function() { return failResolution; },
+  "failResolutions": function() { return failResolutions; },
   "finishResolution": function() { return finishResolution; },
   "finishResolutions": function() { return finishResolutions; },
   "invalidateResolution": function() { return invalidateResolution; },
@@ -506,12 +511,11 @@ __webpack_require__.d(actions_namespaceObject, {
 var plugins_namespaceObject = {};
 __webpack_require__.r(plugins_namespaceObject);
 __webpack_require__.d(plugins_namespaceObject, {
-  "controls": function() { return plugins_controls; },
   "persistence": function() { return persistence; }
 });
 
 // EXTERNAL MODULE: ./node_modules/turbo-combine-reducers/index.js
-var turbo_combine_reducers = __webpack_require__(9884);
+var turbo_combine_reducers = __webpack_require__(9125);
 var turbo_combine_reducers_default = /*#__PURE__*/__webpack_require__.n(turbo_combine_reducers);
 ;// CONCATENATED MODULE: external "lodash"
 var external_lodash_namespaceObject = window["lodash"];
@@ -1244,7 +1248,7 @@ if (false) {}
 
 
 // EXTERNAL MODULE: ./node_modules/equivalent-key-map/equivalent-key-map.js
-var equivalent_key_map = __webpack_require__(3909);
+var equivalent_key_map = __webpack_require__(2167);
 var equivalent_key_map_default = /*#__PURE__*/__webpack_require__.n(equivalent_key_map);
 ;// CONCATENATED MODULE: external ["wp","reduxRoutine"]
 var external_wp_reduxRoutine_namespaceObject = window["wp"]["reduxRoutine"];
@@ -1288,7 +1292,7 @@ var external_wp_reduxRoutine_default = /*#__PURE__*/__webpack_require__.n(extern
  * @return {Function} Registry selector that can be registered with a store.
  */
 function createRegistrySelector(registrySelector) {
-  // create a selector function that is bound to the registry referenced by `selector.registry`
+  // Create a selector function that is bound to the registry referenced by `selector.registry`
   // and that has the same API as a regular selector. Binding it in such a way makes it
   // possible to call the selector directly from another selector.
   const selector = function () {
@@ -1331,7 +1335,7 @@ function createRegistryControl(registryControl) {
   registryControl.isRegistryControl = true;
   return registryControl;
 }
-//# sourceMappingURL=factory.js.map
+
 ;// CONCATENATED MODULE: ./packages/data/build-module/controls.js
 /**
  * External dependencies
@@ -1488,7 +1492,7 @@ const builtinControls = {
     return registry.dispatch(storeKey)[actionName](...args);
   })
 };
-//# sourceMappingURL=controls.js.map
+
 ;// CONCATENATED MODULE: ./node_modules/is-promise/index.mjs
 function isPromise(obj) {
   return !!obj && (typeof obj === 'object' || typeof obj === 'function') && typeof obj.then === 'function';
@@ -1518,7 +1522,7 @@ const promiseMiddleware = () => next => action => {
 };
 
 /* harmony default export */ var promise_middleware = (promiseMiddleware);
-//# sourceMappingURL=promise-middleware.js.map
+
 ;// CONCATENATED MODULE: ./packages/data/build-module/store/index.js
 const coreDataStore = {
   name: 'core/data',
@@ -1562,7 +1566,7 @@ const coreDataStore = {
 
 };
 /* harmony default export */ var store = (coreDataStore);
-//# sourceMappingURL=index.js.map
+
 ;// CONCATENATED MODULE: ./packages/data/build-module/resolvers-cache-middleware.js
 /**
  * External dependencies
@@ -1598,9 +1602,9 @@ const createResolversCacheMiddleware = (registry, reducerKey) => () => next => a
 
     resolversByArgs.forEach((value, args) => {
       // resolversByArgs is the map Map([ args ] => boolean) storing the cache resolution status for a given selector.
-      // If the value is false it means this resolver has finished its resolution which means we need to invalidate it,
-      // if it's true it means it's inflight and the invalidation is not necessary.
-      if (value !== false || !resolver.shouldInvalidate(action, ...args)) {
+      // If the value is "finished" or "error" it means this resolver has finished its resolution which means we need
+      // to invalidate it, if it's true it means it's inflight and the invalidation is not necessary.
+      if ((value === null || value === void 0 ? void 0 : value.status) !== 'finished' && (value === null || value === void 0 ? void 0 : value.status) !== 'error' || !resolver.shouldInvalidate(action, ...args)) {
         return;
       } // Trigger cache invalidation
 
@@ -1612,7 +1616,7 @@ const createResolversCacheMiddleware = (registry, reducerKey) => () => next => a
 };
 
 /* harmony default export */ var resolvers_cache_middleware = (createResolversCacheMiddleware);
-//# sourceMappingURL=resolvers-cache-middleware.js.map
+
 ;// CONCATENATED MODULE: ./packages/data/build-module/redux-store/thunk-middleware.js
 function createThunkMiddleware(args) {
   return () => next => action => {
@@ -1623,30 +1627,24 @@ function createThunkMiddleware(args) {
     return next(action);
   };
 }
-//# sourceMappingURL=thunk-middleware.js.map
+
 ;// CONCATENATED MODULE: ./packages/data/build-module/redux-store/metadata/utils.js
+/**
+ * External dependencies
+ */
+
 /**
  * Higher-order reducer creator which creates a combined reducer object, keyed
  * by a property on the action object.
  *
- * @template {any} TState
- * @template {import('redux').AnyAction} TAction
- *
- * @param {string} actionProperty Action property by which to key object.
- *
- * @return {(reducer: import('redux').Reducer<TState, TAction>) => import('redux').Reducer<Record<string, TState>, TAction>} Higher-order reducer.
+ * @param  actionProperty Action property by which to key object.
+ * @return Higher-order reducer.
  */
 const onSubKey = actionProperty => reducer => function () {
-  let state = arguments.length > 0 && arguments[0] !== undefined ? arguments[0] :
-  /** @type {Record<string, TState>} */
-  {};
+  let state = arguments.length > 0 && arguments[0] !== undefined ? arguments[0] : {};
   let action = arguments.length > 1 ? arguments[1] : undefined;
   // Retrieve subkey from action. Do not track if undefined; useful for cases
   // where reducer is scoped by action shape.
-
-  /** @type {keyof state} */
-
-  /* eslint-enable jsdoc/no-undefined-types */
   const key = action[actionProperty];
 
   if (key === undefined) {
@@ -1665,7 +1663,29 @@ const onSubKey = actionProperty => reducer => function () {
     [key]: nextKeyState
   };
 };
-//# sourceMappingURL=utils.js.map
+/**
+ * Normalize selector argument array by defaulting `undefined` value to an empty array
+ * and removing trailing `undefined` values.
+ *
+ * @param  args Selector argument array
+ * @return Normalized state key array
+ */
+
+function selectorArgsToStateKey(args) {
+  if (args === undefined || args === null) {
+    return [];
+  }
+
+  const len = args.length;
+  let idx = len;
+
+  while (idx > 0 && args[idx - 1] === undefined) {
+    idx--;
+  }
+
+  return idx === len ? args : args.slice(0, idx);
+}
+
 ;// CONCATENATED MODULE: ./packages/data/build-module/redux-store/metadata/reducer.js
 /**
  * External dependencies
@@ -1690,31 +1710,82 @@ const subKeysIsResolved = onSubKey('selectorName')(function () {
 
   switch (action.type) {
     case 'START_RESOLUTION':
+      {
+        const nextState = new (equivalent_key_map_default())(state);
+        nextState.set(selectorArgsToStateKey(action.args), {
+          status: 'resolving'
+        });
+        return nextState;
+      }
+
     case 'FINISH_RESOLUTION':
       {
-        const isStarting = action.type === 'START_RESOLUTION';
         const nextState = new (equivalent_key_map_default())(state);
-        nextState.set(action.args, isStarting);
+        nextState.set(selectorArgsToStateKey(action.args), {
+          status: 'finished'
+        });
+        return nextState;
+      }
+
+    case 'FAIL_RESOLUTION':
+      {
+        const nextState = new (equivalent_key_map_default())(state);
+        nextState.set(selectorArgsToStateKey(action.args), {
+          status: 'error',
+          error: action.error
+        });
         return nextState;
       }
 
     case 'START_RESOLUTIONS':
-    case 'FINISH_RESOLUTIONS':
       {
-        const isStarting = action.type === 'START_RESOLUTIONS';
         const nextState = new (equivalent_key_map_default())(state);
 
         for (const resolutionArgs of action.args) {
-          nextState.set(resolutionArgs, isStarting);
+          nextState.set(selectorArgsToStateKey(resolutionArgs), {
+            status: 'resolving'
+          });
         }
 
+        return nextState;
+      }
+
+    case 'FINISH_RESOLUTIONS':
+      {
+        const nextState = new (equivalent_key_map_default())(state);
+
+        for (const resolutionArgs of action.args) {
+          nextState.set(selectorArgsToStateKey(resolutionArgs), {
+            status: 'finished'
+          });
+        }
+
+        return nextState;
+      }
+
+    case 'FAIL_RESOLUTIONS':
+      {
+        const nextState = new (equivalent_key_map_default())(state);
+        action.args.forEach((resolutionArgs, idx) => {
+          const resolutionState = {
+            status: 'error',
+            error: undefined
+          };
+          const error = action.errors[idx];
+
+          if (error) {
+            resolutionState.error = error;
+          }
+
+          nextState.set(selectorArgsToStateKey(resolutionArgs), resolutionState);
+        });
         return nextState;
       }
 
     case 'INVALIDATE_RESOLUTION':
       {
         const nextState = new (equivalent_key_map_default())(state);
-        nextState.delete(action.args);
+        nextState.delete(selectorArgsToStateKey(action.args));
         return nextState;
       }
   }
@@ -1745,8 +1816,10 @@ const isResolved = function () {
 
     case 'START_RESOLUTION':
     case 'FINISH_RESOLUTION':
+    case 'FAIL_RESOLUTION':
     case 'START_RESOLUTIONS':
     case 'FINISH_RESOLUTIONS':
+    case 'FAIL_RESOLUTIONS':
     case 'INVALIDATE_RESOLUTION':
       return subKeysIsResolved(state, action);
   }
@@ -1755,80 +1828,140 @@ const isResolved = function () {
 };
 
 /* harmony default export */ var metadata_reducer = (isResolved);
-//# sourceMappingURL=reducer.js.map
+
 ;// CONCATENATED MODULE: ./packages/data/build-module/redux-store/metadata/selectors.js
 /**
  * External dependencies
  */
 
+/**
+ * Internal dependencies
+ */
+
+
 /** @typedef {Record<string, import('./reducer').State>} State */
 
+/** @typedef {import('./reducer').StateValue} StateValue */
+
+/** @typedef {import('./reducer').Status} Status */
+
+/**
+ * Returns the raw resolution state value for a given selector name,
+ * and arguments set. May be undefined if the selector has never been resolved
+ * or not resolved for the given set of arguments, otherwise true or false for
+ * resolution started and completed respectively.
+ *
+ * @param {State}      state        Data state.
+ * @param {string}     selectorName Selector name.
+ * @param {unknown[]?} args         Arguments passed to selector.
+ *
+ * @return {StateValue|undefined} isResolving value.
+ */
+
+function getResolutionState(state, selectorName, args) {
+  const map = (0,external_lodash_namespaceObject.get)(state, [selectorName]);
+
+  if (!map) {
+    return;
+  }
+
+  return map.get(selectorArgsToStateKey(args));
+}
 /**
  * Returns the raw `isResolving` value for a given selector name,
  * and arguments set. May be undefined if the selector has never been resolved
  * or not resolved for the given set of arguments, otherwise true or false for
  * resolution started and completed respectively.
  *
- * @param {State}     state        Data state.
- * @param {string}    selectorName Selector name.
- * @param {unknown[]} args         Arguments passed to selector.
+ * @param {State}      state        Data state.
+ * @param {string}     selectorName Selector name.
+ * @param {unknown[]?} args         Arguments passed to selector.
  *
  * @return {boolean | undefined} isResolving value.
  */
 
 function getIsResolving(state, selectorName, args) {
-  const map = (0,external_lodash_namespaceObject.get)(state, [selectorName]);
-
-  if (!map) {
-    return undefined;
-  }
-
-  return map.get(args);
+  const resolutionState = getResolutionState(state, selectorName, args);
+  return resolutionState && resolutionState.status === 'resolving';
 }
 /**
  * Returns true if resolution has already been triggered for a given
  * selector name, and arguments set.
  *
- * @param {State}     state        Data state.
- * @param {string}    selectorName Selector name.
- * @param {unknown[]} [args]       Arguments passed to selector (default `[]`).
+ * @param {State}      state        Data state.
+ * @param {string}     selectorName Selector name.
+ * @param {unknown[]?} args         Arguments passed to selector.
  *
  * @return {boolean} Whether resolution has been triggered.
  */
 
-function hasStartedResolution(state, selectorName) {
-  let args = arguments.length > 2 && arguments[2] !== undefined ? arguments[2] : [];
-  return getIsResolving(state, selectorName, args) !== undefined;
+function hasStartedResolution(state, selectorName, args) {
+  return getResolutionState(state, selectorName, args) !== undefined;
 }
 /**
  * Returns true if resolution has completed for a given selector
  * name, and arguments set.
  *
- * @param {State}     state        Data state.
- * @param {string}    selectorName Selector name.
- * @param {unknown[]} [args]       Arguments passed to selector.
+ * @param {State}      state        Data state.
+ * @param {string}     selectorName Selector name.
+ * @param {unknown[]?} args         Arguments passed to selector.
  *
  * @return {boolean} Whether resolution has completed.
  */
 
-function hasFinishedResolution(state, selectorName) {
-  let args = arguments.length > 2 && arguments[2] !== undefined ? arguments[2] : [];
-  return getIsResolving(state, selectorName, args) === false;
+function hasFinishedResolution(state, selectorName, args) {
+  var _getResolutionState;
+
+  const status = (_getResolutionState = getResolutionState(state, selectorName, args)) === null || _getResolutionState === void 0 ? void 0 : _getResolutionState.status;
+  return status === 'finished' || status === 'error';
+}
+/**
+ * Returns true if resolution has failed for a given selector
+ * name, and arguments set.
+ *
+ * @param {State}      state        Data state.
+ * @param {string}     selectorName Selector name.
+ * @param {unknown[]?} args         Arguments passed to selector.
+ *
+ * @return {boolean} Has resolution failed
+ */
+
+function hasResolutionFailed(state, selectorName, args) {
+  var _getResolutionState2;
+
+  return ((_getResolutionState2 = getResolutionState(state, selectorName, args)) === null || _getResolutionState2 === void 0 ? void 0 : _getResolutionState2.status) === 'error';
+}
+/**
+ * Returns the resolution error for a given selector name, and arguments set.
+ * Note it may be of an Error type, but may also be null, undefined, or anything else
+ * that can be `throw`-n.
+ *
+ * @param {State}      state        Data state.
+ * @param {string}     selectorName Selector name.
+ * @param {unknown[]?} args         Arguments passed to selector.
+ *
+ * @return {Error|unknown} Last resolution error
+ */
+
+function getResolutionError(state, selectorName, args) {
+  const resolutionState = getResolutionState(state, selectorName, args);
+  return (resolutionState === null || resolutionState === void 0 ? void 0 : resolutionState.status) === 'error' ? resolutionState.error : null;
 }
 /**
  * Returns true if resolution has been triggered but has not yet completed for
  * a given selector name, and arguments set.
  *
- * @param {State}     state        Data state.
- * @param {string}    selectorName Selector name.
- * @param {unknown[]} [args]       Arguments passed to selector.
+ * @param {State}      state        Data state.
+ * @param {string}     selectorName Selector name.
+ * @param {unknown[]?} args         Arguments passed to selector.
  *
  * @return {boolean} Whether resolution is in progress.
  */
 
-function isResolving(state, selectorName) {
-  let args = arguments.length > 2 && arguments[2] !== undefined ? arguments[2] : [];
-  return getIsResolving(state, selectorName, args) === true;
+function isResolving(state, selectorName, args) {
+  var _getResolutionState3;
+
+  return ((_getResolutionState3 = getResolutionState(state, selectorName, args)) === null || _getResolutionState3 === void 0 ? void 0 : _getResolutionState3.status) === 'resolving';
 }
 /**
  * Returns the list of the cached resolvers.
@@ -1841,7 +1974,7 @@ function isResolving(state, selectorName) {
 function getCachedResolvers(state) {
   return state;
 }
-//# sourceMappingURL=selectors.js.map
+
 ;// CONCATENATED MODULE: ./packages/data/build-module/redux-store/metadata/actions.js
 /**
  * Returns an action object used in signalling that selector resolution has
@@ -1877,14 +2010,33 @@ function finishResolution(selectorName, args) {
   };
 }
 /**
+ * Returns an action object used in signalling that selector resolution has
+ * failed.
+ *
+ * @param {string}        selectorName Name of selector for which resolver triggered.
+ * @param {unknown[]}     args         Arguments to associate for uniqueness.
+ * @param {Error|unknown} error        The error that caused the failure.
+ *
+ * @return {{ type: 'FAIL_RESOLUTION', selectorName: string, args: unknown[], error: Error|unknown }} Action object.
+ */
+
+function failResolution(selectorName, args, error) {
+  return {
+    type: 'FAIL_RESOLUTION',
+    selectorName,
+    args,
+    error
+  };
+}
+/**
  * Returns an action object used in signalling that a batch of selector resolutions has
  * started.
  *
- * @param {string}    selectorName Name of selector for which resolver triggered.
- * @param {unknown[]} args         Array of arguments to associate for uniqueness, each item
- *                                 is associated to a resolution.
+ * @param {string}      selectorName Name of selector for which resolver triggered.
+ * @param {unknown[][]} args         Array of arguments to associate for uniqueness, each item
+ *                                   is associated to a resolution.
  *
- * @return {{ type: 'START_RESOLUTIONS', selectorName: string, args: unknown[] }} Action object.
+ * @return {{ type: 'START_RESOLUTIONS', selectorName: string, args: unknown[][] }} Action object.
  */
 
 function startResolutions(selectorName, args) {
@@ -1898,11 +2050,11 @@ function startResolutions(selectorName, args) {
  * Returns an action object used in signalling that a batch of selector resolutions has
  * completed.
  *
- * @param {string}    selectorName Name of selector for which resolver triggered.
- * @param {unknown[]} args         Array of arguments to associate for uniqueness, each item
- *                                 is associated to a resolution.
+ * @param {string}      selectorName Name of selector for which resolver triggered.
+ * @param {unknown[][]} args         Array of arguments to associate for uniqueness, each item
+ *                                   is associated to a resolution.
  *
- * @return {{ type: 'FINISH_RESOLUTIONS', selectorName: string, args: unknown[] }} Action object.
+ * @return {{ type: 'FINISH_RESOLUTIONS', selectorName: string, args: unknown[][] }} Action object.
  */
 
 function finishResolutions(selectorName, args) {
@@ -1910,6 +2062,26 @@ function finishResolutions(selectorName, args) {
     type: 'FINISH_RESOLUTIONS',
     selectorName,
     args
+  };
+}
+/**
+ * Returns an action object used in signalling that a batch of selector resolutions has
+ * completed and at least one of them has failed.
+ *
+ * @param {string}            selectorName Name of selector for which resolver triggered.
+ * @param {unknown[]}         args         Array of arguments to associate for uniqueness, each item
+ *                                         is associated to a resolution.
+ * @param {(Error|unknown)[]} errors       Array of errors to associate for uniqueness, each item
+ *                                         is associated to a resolution.
+ * @return {{ type: 'FAIL_RESOLUTIONS', selectorName: string, args: unknown[], errors: Array<Error|unknown> }} Action object.
+ */
+
+function failResolutions(selectorName, args, errors) {
+  return {
+    type: 'FAIL_RESOLUTIONS',
+    selectorName,
+    args,
+    errors
   };
 }
 /**
@@ -1956,7 +2128,7 @@ function invalidateResolutionForStoreSelector(selectorName) {
     selectorName
   };
 }
-//# sourceMappingURL=actions.js.map
+
 ;// CONCATENATED MODULE: ./packages/data/build-module/redux-store/index.js
 /**
  * External dependencies
@@ -2173,12 +2345,7 @@ function instantiateReduxStore(key, options, registry, thunkArgs) {
     ...builtinControls
   };
   const normalizedControls = (0,external_lodash_namespaceObject.mapValues)(controls, control => control.isRegistryControl ? control(registry) : control);
-  const middlewares = [resolvers_cache_middleware(registry, key), promise_middleware, external_wp_reduxRoutine_default()(normalizedControls)];
-
-  if (options.__experimentalUseThunks) {
-    middlewares.push(createThunkMiddleware(thunkArgs));
-  }
-
+  const middlewares = [resolvers_cache_middleware(registry, key), promise_middleware, external_wp_reduxRoutine_default()(normalizedControls), createThunkMiddleware(thunkArgs)];
   const enhancers = [applyMiddleware(...middlewares)];
 
   if (typeof window !== 'undefined' && window.__REDUX_DEVTOOLS_EXTENSION__) {
@@ -2266,30 +2433,56 @@ function mapActions(actions, store) {
 
 
 function mapResolveSelectors(selectors, store) {
-  return (0,external_lodash_namespaceObject.mapValues)((0,external_lodash_namespaceObject.omit)(selectors, ['getIsResolving', 'hasStartedResolution', 'hasFinishedResolution', 'isResolving', 'getCachedResolvers']), (selector, selectorName) => function () {
-    for (var _len3 = arguments.length, args = new Array(_len3), _key3 = 0; _key3 < _len3; _key3++) {
-      args[_key3] = arguments[_key3];
+  const storeSelectors = (0,external_lodash_namespaceObject.omit)(selectors, ['getIsResolving', 'hasStartedResolution', 'hasFinishedResolution', 'hasResolutionFailed', 'isResolving', 'getCachedResolvers', 'getResolutionState', 'getResolutionError']);
+  return (0,external_lodash_namespaceObject.mapValues)(storeSelectors, (selector, selectorName) => {
+    // If the selector doesn't have a resolver, just convert the return value
+    // (including exceptions) to a Promise, no additional extra behavior is needed.
+    if (!selector.hasResolver) {
+      return async function () {
+        for (var _len3 = arguments.length, args = new Array(_len3), _key3 = 0; _key3 < _len3; _key3++) {
+          args[_key3] = arguments[_key3];
+        }
+
+        return selector.apply(null, args);
+      };
     }
 
-    return new Promise(resolve => {
-      const hasFinished = () => selectors.hasFinishedResolution(selectorName, args);
-
-      const getResult = () => selector.apply(null, args); // trigger the selector (to trigger the resolver)
-
-
-      const result = getResult();
-
-      if (hasFinished()) {
-        return resolve(result);
+    return function () {
+      for (var _len4 = arguments.length, args = new Array(_len4), _key4 = 0; _key4 < _len4; _key4++) {
+        args[_key4] = arguments[_key4];
       }
 
-      const unsubscribe = store.subscribe(() => {
+      return new Promise((resolve, reject) => {
+        const hasFinished = () => selectors.hasFinishedResolution(selectorName, args);
+
+        const finalize = result => {
+          const hasFailed = selectors.hasResolutionFailed(selectorName, args);
+
+          if (hasFailed) {
+            const error = selectors.getResolutionError(selectorName, args);
+            reject(error);
+          } else {
+            resolve(result);
+          }
+        };
+
+        const getResult = () => selector.apply(null, args); // Trigger the selector (to trigger the resolver)
+
+
+        const result = getResult();
+
         if (hasFinished()) {
-          unsubscribe();
-          resolve(getResult());
+          return finalize(result);
         }
+
+        const unsubscribe = store.subscribe(() => {
+          if (hasFinished()) {
+            unsubscribe();
+            finalize(getResult());
+          }
+        });
       });
-    });
+    };
   });
 }
 /**
@@ -2314,8 +2507,8 @@ function mapResolvers(resolvers, selectors, store, resolversCache) {
     }
 
     return { ...resolver,
-      // copy the enumerable properties of the resolver function
-      fulfill: resolver // add the fulfill method
+      // Copy the enumerable properties of the resolver function.
+      fulfill: resolver // Add the fulfill method.
 
     };
   });
@@ -2329,8 +2522,8 @@ function mapResolvers(resolvers, selectors, store, resolversCache) {
     }
 
     const selectorResolver = function () {
-      for (var _len4 = arguments.length, args = new Array(_len4), _key4 = 0; _key4 < _len4; _key4++) {
-        args[_key4] = arguments[_key4];
+      for (var _len5 = arguments.length, args = new Array(_len5), _key5 = 0; _key5 < _len5; _key5++) {
+        args[_key5] = arguments[_key5];
       }
 
       async function fulfillSelector() {
@@ -2352,8 +2545,13 @@ function mapResolvers(resolvers, selectors, store, resolversCache) {
         setTimeout(async () => {
           resolversCache.clear(selectorName, args);
           store.dispatch(startResolution(selectorName, args));
-          await fulfillResolver(store, mappedResolvers, selectorName, ...args);
-          store.dispatch(finishResolution(selectorName, args));
+
+          try {
+            await fulfillResolver(store, mappedResolvers, selectorName, ...args);
+            store.dispatch(finishResolution(selectorName, args));
+          } catch (error) {
+            store.dispatch(failResolution(selectorName, args, error));
+          }
         });
       }
 
@@ -2387,8 +2585,8 @@ async function fulfillResolver(store, resolvers, selectorName) {
     return;
   }
 
-  for (var _len5 = arguments.length, args = new Array(_len5 > 3 ? _len5 - 3 : 0), _key5 = 3; _key5 < _len5; _key5++) {
-    args[_key5 - 3] = arguments[_key5];
+  for (var _len6 = arguments.length, args = new Array(_len6 > 3 ? _len6 - 3 : 0), _key6 = 3; _key6 < _len6; _key6++) {
+    args[_key6 - 3] = arguments[_key6];
   }
 
   const action = resolver.fulfill(...args);
@@ -2397,7 +2595,7 @@ async function fulfillResolver(store, resolvers, selectorName) {
     await store.dispatch(action);
   }
 }
-//# sourceMappingURL=index.js.map
+
 ;// CONCATENATED MODULE: ./packages/data/build-module/utils/emitter.js
 /**
  * Create an event emitter.
@@ -2448,7 +2646,7 @@ function createEmitter() {
 
   };
 }
-//# sourceMappingURL=emitter.js.map
+
 ;// CONCATENATED MODULE: ./packages/data/build-module/registry.js
 /**
  * External dependencies
@@ -2509,12 +2707,10 @@ function createRegistry() {
   let parent = arguments.length > 1 && arguments[1] !== undefined ? arguments[1] : null;
   const stores = {};
   const emitter = createEmitter();
-
-  const __experimentalListeningStores = new Set();
+  const listeningStores = new Set();
   /**
    * Global listener called for each store's update.
    */
-
 
   function globalListener() {
     emitter.emit();
@@ -2543,9 +2739,7 @@ function createRegistry() {
 
   function select(storeNameOrDescriptor) {
     const storeName = (0,external_lodash_namespaceObject.isObject)(storeNameOrDescriptor) ? storeNameOrDescriptor.name : storeNameOrDescriptor;
-
-    __experimentalListeningStores.add(storeName);
-
+    listeningStores.add(storeName);
     const store = stores[storeName];
 
     if (store) {
@@ -2555,11 +2749,10 @@ function createRegistry() {
     return parent && parent.select(storeName);
   }
 
-  function __experimentalMarkListeningStores(callback, ref) {
-    __experimentalListeningStores.clear();
-
+  function __unstableMarkListeningStores(callback, ref) {
+    listeningStores.clear();
     const result = callback.call(this);
-    ref.current = Array.from(__experimentalListeningStores);
+    ref.current = Array.from(listeningStores);
     return result;
   }
   /**
@@ -2577,9 +2770,7 @@ function createRegistry() {
 
   function resolveSelect(storeNameOrDescriptor) {
     const storeName = (0,external_lodash_namespaceObject.isObject)(storeNameOrDescriptor) ? storeNameOrDescriptor.name : storeNameOrDescriptor;
-
-    __experimentalListeningStores.add(storeName);
-
+    listeningStores.add(storeName);
     const store = stores[storeName];
 
     if (store) {
@@ -2610,7 +2801,6 @@ function createRegistry() {
   } //
   // Deprecated
   // TODO: Remove this after `use()` is removed.
-  //
 
 
   function withPlugins(attributes) {
@@ -2716,7 +2906,7 @@ function createRegistry() {
    */
 
 
-  function __experimentalSubscribeStore(storeName, handler) {
+  function __unstableSubscribeStore(storeName, handler) {
     if (storeName in stores) {
       return stores[storeName].subscribe(handler);
     } // Trying to access a store that hasn't been registered,
@@ -2729,7 +2919,7 @@ function createRegistry() {
       return subscribe(handler);
     }
 
-    return parent.__experimentalSubscribeStore(storeName, handler);
+    return parent.__unstableSubscribeStore(storeName, handler);
   }
 
   function batch(callback) {
@@ -2753,14 +2943,17 @@ function createRegistry() {
     register,
     registerGenericStore,
     registerStore,
-    __experimentalMarkListeningStores,
-    __experimentalSubscribeStore
+    __unstableMarkListeningStores,
+    __unstableSubscribeStore
   }; //
   // TODO:
   // This function will be deprecated as soon as it is no longer internally referenced.
-  //
 
   function use(plugin, options) {
+    if (!plugin) {
+      return;
+    }
+
     registry = { ...registry,
       ...plugin(registry, options)
     };
@@ -2779,27 +2972,14 @@ function createRegistry() {
 
   return withPlugins(registry);
 }
-//# sourceMappingURL=registry.js.map
+
 ;// CONCATENATED MODULE: ./packages/data/build-module/default-registry.js
 /**
  * Internal dependencies
  */
 
 /* harmony default export */ var default_registry = (createRegistry());
-//# sourceMappingURL=default-registry.js.map
-;// CONCATENATED MODULE: ./packages/data/build-module/plugins/controls/index.js
-/**
- * WordPress dependencies
- */
 
-/* harmony default export */ var plugins_controls = (registry => {
-  external_wp_deprecated_default()('wp.data.plugins.controls', {
-    since: '5.4',
-    hint: 'The controls plugins is now baked-in.'
-  });
-  return registry;
-});
-//# sourceMappingURL=index.js.map
 ;// CONCATENATED MODULE: ./packages/data/build-module/plugins/persistence/storage/object.js
 let objectStorage;
 const storage = {
@@ -2825,7 +3005,7 @@ const storage = {
 
 };
 /* harmony default export */ var object = (storage);
-//# sourceMappingURL=object.js.map
+
 ;// CONCATENATED MODULE: ./packages/data/build-module/plugins/persistence/storage/default.js
 /**
  * Internal dependencies
@@ -2845,7 +3025,7 @@ try {
 }
 
 /* harmony default export */ var storage_default = (default_storage);
-//# sourceMappingURL=default.js.map
+
 ;// CONCATENATED MODULE: ./packages/data/build-module/plugins/persistence/index.js
 /**
  * External dependencies
@@ -3059,66 +3239,375 @@ function persistencePlugin(registry, pluginOptions) {
 }
 /**
  * Move the 'features' object in local storage from the sourceStoreName to the
- * interface store.
+ * preferences store.
  *
  * @param {Object} persistence     The persistence interface.
  * @param {string} sourceStoreName The name of the store that has persisted
- *                                 preferences to migrate to the interface
+ *                                 preferences to migrate to the preferences
  *                                 package.
  */
 
 
-function migrateFeaturePreferencesToInterfaceStore(persistence, sourceStoreName) {
-  var _state$sourceStoreNam;
+function migrateFeaturePreferencesToPreferencesStore(persistence, sourceStoreName) {
+  var _state$interfaceStore, _state$interfaceStore2, _state$interfaceStore3, _state$sourceStoreNam, _state$sourceStoreNam2;
 
+  const preferencesStoreName = 'core/preferences';
   const interfaceStoreName = 'core/interface';
-  const state = persistence.get();
-  const sourcePreferences = (_state$sourceStoreNam = state[sourceStoreName]) === null || _state$sourceStoreNam === void 0 ? void 0 : _state$sourceStoreNam.preferences;
-  const sourceFeatures = sourcePreferences === null || sourcePreferences === void 0 ? void 0 : sourcePreferences.features;
+  const state = persistence.get(); // Features most recently (and briefly) lived in the interface package.
+  // If data exists there, prioritize using that for the migration. If not
+  // also check the original package as the user may have updated from an
+  // older block editor version.
 
-  if (sourceFeatures) {
-    var _state$interfaceStore, _state$interfaceStore2;
+  const interfaceFeatures = (_state$interfaceStore = state[interfaceStoreName]) === null || _state$interfaceStore === void 0 ? void 0 : (_state$interfaceStore2 = _state$interfaceStore.preferences) === null || _state$interfaceStore2 === void 0 ? void 0 : (_state$interfaceStore3 = _state$interfaceStore2.features) === null || _state$interfaceStore3 === void 0 ? void 0 : _state$interfaceStore3[sourceStoreName];
+  const sourceFeatures = (_state$sourceStoreNam = state[sourceStoreName]) === null || _state$sourceStoreNam === void 0 ? void 0 : (_state$sourceStoreNam2 = _state$sourceStoreNam.preferences) === null || _state$sourceStoreNam2 === void 0 ? void 0 : _state$sourceStoreNam2.features;
+  const featuresToMigrate = interfaceFeatures ? interfaceFeatures : sourceFeatures;
 
-    const targetFeatures = (_state$interfaceStore = state[interfaceStoreName]) === null || _state$interfaceStore === void 0 ? void 0 : (_state$interfaceStore2 = _state$interfaceStore.preferences) === null || _state$interfaceStore2 === void 0 ? void 0 : _state$interfaceStore2.features; // Avoid migrating features again if they've previously been migrated.
+  if (featuresToMigrate) {
+    var _state$preferencesSto;
 
-    if (!(targetFeatures !== null && targetFeatures !== void 0 && targetFeatures[sourceStoreName])) {
+    const existingPreferences = (_state$preferencesSto = state[preferencesStoreName]) === null || _state$preferencesSto === void 0 ? void 0 : _state$preferencesSto.preferences; // Avoid migrating features again if they've previously been migrated.
+
+    if (!(existingPreferences !== null && existingPreferences !== void 0 && existingPreferences[sourceStoreName])) {
       // Set the feature values in the interface store, the features
       // object is keyed by 'scope', which matches the store name for
       // the source.
-      persistence.set(interfaceStoreName, {
-        preferences: {
-          features: { ...targetFeatures,
-            [sourceStoreName]: sourceFeatures
-          }
+      persistence.set(preferencesStoreName, {
+        preferences: { ...existingPreferences,
+          [sourceStoreName]: featuresToMigrate
         }
-      }); // Remove feature preferences from the source.
+      }); // Remove migrated feature preferences from `interface`.
 
-      persistence.set(sourceStoreName, {
-        preferences: { ...sourcePreferences,
-          features: undefined
-        }
-      });
+      if (interfaceFeatures) {
+        var _state$interfaceStore4, _state$interfaceStore5;
+
+        const otherInterfaceState = state[interfaceStoreName];
+        const otherInterfaceScopes = (_state$interfaceStore4 = state[interfaceStoreName]) === null || _state$interfaceStore4 === void 0 ? void 0 : (_state$interfaceStore5 = _state$interfaceStore4.preferences) === null || _state$interfaceStore5 === void 0 ? void 0 : _state$interfaceStore5.features;
+        persistence.set(interfaceStoreName, { ...otherInterfaceState,
+          preferences: {
+            features: { ...otherInterfaceScopes,
+              [sourceStoreName]: undefined
+            }
+          }
+        });
+      } // Remove migrated feature preferences from the source.
+
+
+      if (sourceFeatures) {
+        var _state$sourceStoreNam3;
+
+        const otherSourceState = state[sourceStoreName];
+        const sourcePreferences = (_state$sourceStoreNam3 = state[sourceStoreName]) === null || _state$sourceStoreNam3 === void 0 ? void 0 : _state$sourceStoreNam3.preferences;
+        persistence.set(sourceStoreName, { ...otherSourceState,
+          preferences: { ...sourcePreferences,
+            features: undefined
+          }
+        });
+      }
     }
   }
 }
 /**
- * Deprecated: Remove this function and the code in WordPress Core that calls
- * it once WordPress 6.0 is released.
+ * Migrates an individual item inside the `preferences` object for a store.
+ *
+ * @param {Object}    persistence   The persistence interface.
+ * @param {Object}    migrate       An options object that contains details of the migration.
+ * @param {string}    migrate.from  The name of the store to migrate from.
+ * @param {string}    migrate.scope The scope in the preferences store to migrate to.
+ * @param {string}    key           The key in the preferences object to migrate.
+ * @param {?Function} convert       A function that converts preferences from one format to another.
  */
 
+function migrateIndividualPreferenceToPreferencesStore(persistence, _ref, key) {
+  var _state$sourceStoreNam4, _state$sourceStoreNam5, _state$preferencesSto2, _state$preferencesSto3, _state$preferencesSto4, _state$preferencesSto5, _state$preferencesSto6, _state$preferencesSto7, _state$sourceStoreNam6;
+
+  let {
+    from: sourceStoreName,
+    scope
+  } = _ref;
+  let convert = arguments.length > 3 && arguments[3] !== undefined ? arguments[3] : external_lodash_namespaceObject.identity;
+  const preferencesStoreName = 'core/preferences';
+  const state = persistence.get();
+  const sourcePreference = (_state$sourceStoreNam4 = state[sourceStoreName]) === null || _state$sourceStoreNam4 === void 0 ? void 0 : (_state$sourceStoreNam5 = _state$sourceStoreNam4.preferences) === null || _state$sourceStoreNam5 === void 0 ? void 0 : _state$sourceStoreNam5[key]; // There's nothing to migrate, exit early.
+
+  if (sourcePreference === undefined) {
+    return;
+  }
+
+  const targetPreference = (_state$preferencesSto2 = state[preferencesStoreName]) === null || _state$preferencesSto2 === void 0 ? void 0 : (_state$preferencesSto3 = _state$preferencesSto2.preferences) === null || _state$preferencesSto3 === void 0 ? void 0 : (_state$preferencesSto4 = _state$preferencesSto3[scope]) === null || _state$preferencesSto4 === void 0 ? void 0 : _state$preferencesSto4[key]; // There's existing data at the target, so don't overwrite it, exit early.
+
+  if (targetPreference) {
+    return;
+  }
+
+  const otherScopes = (_state$preferencesSto5 = state[preferencesStoreName]) === null || _state$preferencesSto5 === void 0 ? void 0 : _state$preferencesSto5.preferences;
+  const otherPreferences = (_state$preferencesSto6 = state[preferencesStoreName]) === null || _state$preferencesSto6 === void 0 ? void 0 : (_state$preferencesSto7 = _state$preferencesSto6.preferences) === null || _state$preferencesSto7 === void 0 ? void 0 : _state$preferencesSto7[scope]; // Pass an object with the key and value as this allows the convert
+  // function to convert to a data structure that has different keys.
+
+  const convertedPreferences = convert({
+    [key]: sourcePreference
+  });
+  persistence.set(preferencesStoreName, {
+    preferences: { ...otherScopes,
+      [scope]: { ...otherPreferences,
+        ...convertedPreferences
+      }
+    }
+  }); // Remove migrated feature preferences from the source.
+
+  const otherSourceState = state[sourceStoreName];
+  const allSourcePreferences = (_state$sourceStoreNam6 = state[sourceStoreName]) === null || _state$sourceStoreNam6 === void 0 ? void 0 : _state$sourceStoreNam6.preferences;
+  persistence.set(sourceStoreName, { ...otherSourceState,
+    preferences: { ...allSourcePreferences,
+      [key]: undefined
+    }
+  });
+}
+/**
+ * Convert from:
+ * ```
+ * {
+ *     panels: {
+ *         tags: {
+ *             enabled: true,
+ *             opened: true,
+ *         },
+ *         permalinks: {
+ *             enabled: false,
+ *             opened: false,
+ *         },
+ *     },
+ * }
+ * ```
+ *
+ * to:
+ * {
+ *     inactivePanels: [
+ *         'permalinks',
+ *     ],
+ *     openPanels: [
+ *         'tags',
+ *     ],
+ * }
+ *
+ * @param {Object} preferences A preferences object.
+ *
+ * @return {Object} The converted data.
+ */
+
+function convertEditPostPanels(preferences) {
+  var _preferences$panels;
+
+  const panels = (_preferences$panels = preferences === null || preferences === void 0 ? void 0 : preferences.panels) !== null && _preferences$panels !== void 0 ? _preferences$panels : {};
+  return Object.keys(panels).reduce((convertedData, panelName) => {
+    const panel = panels[panelName];
+
+    if ((panel === null || panel === void 0 ? void 0 : panel.enabled) === false) {
+      convertedData.inactivePanels.push(panelName);
+    }
+
+    if ((panel === null || panel === void 0 ? void 0 : panel.opened) === true) {
+      convertedData.openPanels.push(panelName);
+    }
+
+    return convertedData;
+  }, {
+    inactivePanels: [],
+    openPanels: []
+  });
+}
+function migrateThirdPartyFeaturePreferencesToPreferencesStore(persistence) {
+  var _state$interfaceStore6, _state$interfaceStore7;
+
+  const interfaceStoreName = 'core/interface';
+  const preferencesStoreName = 'core/preferences';
+  let state = persistence.get();
+  const interfaceScopes = (_state$interfaceStore6 = state[interfaceStoreName]) === null || _state$interfaceStore6 === void 0 ? void 0 : (_state$interfaceStore7 = _state$interfaceStore6.preferences) === null || _state$interfaceStore7 === void 0 ? void 0 : _state$interfaceStore7.features;
+
+  for (const scope in interfaceScopes) {
+    var _state$preferencesSto8, _state$interfaceStore8, _state$interfaceStore9;
+
+    // Don't migrate any core 'scopes'.
+    if (scope.startsWith('core')) {
+      continue;
+    } // Skip this scope if there are no features to migrate.
+
+
+    const featuresToMigrate = interfaceScopes[scope];
+
+    if (!featuresToMigrate) {
+      continue;
+    }
+
+    const existingPreferences = (_state$preferencesSto8 = state[preferencesStoreName]) === null || _state$preferencesSto8 === void 0 ? void 0 : _state$preferencesSto8.preferences; // Add the data to the preferences store structure.
+
+    persistence.set(preferencesStoreName, {
+      preferences: { ...existingPreferences,
+        [scope]: featuresToMigrate
+      }
+    }); // Remove the data from the interface store structure.
+    // Call `persistence.get` again to make sure `state` is up-to-date with
+    // any changes from the previous iteration of this loop.
+
+    state = persistence.get();
+    const otherInterfaceState = state[interfaceStoreName];
+    const otherInterfaceScopes = (_state$interfaceStore8 = state[interfaceStoreName]) === null || _state$interfaceStore8 === void 0 ? void 0 : (_state$interfaceStore9 = _state$interfaceStore8.preferences) === null || _state$interfaceStore9 === void 0 ? void 0 : _state$interfaceStore9.features;
+    persistence.set(interfaceStoreName, { ...otherInterfaceState,
+      preferences: {
+        features: { ...otherInterfaceScopes,
+          [scope]: undefined
+        }
+      }
+    });
+  }
+}
+/**
+ * Migrates interface 'enableItems' data to the preferences store.
+ *
+ * The interface package stores this data in this format:
+ * ```js
+ * {
+ *     enableItems: {
+ *         singleEnableItems: {
+ * 	           complementaryArea: {
+ *                 'core/edit-post': 'edit-post/document',
+ *                 'core/edit-site': 'edit-site/global-styles',
+ *             }
+ *         },
+ *         multipleEnableItems: {
+ *             pinnedItems: {
+ *                 'core/edit-post': {
+ *                     'plugin-1': true,
+ *                 },
+ *                 'core/edit-site': {
+ *                     'plugin-2': true,
+ *                 },
+ *             },
+ *         }
+ *     }
+ * }
+ * ```
+ * and it should be migrated it to:
+ * ```js
+ * {
+ *     'core/edit-post': {
+ *         complementaryArea: 'edit-post/document',
+ *         pinnedItems: {
+ *             'plugin-1': true,
+ *         },
+ *     },
+ *     'core/edit-site': {
+ *         complementaryArea: 'edit-site/global-styles',
+ *         pinnedItems: {
+ *             'plugin-2': true,
+ *         },
+ *     },
+ * }
+ * ```
+ *
+ * @param {Object} persistence The persistence interface.
+ */
+
+function migrateInterfaceEnableItemsToPreferencesStore(persistence) {
+  var _state$interfaceStore10, _state$preferencesSto9, _state$preferencesSto10, _sourceEnableItems$si, _sourceEnableItems$si2, _sourceEnableItems$mu, _sourceEnableItems$mu2;
+
+  const interfaceStoreName = 'core/interface';
+  const preferencesStoreName = 'core/preferences';
+  const state = persistence.get();
+  const sourceEnableItems = (_state$interfaceStore10 = state[interfaceStoreName]) === null || _state$interfaceStore10 === void 0 ? void 0 : _state$interfaceStore10.enableItems; // There's nothing to migrate, exit early.
+
+  if (!sourceEnableItems) {
+    return;
+  }
+
+  const allPreferences = (_state$preferencesSto9 = (_state$preferencesSto10 = state[preferencesStoreName]) === null || _state$preferencesSto10 === void 0 ? void 0 : _state$preferencesSto10.preferences) !== null && _state$preferencesSto9 !== void 0 ? _state$preferencesSto9 : {}; // First convert complementaryAreas into the right format.
+  // Use the existing preferences as the accumulator so that the data is
+  // merged.
+
+  const sourceComplementaryAreas = (_sourceEnableItems$si = sourceEnableItems === null || sourceEnableItems === void 0 ? void 0 : (_sourceEnableItems$si2 = sourceEnableItems.singleEnableItems) === null || _sourceEnableItems$si2 === void 0 ? void 0 : _sourceEnableItems$si2.complementaryArea) !== null && _sourceEnableItems$si !== void 0 ? _sourceEnableItems$si : {};
+  const convertedComplementaryAreas = Object.keys(sourceComplementaryAreas).reduce((accumulator, scope) => {
+    var _accumulator$scope;
+
+    const data = sourceComplementaryAreas[scope]; // Don't overwrite any existing data in the preferences store.
+
+    if ((_accumulator$scope = accumulator[scope]) !== null && _accumulator$scope !== void 0 && _accumulator$scope.complementaryArea) {
+      return accumulator;
+    }
+
+    return { ...accumulator,
+      [scope]: { ...accumulator[scope],
+        complementaryArea: data
+      }
+    };
+  }, allPreferences); // Next feed the converted complementary areas back into a reducer that
+  // converts the pinned items, resulting in the fully migrated data.
+
+  const sourcePinnedItems = (_sourceEnableItems$mu = sourceEnableItems === null || sourceEnableItems === void 0 ? void 0 : (_sourceEnableItems$mu2 = sourceEnableItems.multipleEnableItems) === null || _sourceEnableItems$mu2 === void 0 ? void 0 : _sourceEnableItems$mu2.pinnedItems) !== null && _sourceEnableItems$mu !== void 0 ? _sourceEnableItems$mu : {};
+  const allConvertedData = Object.keys(sourcePinnedItems).reduce((accumulator, scope) => {
+    var _accumulator$scope2;
+
+    const data = sourcePinnedItems[scope]; // Don't overwrite any existing data in the preferences store.
+
+    if ((_accumulator$scope2 = accumulator[scope]) !== null && _accumulator$scope2 !== void 0 && _accumulator$scope2.pinnedItems) {
+      return accumulator;
+    }
+
+    return { ...accumulator,
+      [scope]: { ...accumulator[scope],
+        pinnedItems: data
+      }
+    };
+  }, convertedComplementaryAreas);
+  persistence.set(preferencesStoreName, {
+    preferences: allConvertedData
+  }); // Remove migrated preferences.
+
+  const otherInterfaceItems = state[interfaceStoreName];
+  persistence.set(interfaceStoreName, { ...otherInterfaceItems,
+    enableItems: undefined
+  });
+}
+
 persistencePlugin.__unstableMigrate = pluginOptions => {
-  const persistence = createPersistenceInterface(pluginOptions);
-  migrateFeaturePreferencesToInterfaceStore(persistence, 'core/edit-widgets');
-  migrateFeaturePreferencesToInterfaceStore(persistence, 'core/customize-widgets');
-  migrateFeaturePreferencesToInterfaceStore(persistence, 'core/edit-post');
+  const persistence = createPersistenceInterface(pluginOptions); // Boolean feature preferences.
+
+  migrateFeaturePreferencesToPreferencesStore(persistence, 'core/edit-widgets');
+  migrateFeaturePreferencesToPreferencesStore(persistence, 'core/customize-widgets');
+  migrateFeaturePreferencesToPreferencesStore(persistence, 'core/edit-post');
+  migrateFeaturePreferencesToPreferencesStore(persistence, 'core/edit-site');
+  migrateThirdPartyFeaturePreferencesToPreferencesStore(persistence); // Other ad-hoc preferences.
+
+  migrateIndividualPreferenceToPreferencesStore(persistence, {
+    from: 'core/edit-post',
+    scope: 'core/edit-post'
+  }, 'hiddenBlockTypes');
+  migrateIndividualPreferenceToPreferencesStore(persistence, {
+    from: 'core/edit-post',
+    scope: 'core/edit-post'
+  }, 'editorMode');
+  migrateIndividualPreferenceToPreferencesStore(persistence, {
+    from: 'core/edit-post',
+    scope: 'core/edit-post'
+  }, 'preferredStyleVariations');
+  migrateIndividualPreferenceToPreferencesStore(persistence, {
+    from: 'core/edit-post',
+    scope: 'core/edit-post'
+  }, 'panels', convertEditPostPanels);
+  migrateIndividualPreferenceToPreferencesStore(persistence, {
+    from: 'core/editor',
+    scope: 'core/edit-post'
+  }, 'isPublishSidebarEnabled');
+  migrateIndividualPreferenceToPreferencesStore(persistence, {
+    from: 'core/edit-site',
+    scope: 'core/edit-site'
+  }, 'editorMode');
+  migrateInterfaceEnableItemsToPreferencesStore(persistence);
 };
 
 /* harmony default export */ var persistence = (persistencePlugin);
-//# sourceMappingURL=index.js.map
+
 ;// CONCATENATED MODULE: ./packages/data/build-module/plugins/index.js
 
 
-//# sourceMappingURL=index.js.map
 ;// CONCATENATED MODULE: ./node_modules/@babel/runtime/helpers/esm/extends.js
 function _extends() {
   _extends = Object.assign || function (target) {
@@ -3250,7 +3739,7 @@ const RegistryConsumer = Consumer;
  */
 
 /* harmony default export */ var context = (Provider);
-//# sourceMappingURL=context.js.map
+
 ;// CONCATENATED MODULE: ./packages/data/build-module/components/registry-provider/use-registry.js
 /**
  * WordPress dependencies
@@ -3304,7 +3793,7 @@ const RegistryConsumer = Consumer;
 function useRegistry() {
   return (0,external_wp_element_namespaceObject.useContext)(Context);
 }
-//# sourceMappingURL=use-registry.js.map
+
 ;// CONCATENATED MODULE: ./packages/data/build-module/components/async-mode-provider/context.js
 /**
  * WordPress dependencies
@@ -3352,7 +3841,7 @@ const AsyncModeConsumer = (/* unused pure expression or super */ null && (contex
  */
 
 /* harmony default export */ var async_mode_provider_context = (context_Provider);
-//# sourceMappingURL=context.js.map
+
 ;// CONCATENATED MODULE: ./packages/data/build-module/components/async-mode-provider/use-async-mode.js
 /**
  * WordPress dependencies
@@ -3366,7 +3855,7 @@ const AsyncModeConsumer = (/* unused pure expression or super */ null && (contex
 function useAsyncMode() {
   return (0,external_wp_element_namespaceObject.useContext)(context_Context);
 }
-//# sourceMappingURL=use-async-mode.js.map
+
 ;// CONCATENATED MODULE: ./packages/data/build-module/components/use-select/index.js
 /**
  * External dependencies
@@ -3487,15 +3976,15 @@ function useSelect(mapSelect, deps) {
     queue: true
   }), [registry]);
   const [, forceRender] = (0,external_wp_element_namespaceObject.useReducer)(s => s + 1, 0);
+  const latestRegistry = (0,external_wp_element_namespaceObject.useRef)(registry);
   const latestMapSelect = (0,external_wp_element_namespaceObject.useRef)();
   const latestIsAsync = (0,external_wp_element_namespaceObject.useRef)(isAsync);
   const latestMapOutput = (0,external_wp_element_namespaceObject.useRef)();
-  const latestMapOutputError = (0,external_wp_element_namespaceObject.useRef)();
-  const isMountedAndNotUnsubscribing = (0,external_wp_element_namespaceObject.useRef)(); // Keep track of the stores being selected in the _mapSelect function,
+  const latestMapOutputError = (0,external_wp_element_namespaceObject.useRef)(); // Keep track of the stores being selected in the _mapSelect function,
   // and only subscribe to those stores later.
 
   const listeningStores = (0,external_wp_element_namespaceObject.useRef)([]);
-  const trapSelect = (0,external_wp_element_namespaceObject.useCallback)(callback => registry.__experimentalMarkListeningStores(callback, listeningStores), [registry]); // Generate a "flag" for used in the effect dependency array.
+  const wrapSelect = (0,external_wp_element_namespaceObject.useCallback)(callback => registry.__unstableMarkListeningStores(() => callback(registry.select, registry), listeningStores), [registry]); // Generate a "flag" for used in the effect dependency array.
   // It's different than just using `mapSelect` since deps could be undefined,
   // in that case, we would still want to memoize it.
 
@@ -3504,12 +3993,13 @@ function useSelect(mapSelect, deps) {
 
   if (_mapSelect) {
     mapOutput = latestMapOutput.current;
+    const hasReplacedRegistry = latestRegistry.current !== registry;
     const hasReplacedMapSelect = latestMapSelect.current !== _mapSelect;
     const lastMapSelectFailed = !!latestMapOutputError.current;
 
-    if (hasReplacedMapSelect || lastMapSelectFailed) {
+    if (hasReplacedRegistry || hasReplacedMapSelect || lastMapSelectFailed) {
       try {
-        mapOutput = trapSelect(() => _mapSelect(registry.select, registry));
+        mapOutput = wrapSelect(_mapSelect);
       } catch (error) {
         let errorMessage = `An error occurred while running 'mapSelect': ${error.message}`;
 
@@ -3530,10 +4020,10 @@ function useSelect(mapSelect, deps) {
       return;
     }
 
+    latestRegistry.current = registry;
     latestMapSelect.current = _mapSelect;
     latestMapOutput.current = mapOutput;
-    latestMapOutputError.current = undefined;
-    isMountedAndNotUnsubscribing.current = true; // This has to run after the other ref updates
+    latestMapOutputError.current = undefined; // This has to run after the other ref updates
     // to avoid using stale values in the flushed
     // callbacks or potentially overwriting a
     // changed `latestMapOutput.current`.
@@ -3549,30 +4039,20 @@ function useSelect(mapSelect, deps) {
     }
 
     const onStoreChange = () => {
-      if (isMountedAndNotUnsubscribing.current) {
-        try {
-          const newMapOutput = trapSelect(() => latestMapSelect.current(registry.select, registry));
+      try {
+        const newMapOutput = wrapSelect(latestMapSelect.current);
 
-          if (external_wp_isShallowEqual_default()(latestMapOutput.current, newMapOutput)) {
-            return;
-          }
-
-          latestMapOutput.current = newMapOutput;
-        } catch (error) {
-          latestMapOutputError.current = error;
+        if (external_wp_isShallowEqual_default()(latestMapOutput.current, newMapOutput)) {
+          return;
         }
 
-        forceRender();
+        latestMapOutput.current = newMapOutput;
+      } catch (error) {
+        latestMapOutputError.current = error;
       }
-    }; // catch any possible state changes during mount before the subscription
-    // could be set.
 
-
-    if (latestIsAsync.current) {
-      renderQueue.add(queueContext, onStoreChange);
-    } else {
-      onStoreChange();
-    }
+      forceRender();
+    };
 
     const onChange = () => {
       if (latestIsAsync.current) {
@@ -3580,21 +4060,23 @@ function useSelect(mapSelect, deps) {
       } else {
         onStoreChange();
       }
-    };
+    }; // Catch any possible state changes during mount before the subscription
+    // could be set.
 
-    const unsubscribers = listeningStores.current.map(storeName => registry.__experimentalSubscribeStore(storeName, onChange));
+
+    onStoreChange();
+    const unsubscribers = listeningStores.current.map(storeName => registry.__unstableSubscribeStore(storeName, onChange));
     return () => {
-      isMountedAndNotUnsubscribing.current = false; // The return value of the subscribe function could be undefined if the store is a custom generic store.
-
+      // The return value of the subscribe function could be undefined if the store is a custom generic store.
       unsubscribers.forEach(unsubscribe => unsubscribe === null || unsubscribe === void 0 ? void 0 : unsubscribe());
-      renderQueue.flush(queueContext);
+      renderQueue.cancel(queueContext);
     }; // If you're tempted to eliminate the spread dependencies below don't do it!
     // We're passing these in from the calling function and want to make sure we're
     // examining every individual value inside the `deps` array.
-  }, [registry, trapSelect, hasMappingFunction, depsChangedFlag]);
+  }, [registry, wrapSelect, hasMappingFunction, depsChangedFlag]);
   return hasMappingFunction ? mapOutput : registry.select(mapSelect);
 }
-//# sourceMappingURL=index.js.map
+
 ;// CONCATENATED MODULE: ./packages/data/build-module/components/with-select/index.js
 
 
@@ -3656,7 +4138,7 @@ const withSelect = mapSelectToProps => (0,external_wp_compose_namespaceObject.cr
 }), 'withSelect');
 
 /* harmony default export */ var with_select = (withSelect);
-//# sourceMappingURL=index.js.map
+
 ;// CONCATENATED MODULE: ./packages/data/build-module/components/use-dispatch/use-dispatch-with-map.js
 /**
  * External dependencies
@@ -3710,7 +4192,7 @@ const useDispatchWithMap = (dispatchMap, deps) => {
 };
 
 /* harmony default export */ var use_dispatch_with_map = (useDispatchWithMap);
-//# sourceMappingURL=use-dispatch-with-map.js.map
+
 ;// CONCATENATED MODULE: ./packages/data/build-module/components/with-dispatch/index.js
 
 
@@ -3812,7 +4294,7 @@ const withDispatch = mapDispatchToProps => (0,external_wp_compose_namespaceObjec
 }, 'withDispatch');
 
 /* harmony default export */ var with_dispatch = (withDispatch);
-//# sourceMappingURL=index.js.map
+
 ;// CONCATENATED MODULE: ./packages/data/build-module/components/with-registry/index.js
 
 
@@ -3839,7 +4321,7 @@ const withRegistry = (0,external_wp_compose_namespaceObject.createHigherOrderCom
   registry: registry
 }))), 'withRegistry');
 /* harmony default export */ var with_registry = (withRegistry);
-//# sourceMappingURL=index.js.map
+
 ;// CONCATENATED MODULE: ./packages/data/build-module/components/use-dispatch/use-dispatch.js
 /**
  * Internal dependencies
@@ -3900,7 +4382,7 @@ const useDispatch = storeNameOrDescriptor => {
 };
 
 /* harmony default export */ var use_dispatch = (useDispatch);
-//# sourceMappingURL=use-dispatch.js.map
+
 ;// CONCATENATED MODULE: ./packages/data/build-module/index.js
 /**
  * External dependencies
@@ -4106,7 +4588,7 @@ const use = default_registry.use;
  */
 
 const register = default_registry.register;
-//# sourceMappingURL=index.js.map
+
 }();
 (window.wp = window.wp || {}).data = __webpack_exports__;
 /******/ })()

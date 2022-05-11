@@ -73,7 +73,7 @@ class Code_Snippet {
 	}
 
 	/**
-	 * Set all of the snippet fields from an array or object.
+	 * Set all snippet fields from an array or object.
 	 * Invalid fields will be ignored
 	 *
 	 * @param array|object $fields List of fields
@@ -148,6 +148,15 @@ class Code_Snippet {
 			return call_user_func( array( $this, 'get_' . $field ) );
 		}
 
+		if ( ! $this->is_allowed_field( $field ) ) {
+			if ( WP_DEBUG ) {
+				/** @phpcs:disable WordPress.PHP.DevelopmentFunctions.error_log_trigger_error */
+				trigger_error( 'Trying to access invalid property on Snippets class: ' . esc_html( $field ), E_WARNING );
+			}
+
+			return null;
+		}
+
 		return $this->fields[ $field ];
 	}
 
@@ -161,8 +170,8 @@ class Code_Snippet {
 		$field = $this->validate_field_name( $field );
 
 		if ( ! $this->is_allowed_field( $field ) ) {
-
 			if ( WP_DEBUG ) {
+				/** @phpcs:disable WordPress.PHP.DevelopmentFunctions.error_log_trigger_error */
 				trigger_error( 'Trying to set invalid property on Snippets class: ' . esc_html( $field ), E_WARNING );
 			}
 
@@ -352,7 +361,7 @@ class Code_Snippet {
 	 * Update the last modification date to the current date and time.
 	 */
 	public function update_modified() {
-		$this->modified = gmdate( Code_Snippet::DATE_FORMAT );
+		$this->modified = gmdate( self::DATE_FORMAT );
 	}
 
 	/**

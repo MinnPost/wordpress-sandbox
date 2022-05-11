@@ -2,7 +2,7 @@
 
 /**
  * This class handles the settings admin menu
- * @since 2.4.0
+ * @since   2.4.0
  * @package Code_Snippets
  */
 class Code_Snippets_Settings_Menu extends Code_Snippets_Admin_Menu {
@@ -65,7 +65,8 @@ class Code_Snippets_Settings_Menu extends Code_Snippets_Admin_Menu {
 		wp_enqueue_style(
 			'code-snippets-edit',
 			plugins_url( 'css/min/settings.css', $plugin->file ),
-			array(), $plugin->version
+			array(),
+			$plugin->version
 		);
 
 		code_snippets_editor_settings_preview_assets();
@@ -79,27 +80,29 @@ class Code_Snippets_Settings_Menu extends Code_Snippets_Admin_Menu {
 
 		?>
 		<div class="wrap">
-			<h1><?php esc_html_e( 'Settings', 'code-snippets' );
+			<h1>
+				<?php esc_html_e( 'Settings', 'code-snippets' );
 
 				if ( code_snippets()->admin->is_compact_menu() ) {
 
 					printf( '<a href="%2$s" class="page-title-action">%1$s</a>',
 						esc_html_x( 'Manage', 'snippets', 'code-snippets' ),
-						code_snippets()->get_menu_url()
+						esc_url( code_snippets()->get_menu_url() )
 					);
 
 					printf( '<a href="%2$s" class="page-title-action">%1$s</a>',
 						esc_html_x( 'Add New', 'snippet', 'code-snippets' ),
-						code_snippets()->get_menu_url( 'add' )
+						esc_url( code_snippets()->get_menu_url( 'add' ) )
 					);
 
 					printf( '<a href="%2$s" class="page-title-action">%1$s</a>',
 						esc_html_x( 'Import', 'snippets', 'code-snippets' ),
-						code_snippets()->get_menu_url( 'import' )
+						esc_url( code_snippets()->get_menu_url( 'import' ) )
 					);
 				}
 
-				?></h1>
+				?>
+			</h1>
 
 			<?php settings_errors( 'code-snippets-settings-notices' ); ?>
 
@@ -126,7 +129,7 @@ class Code_Snippets_Settings_Menu extends Code_Snippets_Admin_Menu {
 	/**
 	 * Fill in for the Settings API in the Network Admin
 	 */
-	function update_network_options() {
+	public function update_network_options() {
 
 		/* Ensure the settings have been saved */
 		if ( ! isset( $_GET['update_site_option'], $_POST['code_snippets_settings'] ) || ! $_GET['update_site_option'] ) {
@@ -136,7 +139,7 @@ class Code_Snippets_Settings_Menu extends Code_Snippets_Admin_Menu {
 		check_admin_referer( 'code-snippets-options' );
 
 		/* Retrieve the saved options and save them to the database */
-		$value = wp_unslash( $_POST['code_snippets_settings'] );
+		$value = map_deep( wp_unslash( $_POST['code_snippets_settings'] ), 'sanitize_key' );
 		update_site_option( 'code_snippets_settings', $value );
 
 		/* Add an updated notice */

@@ -45,7 +45,7 @@ class Code_Snippets_Manage_Menu extends Code_Snippets_Admin_Menu {
 	 * @uses add_menu_page() to register a top-level menu
 	 * @uses add_submenu_page() to register a sub-menu
 	 */
-	function register() {
+	public function register() {
 
 		/* Register the top-level menu */
 		add_menu_page(
@@ -68,7 +68,7 @@ class Code_Snippets_Manage_Menu extends Code_Snippets_Admin_Menu {
 			return;
 		}
 
-		$sub = code_snippets()->get_menu_slug( isset( $_GET['sub'] ) ? $_GET['sub'] : 'snippets' );
+		$sub = code_snippets()->get_menu_slug( isset( $_GET['sub'] ) ? sanitize_key( $_GET['sub'] ) : 'snippets' );
 
 		$classmap = array(
 			'snippets'             => 'manage',
@@ -102,7 +102,7 @@ class Code_Snippets_Manage_Menu extends Code_Snippets_Admin_Menu {
 	/**
 	 * Executed when the admin page is loaded
 	 */
-	function load() {
+	public function load() {
 		parent::load();
 
 		/* Load the contextual help tabs */
@@ -123,14 +123,17 @@ class Code_Snippets_Manage_Menu extends Code_Snippets_Admin_Menu {
 
 		wp_enqueue_style(
 			'code-snippets-manage',
-			plugins_url( "css/min/manage{$rtl}.css", $plugin->file ),
-			array(), $plugin->version
+			plugins_url( "css/min/manage$rtl.css", $plugin->file ),
+			array(),
+			$plugin->version
 		);
 
 		wp_enqueue_script(
 			'code-snippets-manage-js',
 			plugins_url( 'js/min/manage.js', $plugin->file ),
-			array(), $plugin->version, true
+			array(),
+			$plugin->version,
+			true
 		);
 
 		wp_localize_script(
@@ -152,11 +155,13 @@ class Code_Snippets_Manage_Menu extends Code_Snippets_Admin_Menu {
 		/* Output a warning if safe mode is active */
 		if ( defined( 'CODE_SNIPPETS_SAFE_MODE' ) && CODE_SNIPPETS_SAFE_MODE ) {
 			echo '<div id="message" class="error fade"><p>';
-			_e( '<strong>Warning:</strong> Safe mode is active and snippets will not execute! Remove the <code>CODE_SNIPPETS_SAFE_MODE</code> constant from <code>wp-config.php</code> to turn off safe mode. <a href="https://github.com/sheabunge/code-snippets/wiki/Safe-Mode" target="_blank">Help</a>', 'code-snippets' );
+			echo wp_kses_post(
+				__( '<strong>Warning:</strong> Safe mode is active and snippets will not execute! Remove the <code>CODE_SNIPPETS_SAFE_MODE</code> constant from <code>wp-config.php</code> to turn off safe mode. <a href="https://github.com/sheabunge/code-snippets/wiki/Safe-Mode" target="_blank">Help</a>', 'code-snippets' )
+			);
 			echo '</p></div>';
 		}
 
-		echo $this->get_result_message(
+		$this->print_result_message(
 			array(
 				'executed'          => __( 'Snippet <strong>executed</strong>.', 'code-snippets' ),
 				'activated'         => __( 'Snippet <strong>activated</strong>.', 'code-snippets' ),
@@ -180,7 +185,7 @@ class Code_Snippets_Manage_Menu extends Code_Snippets_Admin_Menu {
 	 *
 	 * @return mixed
 	 */
-	function save_screen_option( $status, $option, $value ) {
+	public function save_screen_option( $status, $option, $value ) {
 		if ( 'snippets_per_page' === $option ) {
 			return $value;
 		}
@@ -195,24 +200,28 @@ class Code_Snippets_Manage_Menu extends Code_Snippets_Admin_Menu {
 		check_ajax_referer( 'code_snippets_manage_ajax' );
 
 		if ( ! isset( $_POST['field'], $_POST['snippet'] ) ) {
-			wp_send_json_error( array(
-				'type'    => 'param_error',
-				'message' => 'incomplete request',
-			) );
+			wp_send_json_error(
+				array(
+					'type'    => 'param_error',
+					'message' => 'incomplete request',
+				)
+			);
 		}
 
-		$snippet_data = json_decode( stripslashes( $_POST['snippet'] ), true );
+		$snippet_data = map_deep( json_decode( stripslashes( $_POST['snippet'] ), true ), 'sanitize_text_field' );
 
 		$snippet = new Code_Snippet( $snippet_data );
-		$field = $_POST['field'];
+		$field = sanitize_key( $_POST['field'] );
 
 		if ( 'priority' === $field ) {
 
 			if ( ! isset( $snippet_data['priority'] ) || ! is_numeric( $snippet_data['priority'] ) ) {
-				wp_send_json_error( array(
-					'type'    => 'param_error',
-					'message' => 'missing snippet priority data',
-				) );
+				wp_send_json_error(
+					array(
+						'type'    => 'param_error',
+						'message' => 'missing snippet priority data',
+					)
+				);
 			}
 
 			global $wpdb;
@@ -228,10 +237,12 @@ class Code_Snippets_Manage_Menu extends Code_Snippets_Admin_Menu {
 		} elseif ( 'active' === $field ) {
 
 			if ( ! isset( $snippet_data['active'] ) ) {
-				wp_send_json_error( array(
-					'type'    => 'param_error',
-					'message' => 'missing snippet active data',
-				) );
+				wp_send_json_error(
+					array(
+						'type'    => 'param_error',
+						'message' => 'missing snippet active data',
+					)
+				);
 			}
 
 			if ( $snippet->shared_network ) {
@@ -250,10 +261,12 @@ class Code_Snippets_Manage_Menu extends Code_Snippets_Admin_Menu {
 				if ( $snippet->active ) {
 					$result = activate_snippet( $snippet->id, $snippet->network );
 					if ( ! $result ) {
-						wp_send_json_error( array(
-							'type'    => 'action_error',
-							'message' => 'error activating snippet',
-						) );
+						wp_send_json_error(
+							array(
+								'type'    => 'action_error',
+								'message' => 'error activating snippet',
+							)
+						);
 					}
 				} else {
 					deactivate_snippet( $snippet->id, $snippet->network );

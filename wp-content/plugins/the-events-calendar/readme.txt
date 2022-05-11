@@ -4,8 +4,8 @@ Contributors: theeventscalendar, borkweb, bordoni, brianjessee, aguseo, camwynsp
 Tags: events, calendar, event, schedule, organizer
 Donate link: https://evnt.is/29
 Requires at least: 5.6
-Stable tag: 5.13.0
-Tested up to: 5.9.0
+Stable tag: 5.14.2.1
+Tested up to: 5.9.3
 Requires PHP: 7.1
 License: GPLv2 or later
 License URI: http://www.gnu.org/licenses/gpl-2.0.html
@@ -16,6 +16,8 @@ The Events Calendar is the number one calendar plugin for WordPress. Easily crea
 Easily create and manage an events calendar on your WordPress site with [The Events Calendar](https://evnt.is/mj) free plugin. Whether your events are in-person or virtual events, this WordPress calendar plugin boasts professional features backed by our world-class team of developers and designers.
 
 https://vimeo.com/425323974
+
+[See more videos on our YouTube channel](https://evnt.is/1b4-)
 
 Packed with loads of features, The Events Calendar is ready to go out of the box. It’s also extensible, easy to use, and completely customizable.
 
@@ -221,6 +223,77 @@ Remember to always make a backup of your database and files before updating!
 
 == Changelog ==
 
+= [5.14.2.1] 2022-04-28 =
+
+* Fix - Correct an issue with linked common release.
+
+= [5.14.2] 2022-04-28 =
+
+* Feature - Add support to CSV import for the ISO Currency Code field. [TEC-4341]
+* Feature - First iteration of changes for Full Site Editor compatibility. [TEC-4262]
+* Tweak - Added filters `tribe_merge_identical_organizers_enabled`, `tribe_merge_identical_venues_enabled`, `tribe_merge_identical_organizers_fields`, `tribe_merge_identical_venues_fields`, `tribe_amalgamate_venues_keep_venue`, `tribe_amalgamate_organizers_keep_organizer` for better control of the merge duplicate venues and organizers functionality. [TEC-4225]
+* Tweak - Added filter `tribe_events_views_v2_ff_link_next_event` to allow better control of the fast-forward link target. [ECP-957]
+* Tweak - Allow filtering of the "next event" query in the fast-forward link. [ECP-957]
+* Tweak - Added filters: `tribe_merge_identical_organizers_enabled`, `tribe_merge_identical_venues_enabled`, `tribe_merge_identical_organizers_fields`, `tribe_merge_identical_venues_fields`, `tribe_amalgamate_venues_keep_venue`, `tribe_amalgamate_organizers_keep_organizer`, `tribe_events_views_v2_ff_link_next_event`.
+* Tweak - Changed views: `blocks/archive-events`.
+* Fix - Correctly calculate Event duration when the Event crosses the daylight saving date and time. [TEC-4336]
+* Fix - Don't try to validate "raw" as a date. [TEC-4254]
+* Fix - Ensure the Views don't try to do math with strings. [TEC-4322]
+* Fix - Enable more than 5 csv entries to be imported when using 8.0.15 to 8.0.17 or 8.1.2 to 8.1.4. [TEC-4312]
+* Fix - Ensure Google Calendar links include the event description if it exists. [TEC-4315]
+* Language - 3 new strings added, 232 updated, 0 fuzzied, and 0 obsoleted.
+
+= [5.14.1] 2022-03-17 =
+
+* Tweak - Update the backend block editor UI for a single event to look similar to its frontend version in order to create a true WYSIWYG experience when using the block editor. [TEC-4250]
+* Tweak - Added filters: `tribe_events_views_v2_month_ics_start_today`
+* Fix - Correct a regex typo that was breaking proper JSON-LD data around event cost. [TEC-4263]
+* Fix - Correct Month View ics export so it begins on the current day rather than the 1st. [TEC-4223]
+* Fix - Add ISO Currency Code field to admin to set code sent via JSON-LD. TEC was incorrectly sending symbol. [TEC-4212]
+* Fix - Ensure that the full styles custom properties require the skeleton style custom properties. [TEC-4308]
+* Fix - Ensure that the State/Province field saves for non-US venues. [TEC-4309]
+* Fix - Correct duplicated text in wpadminbar Events Menu. [TEC-4310]
+* Fix - Load the assets required by the `Event View` Elementor widget in preview mode. [ECP-1065]
+* Language - 4 new strings added, 144 updated, 0 fuzzied, and 0 obsoleted.
+
+= [5.14.0.4] 2022-03-01 =
+
+* Tweak - Update version of Freemius to 2.4.3.
+
+= [5.14.0.3] 2022-02-25 =
+
+* Fix - Ensure the Venue and Organizer metaboxes load when creating a new post of that type. [TEC-4303]
+
+= [5.14.0.2] 2022-02-22 =
+
+* Fix - Correct conditional in Filter Bar upsell banner. [TEC-4284]
+* Fix - Un-deprecate `tribe_initialize_view()` as it is used in some new views.
+
+= [5.14.0.1] 2022-02-15 =
+
+* Fix - Prevent parse error due to trailing comma on a method call, PHP 7.1 compatibility required. Props @kzeni
+
+= [5.14.0] 2022-02-15 =
+
+* Feature - Add a Filter Bar upsell banner to the Filters tab that displays when the Filter Bar plugin isn't active. [TEC-4238]
+* Tweak - Correct documentation around the subscribe link filters. Add link slug as array keys for `tec_views_v2_single_subscribe_links` filter. [TEC-4215]
+* Tweak - Move and deprecate some methods specific to the Google Calendar link from Main to the new Google_Calendar class. [TEC-4235]
+* Tweak - Prevent scripts from loading on all Admin pages, only load on pages needed.
+* Tweak - Performance improvements around Block Asset loading and redundancy.
+* Tweak - Internal caching of values to reduce `get_option()` call count.
+* Tweak - Switch from `sanitize_title_with_dashes` to `sanitize_key` in a couple instances for performance gains.
+* Tweak - Remove the `wp.editor.InnerBlocks` gutenberg component in favor of `wp.blockEditor.InnerBlocks` which was deprecated since version 5.3. [TEC-4178]
+* Tweak - Prevent asset loading from repeating calls to plugin URL and path, resulting in some minor performance gains.
+* Fix - Update the way we handle Classic Editor compatibility. Specifically around user choice. [TEC-4016]
+* Fix - Remove incorrect reference for moment.min.js.map [TEC-4148]
+* Fix - Fixed troubleshooting page styles for standalone Event Tickets setup [ET-1382]
+* Fix - Remove singleton created from a deprecated class.
+* Fix - Ensure that the tec_views_v2_use_subscribe_links filter applies to the single event view. [TEC-4219]
+* Fix - Hide the "Export to .ics file" link by default, allow showing it via a filter. Also ensure the link is correct. [TEC-4214]
+* Fix - Serve a single event import url for Google Calendar on the single event view. [TEC-4235]
+* Fix - Improve theme CSS compatibility on View container by making sure our views take 100% of the width available (props @askwpgirl) [TEC-4257]
+* Language - 9 new strings added, 277 updated, 1 fuzzied, and 1 obsoleted
+
 = [5.13.0] 2022-01-31 =
 
 * Deprecation - All files from Legacy Views will throw deprecated notices, refer to `https://evnt.is/v1-removal` for extra information.
@@ -236,6 +309,7 @@ Remember to always make a backup of your database and files before updating!
 * Fix - Prevent Onboarding assets from loading on the admin when not needed.
 * Fix - Remove CSS attributes targeting `aria-labels` to prevent inconsistent styling for different languages. [TEC-4227]
 * Fix - Resolve sorting problems when using orderby with the Event repository when no other orderby values are specified. [TEC-4232]
+* Fix - Prevent unwanted notice on single-event and embed views from legacy views deprecation
 
 = [5.12.3] 2022-01-10 =
 
@@ -274,8 +348,8 @@ Remember to always make a backup of your database and files before updating!
 
 * Feature - Add new subscribe options to the "Export Events" link at the bottom of calendar views and single Event view [TEC-4131]
 * Fix - Bypass caching of the event when dealing with the admin event list table. [TEC-4156]
-* Fix - Event List Widget will not print the H3 tag related to the title when that is empty. [BTRIA-1075]
-* Tweak - Allow bypassing of the Aggregator logging function by using the `tec_aggregator_records_should_log_error` filter. [BTRIA-1074]
+* Fix - Event List Widget will not print the H3 tag related to the title when that is empty. [TEC-4160]
+* Tweak - Allow bypassing of the Aggregator logging function by using the `tec_aggregator_records_should_log_error` filter. [TEC-4159]
 * Tweak - Removed the `tribe_events_force_filtered_ical_link` filter and the associated js function that recreates the subscribe link on v1 and Single Event views. [TEC-4131]
 * Language - 4 new strings added, 52 updated, 0 fuzzied, and 2 obsoleted
 
@@ -287,6 +361,7 @@ Remember to always make a backup of your database and files before updating!
 * Fix - When accessing comments there could be situations where an undefined array key was accessed, and in PHP 8 it is a promoted Warning error for undefined array access. [TEC-4093]
 * Fix - Resolved `Warning: reset(): Argument #1 ($array) must be passed by reference...` error that was displayed on the Events, Organizers and Venue REST endpoints in PHP v8. [TEC-4097]
 * Fix - Ensure that the proper spacing is applied for the venue address in list view. [TEC-4089]
+* Tweak - Change some of the block tests to adapt to the new Editor compatibility in common. [TEC-4016]
 * Tweak - Update the google calendar export button to open in a new tab on the event single page for both the classic and block editors. [TEC-4084]
 * Tweak - Add supplied organizer url to JSON-LD for the event->organizer. Props @cmenon12 for the notification and code! [TEC-4095]
 * Tweak - Add a link to the Customizer in the admin menu and in Events->Settings->Display for folks running a FSE theme. [TEC-4126]
@@ -418,7 +493,7 @@ Remember to always make a backup of your database and files before updating!
 = [5.6.0] 2021-04-29 =
 
 * Version - The Events Calendar 5.6.0 is only compatible with Events Calendar PRO 5.6.0 and higher
-* Fix - Correct implementation of filters in Views/V2/Hooks.php to avoid fatals. [BTRIA-791]
+* Fix - Correct implementation of filters in Views/V2/Hooks.php to avoid fatals. [ECP-761]
 * Fix - Ensure when saving on Blocks editor Organizer and Venue IDs don't throw notices for failed deletion. [TEC-3844]
 * Fix - Resolve compatibility problem between The Events Calendar and other plugins using Select2. [TEC-3748]
 * Fix - Enqueue full styles for v2 event single only when using full styles. [TEC-3848]
@@ -455,7 +530,7 @@ Remember to always make a backup of your database and files before updating!
 
 = [5.4.0.1] 2021-03-04 =
 
-* Fix - Prevent fatals happening with PHP 5.6 due to duplicated class for templates [BTRIA-767]
+* Fix - Prevent fatals happening with PHP 5.6 due to duplicated class for templates [TEC-3799]
 
 = [5.4.0] 2021-02-24 =
 
@@ -481,7 +556,7 @@ Remember to always make a backup of your database and files before updating!
 * Feature - Add customizer support for custom location pins on single events when Views V2 is active. [TEC-3276]
 * Fix - Use dynamic label for fast-forward link on the month view. [TEC-3452]
 * Fix - Correctly filter `locale` in the `Tribe\Events\I18n` class to avoid errors.
-* Fix - Prevent heartbeat warning when null data param is passed on Cron and AJAX requests [BTRIA-687]
+* Fix - Prevent heartbeat warning when null data param is passed on Cron and AJAX requests [TEC-3745]
 * Fix - Increase the minimum width of the datetime dropdown when editing an event with the block editor. [TEC-3126]
 * Fix - Ordering with an Array when using `Tribe__Repository` now properly ignores the global order passed as the default. [ECP-598]
 * Fix - Resolve PHP 8.0 incompatibility with `__wakeup` and `__clone` visibility on Extension class.
@@ -664,7 +739,7 @@ Remember to always make a backup of your database and files before updating!
 * Fix - Correct a few incorrect and/or typoed text domains [TEC-3390]
 * Fix - Ensure we pass search keywords when changing views and in the top-bar nav [TEC-3282]
 * Fix - Prevent Blocks editor from throwing browser alert when leaving the page without any changes applied to the edited post.
-* Fix - Several strings have been adjusted for consistency and better translatability [BTRIA-307]
+* Fix - Several strings have been adjusted for consistency and better translatability [TEC-3417]
 * Hook - Add the `tribe_events_blocks_editor_is_on` filter; returning a falsy value from this filter will prevent the Blocks Editor to ever be active on Events; else the settings from Events > Settings will apply [TEC-3349]
 * Tweak - Add some filters for better control of link targets, standardize the way we create those links [TEC-3402]
 * Language - 4 new strings added, 286 updated, 1 fuzzied, and 2 obsoleted
@@ -681,7 +756,7 @@ Remember to always make a backup of your database and files before updating!
 * Tweak - Remove "(beta)" label from URL source type of import. [TEC-3289]
 * Tweak - Reword the Filter Activation setting's labels for better clarity.  [FBAR-79]
 * Fix - Ensure that any values for `liveFilterUpdate` that are not `automatic` or `manual` get converted. [FBAR-83]
-* Fix - Breakpoint code compatibility with the latest version of jQuery 3.4.1 [BTRIA-154]
+* Fix - Breakpoint code compatibility with the latest version of jQuery 3.4.1 [TEC-3251]
 * Fix - Remove numbers from listed events in event list widget for Genesis theme. [TEC-2957]
 * Fix - Customizer accent color affects featured line and text. [TEC-3277]
 * Fix - Resolve conflict between datepicker holding consistent size when navigating and flexibility on small screen sizes. [TEC-3322]

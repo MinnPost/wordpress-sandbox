@@ -4,8 +4,8 @@ Donate link: https://sheabunge.com/donate
 Tags: snippets, functions, code, php, multisite
 License: MIT
 License URI: license.txt
-Stable tag: 2.14.3
-Tested up to: 5.8.2
+Stable tag: 2.14.5
+Tested up to: 6.0
 
 An easy, clean and simple way to run code snippets on your site.
 
@@ -87,7 +87,7 @@ Code Snippets v3 will bring a new type of snippet, Content Snippets, which are d
 
 = How can I recover my site if it is crashed by a buggy snippet? =
 
-You can recover your site by enabling the Code Snippets safe mode feature. Instructions for how to turn it on are available here: https://help.codesnippets.pro/article/12-safe-mode.
+You can recover your site by enabling the Code Snippets safe mode feature. Instructions for how to turn it on are available here: <https://help.codesnippets.pro/article/12-safe-mode>.
 
 = Will I lose my snippets if I change the theme or upgrade WordPress? =
 No, the snippets are stored in the WordPress database, independent of the theme and unaffected by WordPress upgrades.
@@ -121,6 +121,12 @@ The best way to do this is to fork the [repository on GitHub](https://github.com
 4. Importing snippets from an export file
 
 == Changelog ==
+
+= 2.14.5 (10 May 2022) =
+* Fixed: Incompatibility issue with older versions of PHP.
+
+= 2.14.4 (5 May 2022) =
+* Fixed: Prevent array key errors when loading the snippet table with unknown order values.
 
 = 2.14.3 (10 Dec 2021) =
 * Fixed: Potential security issue outputting snippets-safe-mode query variable value as-is. Thanks to Krzysztof Zając for reporting.
