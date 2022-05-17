@@ -1,14 +1,31 @@
 <?php
 
-/**
- * Base class for a snippets admin menu
- */
-class Code_Snippets_Admin_Menu {
+namespace Code_Snippets;
 
+/**
+ * Base class for a plugin admin menu.
+ */
+abstract class Admin_Menu {
+
+	/**
+	 * The snippet page short name
+	 *
+	 * @var string
+	 */
 	public $name;
 
+	/**
+	 * The label shown in the admin menu
+	 *
+	 * @var string
+	 */
 	public $label;
 
+	/**
+	 * The text used for the page title
+	 *
+	 * @var string
+	 */
 	public $title;
 
 	/**
@@ -28,9 +45,9 @@ class Code_Snippets_Admin_Menu {
 	/**
 	 * Constructor
 	 *
-	 * @param string $name  The snippet page short name
-	 * @param string $label The label shown in the admin menu
-	 * @param string $title The text used for the page title
+	 * @param string $name  The snippet page short name.
+	 * @param string $label The label shown in the admin menu.
+	 * @param string $title The text used for the page title.
 	 */
 	public function __construct( $name, $label, $title ) {
 		$this->name = $name;
@@ -45,7 +62,7 @@ class Code_Snippets_Admin_Menu {
 	 * Register action and filter hooks
 	 */
 	public function run() {
-		if ( ! code_snippets()->admin->is_compact_menu() ) {
+		if ( ! code_snippets()->is_compact_menu() ) {
 			add_action( 'admin_menu', array( $this, 'register' ) );
 			add_action( 'network_admin_menu', array( $this, 'register' ) );
 		}
@@ -54,12 +71,11 @@ class Code_Snippets_Admin_Menu {
 	/**
 	 * Add a sub-menu to the Snippets menu
 	 *
-	 * @param string $slug  The slug of the menu
-	 * @param string $label The label shown in the admin menu
-	 * @param string $title The page title
+	 * @param string $slug  Menu slug.
+	 * @param string $label Label shown in admin menu.
+	 * @param string $title Page title.
 	 *
 	 * @uses add_submenu_page() to register a submenu
-	 *
 	 */
 	public function add_menu( $slug, $label, $title ) {
 		$hook = add_submenu_page(
@@ -82,25 +98,32 @@ class Code_Snippets_Admin_Menu {
 	}
 
 	/**
+	 * Render the content of a vew template
+	 *
+	 * @param string $name Name of view template to render.
+	 */
+	protected function render_view( $name ) {
+		include dirname( PLUGIN_FILE ) . '/php/views/' . $name . '.php';
+	}
+
+	/**
 	 * Render the menu
 	 */
 	public function render() {
-		$this->print_messages();
-		include dirname( dirname( __FILE__ ) ) . "/views/{$this->name}.php";
+		$this->render_view( $this->name );
 	}
 
 	/**
 	 * Print the status and error messages
 	 */
-	protected function print_messages() {
-	}
+	abstract protected function print_messages();
 
 	/**
 	 * Retrieve a result message based on a posted status
 	 *
-	 * @param array  $messages
-	 * @param string $request_var
-	 * @param string $class
+	 * @param array  $messages    List of possible messages to display.
+	 * @param string $request_var Name of $_REQUEST variable to check.
+	 * @param string $class       Class to use on buttons. Default 'updated'.
 	 *
 	 * @return bool Whether a result message was printed.
 	 */
@@ -126,6 +149,21 @@ class Code_Snippets_Admin_Menu {
 	}
 
 	/**
+	 * Print a result message based on a posted status
+	 *
+	 * @param array  $messages    List of possible messages to display.
+	 * @param string $request_var Name of $_REQUEST variable to check.
+	 * @param string $class       Class to use on buttons. Default 'updated'.
+	 */
+	protected function show_result_message( $messages, $request_var = 'result', $class = 'updated' ) {
+		$message = $this->get_result_message( $messages, $request_var, $class );
+
+		if ( $message ) {
+			echo wp_kses_post( $message );
+		}
+	}
+
+	/**
 	 * Executed when the admin page is loaded
 	 */
 	public function load() {
@@ -148,6 +186,44 @@ class Code_Snippets_Admin_Menu {
 	/**
 	 * Enqueue scripts and stylesheets for the admin page, if necessary
 	 */
-	public function enqueue_assets() {
+	abstract public function enqueue_assets();
+
+	/**
+	 * Render a list of links to other pages in the page title
+	 *
+	 * @param array $actions List of actions to render as links, as array values.
+	 */
+	protected function page_title_actions( $actions ) {
+
+		foreach ( $actions as $action ) {
+			if ( 'settings' === $action && ! isset( code_snippets()->admin->menus['settings'] ) ) {
+				continue;
+			}
+
+			$url = code_snippets()->get_menu_url( $action );
+
+			if ( isset( $_GET['type'] ) && in_array( $_GET['type'], Snippet::get_types(), true ) ) {
+				$url = add_query_arg( 'type', sanitize_key( wp_unslash( $_GET['type'] ) ), $url );
+			}
+
+			printf( '<a href="%s" class="page-title-action">', esc_url( $url ) );
+
+			switch ( $action ) {
+				case 'manage':
+					echo esc_html_x( 'Manage', 'snippets', 'code-snippets' );
+					break;
+				case 'add':
+					echo esc_html_x( 'Add New', 'snippet', 'code-snippets' );
+					break;
+				case 'import':
+					echo esc_html_x( 'Import', 'snippets', 'code-snippets' );
+					break;
+				case 'settings':
+					echo esc_html_x( 'Settings', 'snippets', 'code-snippets' );
+					break;
+			}
+
+			echo '</a>';
+		}
 	}
 }

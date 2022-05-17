@@ -1,15 +1,19 @@
 <?php
 
+namespace Code_Snippets;
+
 /**
  * This class handles the manage snippets menu
+ *
  * @since   2.4.0
  * @package Code_Snippets
  */
-class Code_Snippets_Manage_Menu extends Code_Snippets_Admin_Menu {
+class Manage_Menu extends Admin_Menu {
 
 	/**
 	 * Holds the list table class
-	 * @var Code_Snippets_List_Table
+	 *
+	 * @var List_Table
 	 */
 	public $list_table;
 
@@ -30,7 +34,7 @@ class Code_Snippets_Manage_Menu extends Code_Snippets_Admin_Menu {
 	public function run() {
 		parent::run();
 
-		if ( code_snippets()->admin->is_compact_menu() ) {
+		if ( code_snippets()->is_compact_menu() ) {
 			add_action( 'admin_menu', array( $this, 'register_compact_menu' ), 2 );
 			add_action( 'network_admin_menu', array( $this, 'register_compact_menu' ), 2 );
 		}
@@ -62,9 +66,12 @@ class Code_Snippets_Manage_Menu extends Code_Snippets_Admin_Menu {
 		parent::register();
 	}
 
+	/**
+	 * Add menu pages for the compact menu
+	 */
 	public function register_compact_menu() {
 
-		if ( ! code_snippets()->admin->is_compact_menu() ) {
+		if ( ! code_snippets()->is_compact_menu() ) {
 			return;
 		}
 
@@ -79,7 +86,7 @@ class Code_Snippets_Manage_Menu extends Code_Snippets_Admin_Menu {
 		);
 
 		if ( isset( $classmap[ $sub ], code_snippets()->admin->menus[ $classmap[ $sub ] ] ) ) {
-			/** @var Code_Snippets_Admin_Menu $class */
+			/** Menu class @var Admin_Menu $class */
 			$class = code_snippets()->admin->menus[ $classmap[ $sub ] ];
 		} else {
 			$class = $this;
@@ -106,11 +113,11 @@ class Code_Snippets_Manage_Menu extends Code_Snippets_Admin_Menu {
 		parent::load();
 
 		/* Load the contextual help tabs */
-		$contextual_help = new Code_Snippets_Contextual_Help( 'manage' );
+		$contextual_help = new Contextual_Help( 'manage' );
 		$contextual_help->load();
 
 		/* Initialize the list table class */
-		$this->list_table = new Code_Snippets_List_Table();
+		$this->list_table = new List_Table();
 		$this->list_table->prepare_items();
 	}
 
@@ -155,9 +162,7 @@ class Code_Snippets_Manage_Menu extends Code_Snippets_Admin_Menu {
 		/* Output a warning if safe mode is active */
 		if ( defined( 'CODE_SNIPPETS_SAFE_MODE' ) && CODE_SNIPPETS_SAFE_MODE ) {
 			echo '<div id="message" class="error fade"><p>';
-			echo wp_kses_post(
-				__( '<strong>Warning:</strong> Safe mode is active and snippets will not execute! Remove the <code>CODE_SNIPPETS_SAFE_MODE</code> constant from <code>wp-config.php</code> to turn off safe mode. <a href="https://github.com/sheabunge/code-snippets/wiki/Safe-Mode" target="_blank">Help</a>', 'code-snippets' )
-			);
+			echo wp_kses_post( __( '<strong>Warning:</strong> Safe mode is active and snippets will not execute! Remove the <code>CODE_SNIPPETS_SAFE_MODE</code> constant from <code>wp-config.php</code> to turn off safe mode. <a href="https://help.codesnippets.pro/article/12-safe-mode" target="_blank">Help</a>', 'code-snippets' ) );
 			echo '</p></div>';
 		}
 
@@ -179,9 +184,9 @@ class Code_Snippets_Manage_Menu extends Code_Snippets_Admin_Menu {
 	/**
 	 * Handles saving the user's snippets per page preference
 	 *
-	 * @param mixed  $status
-	 * @param string $option The screen option name
-	 * @param mixed  $value
+	 * @param mixed  $status Current screen option status.
+	 * @param string $option The screen option name.
+	 * @param mixed  $value  Screen option value.
 	 *
 	 * @return mixed
 	 */
@@ -195,6 +200,8 @@ class Code_Snippets_Manage_Menu extends Code_Snippets_Admin_Menu {
 
 	/**
 	 * Handle AJAX requests
+	 *
+	 * @phpcs:disable WordPress.DB.DirectDatabaseQuery.NoCaching
 	 */
 	public function ajax_callback() {
 		check_ajax_referer( 'code_snippets_manage_ajax' );
@@ -208,9 +215,10 @@ class Code_Snippets_Manage_Menu extends Code_Snippets_Admin_Menu {
 			);
 		}
 
-		$snippet_data = map_deep( json_decode( stripslashes( $_POST['snippet'] ), true ), 'sanitize_text_field' );
+		// phpcs:ignore WordPress.Security.ValidatedSanitizedInput.InputNotSanitized
+		$snippet_data = array_map( 'sanitize_text_field', json_decode( wp_unslash( $_POST['snippet'] ), true ) );
 
-		$snippet = new Code_Snippet( $snippet_data );
+		$snippet = new Snippet( $snippet_data );
 		$field = sanitize_key( $_POST['field'] );
 
 		if ( 'priority' === $field ) {

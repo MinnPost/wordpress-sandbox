@@ -1,11 +1,14 @@
 <?php
-
 /**
- * HTML code for the Import Snippets page
+ * HTML for the Import Snippets page.
  *
  * @package    Code_Snippets
  * @subpackage Views
+ *
+ * @var Import_Menu $this
  */
+
+namespace Code_Snippets;
 
 /* Bail if accessed directly */
 if ( ! defined( 'ABSPATH' ) ) {
@@ -20,41 +23,29 @@ $max_size_bytes = apply_filters( 'import_upload_size_limit', wp_max_upload_size(
 		<?php
 
 		esc_html_e( 'Import Snippets', 'code-snippets' );
-		$admin = code_snippets()->admin;
 
-		if ( $admin->is_compact_menu() ) {
-
-			printf( '<a href="%2$s" class="page-title-action">%1$s</a>',
-				esc_html_x( 'Manage', 'snippets', 'code-snippets' ),
-				esc_url( code_snippets()->get_menu_url() )
-			);
-
-			printf( '<a href="%2$s" class="page-title-action">%1$s</a>',
-				esc_html_x( 'Add New', 'snippet', 'code-snippets' ),
-				esc_url( code_snippets()->get_menu_url( 'add' ) )
-			);
-
-			if ( isset( $admin->menus['settings'] ) ) {
-				printf( '<a href="%2$s" class="page-title-action">%1$s</a>',
-					esc_html_x( 'Settings', 'snippets', 'code-snippets' ),
-					esc_url( code_snippets()->get_menu_url( 'settings' ) )
-				);
-			}
+		if ( code_snippets()->is_compact_menu() ) {
+			$this->page_title_actions( [ 'manage', 'add', 'settings' ] );
 		}
 
 		?>
 	</h1>
 
+	<?php $this->print_messages(); ?>
+
 	<div class="narrow">
 
 		<p><?php esc_html_e( 'Upload one or more Code Snippets export files and the snippets will be imported.', 'code-snippets' ); ?></p>
 
-		<p><?php
-			printf(
+		<p>
+			<?php
 			/* translators: %s: link to snippets admin menu */
-				wp_kses_post( __( 'Afterwards, you will need to visit the <a href="%s">All Snippets</a> page to activate the imported snippets.', 'code-snippets' ) ),
-				esc_url( code_snippets()->get_menu_url( 'manage' ) )
-			); ?></p>
+			$text = __( 'Afterwards, you will need to visit the <a href="%s">All Snippets</a> page to activate the imported snippets.', 'code-snippets' );
+
+			printf( wp_kses( $text, [ 'a' => [ 'href' ] ] ), esc_url( code_snippets()->get_menu_url( 'manage' ) ) );
+
+			?>
+		</p>
 
 
 		<form enctype="multipart/form-data" id="import-upload-form" method="post" class="wp-upload-form"
@@ -99,11 +90,9 @@ $max_size_bytes = apply_filters( 'import_upload_size_limit', wp_max_upload_size(
 			<fieldset>
 				<p>
 					<label for="upload"><?php esc_html_e( 'Choose files from your computer:', 'code-snippets' ); ?></label>
-					<?php printf(
-						/* translators: %s: size in bytes */
-						esc_html__( '(Maximum size: %s)', 'code-snippets' ),
-						esc_html( size_format( $max_size_bytes ) )
-					); ?>
+					<?php
+					/* translators: %s: size in bytes */
+					printf( esc_html__( '(Maximum size: %s)', 'code-snippets' ), esc_html( size_format( $max_size_bytes ) ) ); ?>
 					<input type="file" id="upload" name="code_snippets_import_files[]" size="25"
 					       accept="application/json,.json,text/xml" multiple="multiple">
 					<input type="hidden" name="action" value="save">
@@ -112,8 +101,10 @@ $max_size_bytes = apply_filters( 'import_upload_size_limit', wp_max_upload_size(
 			</fieldset>
 
 			<?php
+
 			do_action( 'code_snippets/admin/import_form' );
 			submit_button( __( 'Upload files and import', 'code-snippets' ) );
+
 			?>
 		</form>
 	</div>

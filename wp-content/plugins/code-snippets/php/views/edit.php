@@ -1,13 +1,14 @@
 <?php
-
 /**
- * HTML code for the Add New/Edit Snippet page
+ * HTML for the Add New/Edit Snippet page.
  *
  * @package    Code_Snippets
  * @subpackage Views
  *
- * @var Code_Snippets_Edit_Menu $this
+ * @var Edit_Menu $this
  */
+
+namespace Code_Snippets;
 
 /* Bail if accessed directly */
 if ( ! defined( 'ABSPATH' ) ) {
@@ -21,7 +22,7 @@ if ( ! $snippet->id ) {
 	$classes[] = 'new-snippet';
 } elseif ( 'single-use' === $snippet->scope ) {
 	$classes[] = 'single-use-snippet';
-} else {
+} elseif ( 'html' !== $snippet->type ) {
 	$classes[] = ( $snippet->active ? '' : 'in' ) . 'active-snippet';
 }
 
@@ -33,41 +34,24 @@ if ( ! $snippet->id ) {
 		if ( $snippet->id ) {
 			esc_html_e( 'Edit Snippet', 'code-snippets' );
 			printf( ' <a href="%1$s" class="page-title-action add-new-h2">%2$s</a>',
-				esc_url( code_snippets()->get_menu_url( 'add' ) ),
+				esc_url( add_query_arg( 'type', $snippet->type, code_snippets()->get_menu_url( 'add' ) ) ),
 				esc_html_x( 'Add New', 'snippet', 'code-snippets' )
 			);
 		} else {
 			esc_html_e( 'Add New Snippet', 'code-snippets' );
 		}
 
-		$admin = code_snippets()->admin;
-
-		if ( code_snippets()->admin->is_compact_menu() ) {
-
-			printf( '<a href="%2$s" class="page-title-action">%1$s</a>',
-				esc_html_x( 'Manage', 'snippets', 'code-snippets' ),
-				esc_url( code_snippets()->get_menu_url() )
-			);
-
-			printf( '<a href="%2$s" class="page-title-action">%1$s</a>',
-				esc_html_x( 'Import', 'snippets', 'code-snippets' ),
-				esc_url( code_snippets()->get_menu_url( 'import' ) )
-			);
-
-			if ( isset( $admin->menus['settings'] ) ) {
-
-				printf( '<a href="%2$s" class="page-title-action">%1$s</a>',
-					esc_html_x( 'Settings', 'snippets', 'code-snippets' ),
-					esc_url( code_snippets()->get_menu_url( 'settings' ) )
-				);
-			}
+		if ( code_snippets()->is_compact_menu() ) {
+			$this->page_title_actions( [ 'manage', 'import', 'settings' ] );
 		}
 
 		?>
 	</h1>
 
-	<form method="post" id="snippet-form" action="" style="margin-top: 10px;"
-	      class="<?php echo esc_attr( implode( ' ', $classes ) ); ?>">
+	<?php $this->print_messages(); ?>
+
+	<form method="post" id="snippet-form" action="" class="<?php echo esc_attr( implode( ' ', $classes ) ); ?>"
+	      data-snippet-type="<?php echo esc_attr( $snippet->type ); ?>">
 		<?php
 		/* Output the hidden fields */
 
@@ -77,6 +61,8 @@ if ( ! $snippet->id ) {
 
 		printf( '<input type="hidden" name="snippet_active" value="%d">', esc_attr( $snippet->active ) );
 
+		printf( '<input type="hidden" name="current_snippet_scope" value="%s">', esc_attr( $snippet->scope ) );
+
 		do_action( 'code_snippets/admin/before_title_input', $snippet );
 		?>
 
@@ -85,7 +71,7 @@ if ( ! $snippet->id ) {
 				<label for="title" style="display: none;"><?php esc_html_e( 'Name', 'code-snippets' ); ?></label>
 				<input id="title" type="text" autocomplete="off" name="snippet_name"
 				       value="<?php echo esc_attr( $snippet->name ); ?>"
-				       placeholder="<?php esc_html_e( 'Enter title here', 'code-snippets' ); ?>">
+				       placeholder="<?php esc_attr_e( 'Enter title here', 'code-snippets' ); ?>">
 			</div>
 		</div>
 
@@ -93,56 +79,53 @@ if ( ! $snippet->id ) {
 
 		<p class="submit-inline"><?php do_action( 'code_snippets/admin/code_editor_toolbar', $snippet ); ?></p>
 
-		<h2><label for="snippet_code"><?php esc_html_e( 'Code', 'code-snippets' ); ?></label></h2>
+		<h2>
+			<label for="snippet_code">
+				<?php esc_html_e( 'Code', 'code-snippets' );
+
+				if ( $snippet->id ) {
+					printf( ' <span class="snippet-type-badge" data-type="%s">%s</span>', esc_attr( $snippet->type ), esc_html( $snippet->type ) );
+				}
+
+				?>
+			</label>
+		</h2>
+
+		<?php if ( ! $snippet->id ) { ?>
+			<h2 class="nav-tab-wrapper" id="snippet-type-tabs">
+				<?php
+
+				foreach ( code_snippets()->get_types() as $type_name => $label ) {
+
+					if ( $snippet->type === $type_name ) {
+						echo '<a class="nav-tab nav-tab-active"';
+					} else {
+						printf( '<a class="nav-tab" href="%s"', esc_url( add_query_arg( 'type', $type_name ) ) );
+					}
+
+					printf( ' data-type="%s">%s <span>%s</span></a>', esc_attr( $type_name ), esc_html( $label ), esc_html( $type_name ) );
+				} ?>
+			</h2>
+		<?php } ?>
 
 		<div class="snippet-editor">
 			<textarea id="snippet_code" name="snippet_code" rows="200" spellcheck="false"
 			          style="font-family: monospace; width: 100%;"><?php echo esc_textarea( $snippet->code ); ?></textarea>
 
-			<div class="snippet-editor-help">
+			<?php $this->render_view( 'partials/editor-shortcuts' ); ?>
+		</div>
 
-				<div class="editor-help-tooltip cm-s-<?php
-				echo esc_attr( code_snippets_get_setting( 'editor', 'theme' ) ); ?>"><?php
-					echo esc_html_x( '?', 'help tooltip', 'code-snippets' ); ?></div>
-
-				<div class="editor-help-text">
-					<table>
-						<tr>
-							<td><?php esc_html_e( 'Save changes', 'code-snippets' ); ?></td>
-							<td><?php $this->render_keyboard_shortcut( 'Cmd', 'S' ); ?></td>
-						</tr>
-						<tr>
-							<td><?php esc_html_e( 'Begin searching', 'code-snippets' ); ?></td>
-							<td><?php $this->render_keyboard_shortcut( 'Cmd', 'F' ); ?></td>
-						</tr>
-						<tr>
-							<td><?php esc_html_e( 'Find next', 'code-snippets' ); ?></td>
-							<td><?php $this->render_keyboard_shortcut( 'Cmd', 'G' ); ?></td>
-						</tr>
-						<tr>
-							<td><?php esc_html_e( 'Find previous', 'code-snippets' ); ?></td>
-							<td><?php $this->render_keyboard_shortcut( array( 'Shift', 'Cmd' ), 'G' ); ?></td>
-						</tr>
-						<tr>
-							<td><?php esc_html_e( 'Replace', 'code-snippets' ); ?></td>
-							<td><?php $this->render_keyboard_shortcut( array( 'Shift', 'Cmd' ), 'F' ); ?></td>
-						</tr>
-						<tr>
-							<td><?php esc_html_e( 'Replace all', 'code-snippets' ); ?></td>
-							<td><?php $this->render_keyboard_shortcut( array( 'Shift', 'Cmd', 'Option' ), 'R' ); ?></td>
-						</tr>
-						<tr>
-							<td><?php esc_html_e( 'Persistent search', 'code-snippets' ); ?></td>
-							<td><?php $this->render_keyboard_shortcut( 'Alt', 'F' ); ?></td>
-						</tr>
-					</table>
-				</div>
-			</div>
+		<div class="below-editor">
+			<?php
+			$this->render_view( 'partials/edit-scopes' );
+			do_action( 'code_snippets_below_editor', $snippet );
+			?>
 		</div>
 
 		<?php
+
 		/* Allow plugins to add fields and content to this page */
-		do_action( 'code_snippets/admin/single', $snippet );
+		do_action( 'code_snippets_edit_snippet', $snippet );
 
 		/* Add a nonce for security */
 		wp_nonce_field( 'save_snippet' );

@@ -1,18 +1,24 @@
 <?php
 
+namespace Code_Snippets;
+
 /**
  * Validates code prior to execution.
  *
  * @package Code_Snippets
  */
-class Code_Snippets_Validator {
+class Validator {
 
 	/**
+	 * Code to validate.
+	 *
 	 * @var string
 	 */
 	private $code;
 
 	/**
+	 * List of tokens.
+	 *
 	 * @var array
 	 */
 	private $tokens;
@@ -76,20 +82,14 @@ class Code_Snippets_Validator {
 	}
 
 	/**
-	 * Move the pointer to the next token, if there is one
+	 * Move the pointer to the next token, if there is one.
 	 *
-	 * If the first argument is provided, only move the pointer if the tokens match
-	 *
-	 * @return bool Whether the pointer was advanced.
+	 * If the first argument is provided, only move the pointer if the tokens match.
 	 */
 	private function next() {
-		if ( $this->end() ) {
-			return false;
+		if ( ! $this->end() ) {
+			$this->current++;
 		}
-
-		$this->current++;
-
-		return true;
 	}
 
 	/**
@@ -130,6 +130,7 @@ class Code_Snippets_Validator {
 
 	/**
 	 * Validate the given PHP code and return the result.
+	 *
 	 * @return array|bool Array containing message if an error was encountered, false if validation was successful.
 	 */
 	public function validate() {
@@ -183,7 +184,7 @@ class Code_Snippets_Validator {
 				$this->next();
 			}
 
-			// if we've eaten all of the tokens without discovering a name, then there must be a syntax error, so return appropriately
+			// if we've eaten all the tokens without discovering a name, then there must be a syntax error, so return appropriately
 			if ( $this->end() ) {
 				return array(
 					'message' => __( 'Parse error: syntax error, unexpected end of snippet.', 'code-snippets' ),
