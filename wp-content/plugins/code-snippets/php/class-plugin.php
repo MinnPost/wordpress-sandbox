@@ -68,6 +68,8 @@ class Plugin {
 		$this->version = $version;
 		$this->file = $file;
 
+		wp_cache_add_global_groups( CACHE_GROUP );
+
 		add_action( 'init', array( $this, 'load_textdomain' ), 9 );
 
 		add_filter( 'code_snippets/execute_snippets', array( $this, 'disable_snippet_execution' ), 5 );
@@ -266,10 +268,10 @@ class Plugin {
 		$domain = 'code-snippets';
 		$locale = apply_filters( 'plugin_locale', get_locale(), $domain );
 
-		// wp-content/languages/code-snippets/code-snippets-[locale].mo
+		// wp-content/languages/code-snippets/code-snippets-[locale].mo.
 		load_textdomain( $domain, trailingslashit( WP_LANG_DIR ) . "$domain/$domain-$locale.mo" );
 
-		// wp-content/plugins/code-snippets/languages/code-snippets-[locale].mo
+		// wp-content/plugins/code-snippets/languages/code-snippets-[locale].mo.
 		load_plugin_textdomain( $domain, false, dirname( plugin_basename( $this->file ) ) . '/languages' );
 	}
 

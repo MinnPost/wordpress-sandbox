@@ -10,6 +10,8 @@ namespace Code_Snippets\Settings;
 
 const NS = __NAMESPACE__ . '\\';
 
+const CACHE_KEY = 'code_snippets_settings';
+
 /**
  * Add a new option for either the current site or the current network
  *
@@ -58,7 +60,6 @@ function update_self_option( $network, $option, $value ) {
  * @return bool
  */
 function are_settings_unified() {
-
 	if ( ! is_multisite() ) {
 		return false;
 	}
@@ -76,8 +77,8 @@ function are_settings_unified() {
  */
 function get_settings_values() {
 
-	/* Check if the settings have been cached */
-	$settings = wp_cache_get( 'code_snippets_settings' );
+	// Check if the settings have been cached.
+	$settings = wp_cache_get( CACHE_KEY );
 	if ( $settings ) {
 		return $settings;
 	}
@@ -95,7 +96,7 @@ function get_settings_values() {
 		}
 	}
 
-	wp_cache_set( 'code_snippets_settings', $settings );
+	wp_cache_set( CACHE_KEY, $settings );
 
 	return $settings;
 }
@@ -128,7 +129,7 @@ function update_setting( $section, $field, $new_value ) {
 
 	$settings[ $section ][ $field ] = $new_value;
 
-	wp_cache_set( 'code_snippets_settings', $settings );
+	wp_cache_set( CACHE_KEY, $settings );
 	return update_self_option( are_settings_unified(), 'code_snippets_settings', $settings );
 }
 
@@ -255,14 +256,14 @@ function sanitize_settings( array $input ) {
 	$settings = get_settings_values();
 	$updated = false;
 
-	// don't directly loop through $input as it does not include as deselected checkboxes.
+	// Don't directly loop through $input as it does not include as deselected checkboxes.
 	foreach ( get_settings_fields() as $section_id => $fields ) {
 		foreach ( $fields as $field_id => $field ) {
 
-			// fetch the corresponding input value from the posted data.
+			// Fetch the corresponding input value from the posted data.
 			$input_value = isset( $input[ $section_id ][ $field_id ] ) ? $input[ $section_id ][ $field_id ] : null;
 
-			// attempt to sanitize the setting value
+			// Attempt to sanitize the setting value.
 			$sanitized_value = sanitize_setting_value( $field, $input_value );
 
 			if ( ! is_null( $sanitized_value ) && $settings[ $section_id ][ $field_id ] !== $sanitized_value ) {
@@ -272,7 +273,9 @@ function sanitize_settings( array $input ) {
 		}
 	}
 
-	/* Add an updated message */
+	wp_cache_delete( CACHE_KEY );
+
+	// Add an updated message.
 	if ( $updated ) {
 		add_settings_error(
 			'code-snippets-settings-notices',

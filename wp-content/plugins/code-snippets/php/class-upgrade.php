@@ -63,7 +63,7 @@ class Upgrade {
 		$updated = update_option( 'code_snippets_version', $this->current_version );
 
 		if ( ! $updated ) {
-			return; // bail if the data was not successfully saved to prevent this process from repeating
+			return; // Bail if the data was not successfully saved to prevent this process from repeating.
 		}
 
 		$sample_snippets = $this->get_sample_content();
@@ -77,7 +77,7 @@ class Upgrade {
 			$menu_slug = code_snippets()->get_menu_slug();
 			$option_name = "{$prefix}managetoplevel_page_{$menu_slug}columnshidden";
 
-			// loop through each user ID and remove all matching user meta
+			// Loop through each user ID and remove all matching user meta.
 			foreach ( get_users( array( 'fields' => 'ID' ) ) as $user_id ) {
 				delete_metadata( 'user', $user_id, $option_name, '', true );
 			}
@@ -101,6 +101,8 @@ class Upgrade {
 				}
 			}
 		}
+
+		clean_snippets_cache( $table_name );
 	}
 
 	/**
@@ -135,14 +137,14 @@ class Upgrade {
 				$user->remove_cap( $network_cap );
 			}
 		}
+
+		clean_snippets_cache( $table_name );
 	}
 
 	/**
 	 * Migrate data from the old integer method of storing scopes to the new string method
 	 *
 	 * @param string $table_name Name of database table.
-	 *
-	 * @phpcs:disable WordPress.DB.DirectDatabaseQuery.NoCaching
 	 */
 	private function migrate_scope_data( $table_name ) {
 		global $wpdb;
@@ -160,7 +162,7 @@ class Upgrade {
 					$scope_name,
 					$scope_number
 				)
-			);
+			); // cache ok, will flush at end of process; db call ok.
 		}
 	}
 
@@ -173,30 +175,26 @@ class Upgrade {
 		$tag = "\n\n" . esc_html__( 'This is a sample snippet. Feel free to use it, edit it, or remove it.', 'code-snippets' );
 
 		$snippets_data = array(
-
-			'lowercase_filenames' => array(
+			array(
 				'name' => esc_html__( 'Make upload filenames lowercase', 'code-snippets' ),
 				'code' => "add_filter( 'sanitize_file_name', 'mb_strtolower' );",
 				'desc' => esc_html__( 'Makes sure that image and file uploads have lowercase filenames.', 'code-snippets' ) . $tag,
 				'tags' => array( 'sample', 'media' ),
 			),
-
-			'disable_admin_bar' => array(
+			array(
 				'name'  => esc_html__( 'Disable admin bar', 'code-snippets' ),
 				'code'  => "add_action( 'wp', function () {\n\tif ( ! current_user_can( 'manage_options' ) ) {\n\t\tshow_admin_bar( false );\n\t}\n} );",
 				'desc'  => esc_html__( 'Turns off the WordPress admin bar for everyone except administrators.', 'code-snippets' ) . $tag,
 				'tags'  => array( 'sample', 'admin-bar' ),
 				'scope' => 'front-end',
 			),
-
-			'allow_smilies' => array(
+			array(
 				'name' => esc_html__( 'Allow smilies', 'code-snippets' ),
 				'code' => "add_filter( 'widget_text', 'convert_smilies' );\nadd_filter( 'the_title', 'convert_smilies' );\nadd_filter( 'wp_title', 'convert_smilies' );\nadd_filter( 'get_bloginfo', 'convert_smilies' );",
 				'desc' => esc_html__( 'Allows smiley conversion in obscure places.', 'code-snippets' ) . $tag,
 				'tags' => array( 'sample' ),
 			),
-
-			'current_year' => array(
+			array(
 				'name'  => esc_html__( 'Current year', 'code-snippets' ),
 				'code'  => "<?php echo date( 'Y' ); ?>",
 				'desc'  => esc_html__( 'Shortcode for inserting the current year into a post or page..', 'code-snippets' ) . $tag,

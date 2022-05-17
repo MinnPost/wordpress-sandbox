@@ -20,7 +20,8 @@ class Settings_Menu extends Admin_Menu {
 	 */
 	public function __construct() {
 
-		parent::__construct( 'settings',
+		parent::__construct(
+			'settings',
 			_x( 'Settings', 'menu label', 'code-snippets' ),
 			__( 'Snippets Settings', 'code-snippets' )
 		);
@@ -49,7 +50,7 @@ class Settings_Menu extends Admin_Menu {
 
 			set_transient( 'settings_errors', get_settings_errors(), 30 );
 
-			wp_redirect( esc_url_raw( add_query_arg( 'settings-updated', true, remove_query_arg( 'reset_settings' ) ) ) );
+			wp_safe_redirect( esc_url_raw( add_query_arg( 'settings-updated', true, remove_query_arg( 'reset_settings' ) ) ) );
 			exit;
 		}
 
@@ -57,7 +58,7 @@ class Settings_Menu extends Admin_Menu {
 			if ( Settings\are_settings_unified() ) {
 				$this->update_network_options();
 			} else {
-				wp_redirect( code_snippets()->get_menu_url( 'settings', 'admin' ) );
+				wp_safe_redirect( code_snippets()->get_menu_url( 'settings', 'admin' ) );
 				exit;
 			}
 		}
@@ -211,26 +212,27 @@ class Settings_Menu extends Admin_Menu {
 	 */
 	public function update_network_options() {
 
-		/* Ensure the settings have been saved */
+		// Ensure the settings have been saved.
 		if ( empty( $_GET['update_site_option'] ) || empty( $_POST['code_snippets_settings'] ) ) {
 			return;
 		}
 
 		check_admin_referer( 'code-snippets-options' );
 
-		/* Retrieve the saved options and save them to the database */
+		// Retrieve the saved options and save them to the database.
 		$value = map_deep( wp_unslash( $_POST['code_snippets_settings'] ), 'sanitize_key' );
 		update_site_option( 'code_snippets_settings', $value );
+		wp_cache_delete( Settings\CACHE_KEY );
 
-		/* Add an updated notice */
+		// Add an updated notice.
 		if ( ! count( get_settings_errors() ) ) {
 			add_settings_error( 'general', 'settings_updated', __( 'Settings saved.', 'code-snippets' ), 'updated' );
 		}
 		set_transient( 'settings_errors', get_settings_errors(), 30 );
 
-		/* Redirect back to the settings menu */
+		// Redirect back to the settings menu.
 		$redirect = add_query_arg( 'settings-updated', 'true', remove_query_arg( 'update_site_option', wp_get_referer() ) );
-		wp_redirect( esc_url_raw( $redirect ) );
+		wp_safe_redirect( esc_url_raw( $redirect ) );
 		exit;
 	}
 

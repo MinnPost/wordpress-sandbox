@@ -22,7 +22,8 @@ class Manage_Menu extends Admin_Menu {
 	 */
 	public function __construct() {
 
-		parent::__construct( 'manage',
+		parent::__construct(
+			'manage',
 			_x( 'All Snippets', 'menu label', 'code-snippets' ),
 			__( 'Snippets', 'code-snippets' )
 		);
@@ -45,24 +46,21 @@ class Manage_Menu extends Admin_Menu {
 
 	/**
 	 * Register the top-level 'Snippets' menu and associated 'Manage' subpage
-	 *
-	 * @uses add_menu_page() to register a top-level menu
-	 * @uses add_submenu_page() to register a sub-menu
 	 */
 	public function register() {
 
-		/* Register the top-level menu */
+		// Register the top-level menu.
 		add_menu_page(
 			__( 'Snippets', 'code-snippets' ),
 			_x( 'Snippets', 'top-level menu label', 'code-snippets' ),
 			code_snippets()->get_cap(),
 			code_snippets()->get_menu_slug(),
 			array( $this, 'render' ),
-			'div', // icon is added through CSS
+			'div', // Icon is added through CSS.
 			is_network_admin() ? 21 : 67
 		);
 
-		/* Register the sub-menu */
+		// Register the sub-menu.
 		parent::register();
 	}
 
@@ -199,9 +197,29 @@ class Manage_Menu extends Admin_Menu {
 	}
 
 	/**
-	 * Handle AJAX requests
+	 * Update the priority value for a snippet.
 	 *
-	 * @phpcs:disable WordPress.DB.DirectDatabaseQuery.NoCaching
+	 * @param Snippet $snippet Snippet to update.
+	 *
+	 * @return void
+	 */
+	private function update_snippet_priority( Snippet $snippet ) {
+		global $wpdb;
+		$table = code_snippets()->db->get_table_name( $snippet->network );
+
+		$wpdb->update(
+			$table,
+			array( 'priority' => $snippet->priority ),
+			array( 'id' => $snippet->id ),
+			array( '%d' ),
+			array( '%d' )
+		); // db call ok.
+
+		clean_snippets_cache( $table );
+	}
+
+	/**
+	 * Handle AJAX requests
 	 */
 	public function ajax_callback() {
 		check_ajax_referer( 'code_snippets_manage_ajax' );
@@ -232,15 +250,7 @@ class Manage_Menu extends Admin_Menu {
 				);
 			}
 
-			global $wpdb;
-
-			$wpdb->update(
-				code_snippets()->db->get_table_name( $snippet->network ),
-				array( 'priority' => $snippet->priority ),
-				array( 'id' => $snippet->id ),
-				array( '%d' ),
-				array( '%d' )
-			);
+			$this->update_snippet_priority( $snippet );
 
 		} elseif ( 'active' === $field ) {
 
@@ -263,6 +273,7 @@ class Manage_Menu extends Admin_Menu {
 						array_diff( $active_shared_snippets, array( $snippet->id ) );
 
 					update_option( 'active_shared_network_snippets', $active_shared_snippets );
+					clean_active_snippets_cache( code_snippets()->db->ms_table );
 				}
 			} else {
 

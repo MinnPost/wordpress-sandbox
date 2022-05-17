@@ -62,7 +62,7 @@ class Edit_Menu extends Admin_Menu {
 	public function load() {
 		parent::load();
 
-		// Retrieve the current snippet object
+		// Retrieve the current snippet object.
 		$this->load_snippet_data();
 
 		$screen = get_current_screen();
@@ -71,20 +71,20 @@ class Edit_Menu extends Admin_Menu {
 			$edit_hook .= '-network';
 		}
 
-		// Disallow visiting the edit snippet page without a valid ID
-		if ( $screen->base === $edit_hook && ( ! isset( $_REQUEST['id'] ) || 0 === $this->snippet->id ) ) {
-			wp_redirect( code_snippets()->get_menu_url( 'add' ) );
+		// Disallow visiting the edit snippet page without a valid ID.
+		if ( $screen->base === $edit_hook && ( empty( $_REQUEST['id'] ) || 0 === $this->snippet->id || null === $this->snippet->id ) ) {
+			wp_safe_redirect( code_snippets()->get_menu_url( 'add' ) );
 			exit;
 		}
 
-		// Process any submitted actions
+		// Process any submitted actions.
 		$this->process_actions();
 
-		// Load the contextual help tabs
+		// Load the contextual help tabs.
 		$contextual_help = new Contextual_Help( 'edit' );
 		$contextual_help->load();
 
-		// Register action hooks
+		// Register action hooks.
 		if ( get_setting( 'general', 'enable_description' ) ) {
 			add_action( 'code_snippets_edit_snippet', array( $this, 'render_description_editor' ), 9 );
 		}
@@ -153,7 +153,7 @@ class Edit_Menu extends Admin_Menu {
 			/* Delete the snippet if the button was clicked */
 			if ( isset( $_POST['delete_snippet'] ) ) {
 				delete_snippet( $snippet_id );
-				wp_redirect( add_query_arg( 'result', 'delete', code_snippets()->get_menu_url( 'manage' ) ) );
+				wp_safe_redirect( add_query_arg( 'result', 'delete', code_snippets()->get_menu_url( 'manage' ) ) );
 				exit;
 			}
 
@@ -175,8 +175,6 @@ class Edit_Menu extends Admin_Menu {
 	 * Remove the sharing status from a network snippet
 	 *
 	 * @param int $snippet_id Snippet ID.
-	 *
-	 * @phpcs:disable WordPress.DB.DirectDatabaseQuery.NoCaching
 	 */
 	private function unshare_network_snippet( $snippet_id ) {
 		$shared_snippets = get_site_option( 'shared_network_snippets', array() );
@@ -190,21 +188,21 @@ class Edit_Menu extends Admin_Menu {
 		update_site_option( 'shared_network_snippets', array_values( $shared_snippets ) );
 
 		/* Deactivate on all sites */
-		global $wpdb;
-		$sites = $wpdb->get_col( "SELECT blog_id FROM $wpdb->blogs" );
-		if ( $sites ) {
-			foreach ( $sites as $site ) {
-				switch_to_blog( $site );
-				$active_shared_snippets = get_option( 'active_shared_network_snippets' );
+		$sites = get_sites( [ 'fields' => 'ids' ] );
 
-				if ( is_array( $active_shared_snippets ) ) {
-					$active_shared_snippets = array_diff( $active_shared_snippets, array( $snippet_id ) );
-					update_option( 'active_shared_network_snippets', $active_shared_snippets );
-				}
+		foreach ( $sites as $site ) {
+			switch_to_blog( $site );
+			$active_shared_snippets = get_option( 'active_shared_network_snippets' );
+
+			if ( is_array( $active_shared_snippets ) ) {
+				$active_shared_snippets = array_diff( $active_shared_snippets, array( $snippet_id ) );
+				update_option( 'active_shared_network_snippets', $active_shared_snippets );
 			}
 
-			restore_current_blog();
+			clean_active_snippets_cache( code_snippets()->db->ms_table );
 		}
+
+		restore_current_blog();
 	}
 
 	/**
@@ -282,7 +280,7 @@ class Edit_Menu extends Admin_Menu {
 		if ( isset( $_POST['save_snippet_execute'] ) ) {
 			$snippet->active = 1;
 		} elseif ( isset( $_POST['snippet_sharing'] ) && 'on' === $_POST['snippet_sharing'] ) {
-			// Shared network snippets cannot be network-activated
+			// Shared network snippets cannot be network-activated.
 			$snippet->active = 0;
 			unset( $_POST['save_snippet_activate'], $_POST['save_snippet_deactivate'] );
 		} elseif ( isset( $_POST['save_snippet_activate'] ) ) {
@@ -335,13 +333,13 @@ class Edit_Menu extends Admin_Menu {
 		/* If the saved snippet ID is invalid, display an error message */
 		if ( ! $snippet_id || $snippet_id < 1 ) {
 			/* An error occurred */
-			wp_redirect( add_query_arg( 'result', 'save-error', code_snippets()->get_menu_url( 'add' ) ) );
+			wp_safe_redirect( add_query_arg( 'result', 'save-error', code_snippets()->get_menu_url( 'add' ) ) );
 			exit;
 		}
 
 		/* Display message if a parse error occurred */
 		if ( isset( $code_error ) && $code_error ) {
-			wp_redirect(
+			wp_safe_redirect(
 				add_query_arg(
 					array(
 						'id'     => $snippet_id,
@@ -374,7 +372,7 @@ class Edit_Menu extends Admin_Menu {
 			code_snippets()->get_menu_url( 'edit' )
 		);
 
-		wp_redirect( esc_url_raw( $redirect_uri ) );
+		wp_safe_redirect( esc_url_raw( $redirect_uri ) );
 		exit;
 	}
 
@@ -389,12 +387,13 @@ class Edit_Menu extends Admin_Menu {
 
 		echo '<h2><label for="snippet_description">', esc_html__( 'Description', 'code-snippets' ), '</label></h2>';
 
-		remove_editor_styles(); // stop custom theme styling interfering with the editor
+		remove_editor_styles(); // Stop custom theme styling interfering with the editor.
 
 		wp_editor(
 			$snippet->desc,
 			'description',
-			apply_filters( 'code_snippets/admin/description_editor_settings',
+			apply_filters(
+				'code_snippets/admin/description_editor_settings',
 				array(
 					'textarea_name' => 'snippet_description',
 					'textarea_rows' => $settings['rows'],
@@ -680,7 +679,8 @@ class Edit_Menu extends Admin_Menu {
 			true
 		);
 
-		$options = apply_filters( 'code_snippets/tag_editor_options',
+		$options = apply_filters(
+			'code_snippets/tag_editor_options',
 			array(
 				'allow_spaces'   => true,
 				'available_tags' => get_all_snippet_tags(),
@@ -733,7 +733,7 @@ class Edit_Menu extends Admin_Menu {
 			}
 		}
 
-		// Make the 'Save and Activate' button the default if the setting is enabled
+		// Make the 'Save and Activate' button the default if the setting is enabled.
 		if ( ! $snippet->active && 'single-use' !== $snippet->scope &&
 		     get_setting( 'general', 'activate_by_default' ) ) {
 			$actions = array_reverse( $actions );
