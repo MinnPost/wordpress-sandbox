@@ -5,7 +5,7 @@ Tags: widgets, restrict widgets, display widgets, widget logic, hide widgets, hi
 Requires at least: 4.0
 Tested up to: 5.9
 Requires PHP: 5.6
-Stable tag: 3.7.14
+Stable tag: 3.8
 License: GPLv2 or later
 License URI: http://www.gnu.org/licenses/gpl-2.0.html
 
@@ -153,6 +153,10 @@ Widget Options is a featured pack fully lightweight plugin. Using Query Monitor 
 10. Advanced Custom Fields ( ACF ) Support
 
 == Changelog ==
+
+= 3.8 =
+
+* Added option to upgrade to PRO version.
 
 = 3.7.14 =
 
