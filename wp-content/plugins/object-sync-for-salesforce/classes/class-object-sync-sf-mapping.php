@@ -240,7 +240,7 @@ class Object_Sync_Sf_Mapping {
 	/**
 	 * Option value for whether the plugin is in debug mode
 	 *
-	 * @var string
+	 * @var bool
 	 */
 	public $debug;
 
@@ -324,8 +324,8 @@ class Object_Sync_Sf_Mapping {
 		$this->status_success = 1;
 		$this->status_error   = 0;
 
-		$this->debug = get_option( $this->option_prefix . 'debug_mode', false );
-		$this->debug = filter_var( $this->debug, FILTER_VALIDATE_BOOLEAN );
+		// use the option value for whether we're in debug mode.
+		$this->debug = filter_var( get_option( $this->option_prefix . 'debug_mode', false ), FILTER_VALIDATE_BOOLEAN );
 
 	}
 
@@ -408,7 +408,7 @@ class Object_Sync_Sf_Mapping {
 		} else { // get all of the mappings. ALL THE MAPPINGS.
 
 			// This is the default query for loading fieldmaps.
-			$mappings = $this->wpdb->get_results( "SELECT `id`, `label`, `fieldmap_status`, `wordpress_object`, `salesforce_object`, `salesforce_record_types_allowed`, `salesforce_record_type_default`, `fields`, `pull_trigger_field`, `sync_triggers`, `push_async`, `push_drafts`, `pull_to_drafts`, `weight`, `version` FROM $table ORDER BY `fieldmap_status`", ARRAY_A );
+			$mappings = $this->wpdb->get_results( "SELECT * FROM $table ORDER BY `fieldmap_status`", ARRAY_A );
 
 			// lower than 2.0.0 versions.
 			// @deprecated
@@ -621,11 +621,12 @@ class Object_Sync_Sf_Mapping {
 		if ( isset( $posted['pull_trigger_field'] ) ) {
 			$data['pull_trigger_field'] = $posted['pull_trigger_field'];
 		}
-		$data['fieldmap_status'] = isset( $posted['fieldmap_status'] ) ? $posted['fieldmap_status'] : 'active';
-		$data['push_async']      = isset( $posted['push_async'] ) ? $posted['push_async'] : '';
-		$data['push_drafts']     = isset( $posted['push_drafts'] ) ? $posted['push_drafts'] : '';
-		$data['pull_to_drafts']  = isset( $posted['pull_to_drafts'] ) ? $posted['pull_to_drafts'] : '';
-		$data['weight']          = isset( $posted['weight'] ) ? $posted['weight'] : '';
+		$data['fieldmap_status']                     = isset( $posted['fieldmap_status'] ) ? $posted['fieldmap_status'] : 'active';
+		$data['push_async']                          = isset( $posted['push_async'] ) ? $posted['push_async'] : '';
+		$data['push_drafts']                         = isset( $posted['push_drafts'] ) ? $posted['push_drafts'] : '';
+		$data['pull_to_drafts']                      = isset( $posted['pull_to_drafts'] ) ? $posted['pull_to_drafts'] : '';
+		$data['weight']                              = isset( $posted['weight'] ) ? $posted['weight'] : '';
+		$data['always_delete_object_maps_on_delete'] = isset( $posted['always_delete_object_maps_on_delete'] ) ? $posted['always_delete_object_maps_on_delete'] : '0';
 		return $data;
 	}
 
@@ -663,12 +664,7 @@ class Object_Sync_Sf_Mapping {
 			$insert = $this->wpdb->insert( $this->object_map_table, $data );
 		} else {
 			$status = 'error';
-			if ( isset( $this->logging ) ) {
-				$logging = $this->logging;
-			} elseif ( class_exists( 'Object_Sync_Sf_Logging' ) ) {
-				$logging = new Object_Sync_Sf_Logging( $this->wpdb, $this->version );
-			}
-			$logging->setup(
+			$this->logging->setup(
 				sprintf(
 					// translators: %1$s is the log status, %2$s is the name of a WordPress object. %3$s is the id of that object.
 					esc_html__( '%1$s Mapping: error caused by trying to map the WordPress %2$s with ID of %3$s to Salesforce ID starting with "tmp_sf_", which is invalid.', 'object-sync-for-salesforce' ),
@@ -690,12 +686,7 @@ class Object_Sync_Sf_Mapping {
 			$mapping = $this->load_object_maps_by_salesforce_id( $data['salesforce_id'] )[0];
 			$id      = $mapping['id'];
 			$status  = 'error';
-			if ( isset( $this->logging ) ) {
-				$logging = $this->logging;
-			} elseif ( class_exists( 'Object_Sync_Sf_Logging' ) ) {
-				$logging = new Object_Sync_Sf_Logging( $this->wpdb, $this->version );
-			}
-			$logging->setup(
+			$this->logging->setup(
 				sprintf(
 					// translators: %1$s is the status word "Error". %2$s is the Id of a Salesforce object. %3$s is the ID of a mapping object.
 					esc_html__( '%1$s: Mapping: there is already a WordPress object mapped to the Salesforce object %2$s and the mapping object ID is %3$s', 'object-sync-for-salesforce' ),
@@ -806,6 +797,9 @@ class Object_Sync_Sf_Mapping {
 		$data = $this->setup_object_map_data( $posted );
 		if ( ! isset( $data['object_updated'] ) ) {
 			$data['object_updated'] = current_time( 'mysql' );
+		}
+		if ( isset( $data['action'] ) ) {
+			unset( $data['action'] );
 		}
 		$update = $this->wpdb->update(
 			$this->object_map_table,
@@ -1203,7 +1197,7 @@ class Object_Sync_Sf_Mapping {
 	 *
 	 * @return array $sync_triggers possibly updated array of sync triggers.
 	 */
-	private function maybe_upgrade_sync_triggers( $sync_triggers = array(), $mapping_version, $mapping_id = '' ) {
+	private function maybe_upgrade_sync_triggers( $sync_triggers, $mapping_version, $mapping_id = '' ) {
 		// in v2 of this plugin, we replaced the bit flags with strings to make them more legible.
 		if ( version_compare( $mapping_version, '2.0.0', '<' ) ) {
 			// check if the triggers stored in the database are up to date. if not, update them.
@@ -1271,8 +1265,8 @@ class Object_Sync_Sf_Mapping {
 		$items_per_page        = (int) get_option( $this->option_prefix . 'errors_per_page', 50 );
 		$current_error_page    = isset( $_GET['error_page'] ) ? (int) $_GET['error_page'] : 1;
 		$offset                = ( $current_error_page * $items_per_page ) - $items_per_page;
-		$all_errors            = $this->wpdb->get_results( "SELECT * FROM ${table} WHERE salesforce_id LIKE 'tmp_sf_%' OR wordpress_id LIKE 'tmp_wp_%' LIMIT ${offset}, ${items_per_page}", ARRAY_A );
-		$errors_total          = $this->wpdb->get_var( "SELECT COUNT(`id`) FROM ${table} WHERE salesforce_id LIKE 'tmp_sf_%' OR wordpress_id LIKE 'tmp_wp_%'" );
+		$all_errors            = $this->wpdb->get_results( "SELECT * FROM ${table} WHERE salesforce_id LIKE 'tmp_sf_%' OR wordpress_id LIKE 'tmp_wp_%' OR last_sync_status = 0 LIMIT ${offset}, ${items_per_page}", ARRAY_A );
+		$errors_total          = $this->wpdb->get_var( "SELECT COUNT(`id`) FROM ${table} WHERE salesforce_id LIKE 'tmp_sf_%' OR wordpress_id LIKE 'tmp_wp_%' OR last_sync_status = 0" );
 		$errors['total_pages'] = ceil( $errors_total / $items_per_page );
 		$errors['pagination']  = paginate_links(
 			array(

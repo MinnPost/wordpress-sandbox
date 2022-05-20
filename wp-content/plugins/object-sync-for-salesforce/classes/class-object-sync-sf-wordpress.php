@@ -86,7 +86,7 @@ class Object_Sync_Sf_WordPress {
 	/**
 	 * Whether the plugin is in debug mode
 	 *
-	 * @var string
+	 * @var bool
 	 */
 	public $debug;
 
@@ -118,8 +118,8 @@ class Object_Sync_Sf_WordPress {
 
 		$this->sfwp_transients = new Object_Sync_Sf_WordPress_Transient( 'sfwp_transients' );
 
-		$this->debug = get_option( $this->option_prefix . 'debug_mode', false );
-		$this->debug = filter_var( $this->debug, FILTER_VALIDATE_BOOLEAN );
+		// use the option value for whether we're in debug mode.
+		$this->debug = filter_var( get_option( $this->option_prefix . 'debug_mode', false ), FILTER_VALIDATE_BOOLEAN );
 
 	}
 
@@ -721,7 +721,7 @@ class Object_Sync_Sf_WordPress {
 	 *
 	 * part of CRUD for WordPress objects
 	 */
-	public function object_upsert( $name, $key, $value, $methods = array(), $params, $pull_to_drafts = false, $check_only = false ) {
+	public function object_upsert( $name, $key, $value, $methods, $params, $pull_to_drafts = false, $check_only = false ) {
 
 		$structure = $this->get_wordpress_table_structure( $name );
 		$id_field  = $structure['id_field'];
@@ -856,51 +856,6 @@ class Object_Sync_Sf_WordPress {
 				}
 				break;
 		} // End switch() method.
-
-		if ( isset( $result['errors'] ) && ! empty( $result['errors'] ) ) {
-			$status = 'error';
-			if ( ! isset( $mapping_object['salesforce_id'] ) ) {
-				$title = sprintf(
-					// translators: 1) is log status, 2) is WordPress object type, 3) is WordPress id value.
-					esc_html__( '%1$s: WordPress update for %2$s ID %3$s was unsuccessful with these errors:', 'object-sync-for-salesforce' ),
-					ucfirst( esc_attr( $status ) ),
-					esc_attr( $name ),
-					esc_attr( $id )
-				);
-			} else {
-				$title = sprintf(
-					// translators: 1) is log status, 2) is WordPress object type, 3) is WordPress id value, 4) is Salesforce ID value.
-					esc_html__( '%1$s: WordPress update for %2$s ID %3$s from Salesforce record %4$s was unsuccessful with these errors:', 'object-sync-for-salesforce' ),
-					ucfirst( esc_attr( $status ) ),
-					esc_attr( $name ),
-					esc_attr( $id ),
-					esc_attr( $mapping_object['salesforce_id'] )
-				);
-			}
-
-			if ( isset( $this->logging ) ) {
-				$logging = $this->logging;
-			} elseif ( class_exists( 'Object_Sync_Sf_Logging' ) ) {
-				$logging = new Object_Sync_Sf_Logging( $this->wpdb, $this->version );
-			}
-
-			$body  = '';
-			$body .= '<h2>' . esc_html__( 'Errors from WordPress result:', 'object-sync-for-salesforce' ) . '</h2>';
-			$body .= esc_html( print_r( $result['errors'], true ) ); // phpcs:ignore WordPress.PHP.DevelopmentFunctions.error_log_print_r
-			if ( is_array( $params ) && ! empty( $params ) ) {
-				$body .= '<h2>' . esc_html__( 'Parameters sent to WordPress:', 'object-sync-for-salesforce' ) . '</h2>';
-				$body .= esc_html( print_r( $params, true ) ); // phpcs:ignore WordPress.PHP.DevelopmentFunctions.error_log_print_r
-			}
-
-			$error_log = array(
-				'title'   => $title,
-				'message' => $body,
-				'trigger' => 0,
-				'parent'  => '',
-				'status'  => $status,
-			);
-			$logging->setup( $error_log );
-		}
 
 		return $result;
 	}
@@ -1081,10 +1036,10 @@ class Object_Sync_Sf_WordPress {
 	 *     success: 1
 	 *   "errors" : [ ],
 	 */
-	private function user_upsert( $key, $value, $methods = array(), $params, $id_field = 'ID', $pull_to_drafts = false, $check_only = false ) {
+	private function user_upsert( $key, $value, $methods, $params, $id_field = 'ID', $pull_to_drafts = false, $check_only = false ) {
 
 		// If the key is user_email, we need to make it just email because that is how the WordPress method reads it.
-		$method = $methods['method_match'];
+		$method = isset( $methods['method_match'] ) ? $methods['method_match'] : '';
 		if ( '' !== $method ) {
 			// These methods should give us the user object if we are matching for one.
 			// if we are trying to match to a meta field, the method is an object.
@@ -1187,20 +1142,13 @@ class Object_Sync_Sf_WordPress {
 		}
 
 		// Create log entry for lack of a user id.
-		if ( isset( $this->logging ) ) {
-			$logging = $this->logging;
-		} elseif ( class_exists( 'Object_Sync_Sf_Logging' ) ) {
-			$logging = new Object_Sync_Sf_Logging( $this->wpdb, $this->version );
-		}
-
 		$status = 'error';
 		$title  = sprintf(
 			// translators: placeholders are: 1) the log status.
 			esc_html__( '%1$s: Users: Tried to run user_upsert, and ended up without a user id', 'object-sync-for-salesforce' ),
 			ucfirst( esc_attr( $status ) )
 		);
-
-		$logging->setup(
+		$this->logging->setup(
 			// todo: can we get any more specific about this?
 			$title,
 			'',
@@ -1391,10 +1339,9 @@ class Object_Sync_Sf_WordPress {
 	 *     success: 1
 	 *   "errors" : [ ],
 	 */
-	private function post_upsert( $key, $value, $methods = array(), $params, $id_field = 'ID', $pull_to_drafts = false, $post_type = 'post', $check_only = false ) {
+	private function post_upsert( $key, $value, $methods, $params, $id_field = 'ID', $pull_to_drafts = false, $post_type = 'post', $check_only = false ) {
 
-		$method = $methods['method_match'];
-
+		$method = isset( $methods['method_match'] ) ? $methods['method_match'] : '';
 		if ( '' !== $method ) {
 			// By default, posts use get_posts as the method. args can be like this.
 			// The args don't really make sense, and are inconsistently documented.
@@ -1525,20 +1472,13 @@ class Object_Sync_Sf_WordPress {
 			return $result;
 		}
 		// Create log entry for lack of a post id.
-		if ( isset( $this->logging ) ) {
-			$logging = $this->logging;
-		} elseif ( class_exists( 'Object_Sync_Sf_Logging' ) ) {
-			$logging = new Object_Sync_Sf_Logging( $this->wpdb, $this->version );
-		}
-
 		$status = 'error';
 		$title  = sprintf(
 			// translators: placeholders are: 1) the log status.
 			esc_html__( '%1$s: Posts: Tried to run post_upsert, and ended up without a post id', 'object-sync-for-salesforce' ),
 			ucfirst( esc_attr( $status ) )
 		);
-
-		$logging->setup(
+		$this->logging->setup(
 			// todo: can we be more explicit here about what post upsert failed?
 			$title,
 			'',
@@ -1710,10 +1650,9 @@ class Object_Sync_Sf_WordPress {
 	 *     success: 1
 	 *   "errors" : [ ],
 	 */
-	private function attachment_upsert( $key, $value, $methods = array(), $params, $id_field = 'ID', $check_only = false ) {
+	private function attachment_upsert( $key, $value, $methods, $params, $id_field = 'ID', $check_only = false ) {
 
-		$method = $methods['method_match'];
-
+		$method = isset( $methods['method_match'] ) ? $methods['method_match'] : '';
 		if ( '' !== $method ) {
 			// Get_posts is more helpful here, so that is the method attachment uses for 'read'.
 			// By default, posts use get_posts as the method. args can be like this.
@@ -1840,20 +1779,13 @@ class Object_Sync_Sf_WordPress {
 		}
 
 		// Create log entry for lack of an attachment id.
-		if ( isset( $this->logging ) ) {
-			$logging = $this->logging;
-		} elseif ( class_exists( 'Object_Sync_Sf_Logging' ) ) {
-			$logging = new Object_Sync_Sf_Logging( $this->wpdb, $this->version );
-		}
-
 		$status = 'error';
 		$title  = sprintf(
 			// translators: placeholders are: 1) the log status.
 			esc_html__( '%1$s: Attachments: Tried to run attachment_upsert, and ended up without an attachment id', 'object-sync-for-salesforce' ),
 			ucfirst( esc_attr( $status ) )
 		);
-
-		$logging->setup(
+		$this->logging->setup(
 			$title,
 			'',
 			0,
@@ -2057,11 +1989,11 @@ class Object_Sync_Sf_WordPress {
 	 *     success: 1
 	 *   "errors" : [ ],
 	 */
-	private function term_upsert( $key, $value, $methods = array(), $params, $taxonomy, $id_field = 'ID', $pull_to_drafts = false, $check_only = false ) {
+	private function term_upsert( $key, $value, $methods, $params, $taxonomy, $id_field = 'ID', $pull_to_drafts = false, $check_only = false ) {
 		if ( 'tag' === $taxonomy ) {
 			$taxonomy = 'post_tag';
 		}
-		$method = $methods['method_match'];
+		$method = isset( $methods['method_match'] ) ? $methods['method_match'] : '';
 		if ( '' !== $method ) {
 			// These methods should give us the term object if we are matching for one.
 			// If we are trying to match to a meta field, the method is an object.
@@ -2166,20 +2098,13 @@ class Object_Sync_Sf_WordPress {
 			return $result;
 		}
 		// Create log entry for lack of a term id.
-		if ( isset( $this->logging ) ) {
-			$logging = $this->logging;
-		} elseif ( class_exists( 'Object_Sync_Sf_Logging' ) ) {
-			$logging = new Object_Sync_Sf_Logging( $this->wpdb, $this->version );
-		}
-
 		$status = 'error';
 		$title  = sprintf(
 			// translators: placeholders are: 1) the log status.
 			esc_html__( '%1$s: Terms: Tried to run term_upsert, and ended up without a term id', 'object-sync-for-salesforce' ),
 			ucfirst( esc_attr( $status ) )
 		);
-
-		$logging->setup(
+		$this->logging->setup(
 			$title,
 			'',
 			0,
@@ -2354,7 +2279,7 @@ class Object_Sync_Sf_WordPress {
 	 *   "errors" : [ ],
 	 */
 	private function comment_upsert( $key, $value, $methods, $params, $id_field = 'comment_ID', $pull_to_drafts = false, $check_only = false ) {
-		$method = $methods['method_match'];
+		$method = isset( $methods['method_match'] ) ? $methods['method_match'] : '';
 		if ( 'get_comment' === $method ) {
 			$method = 'get_comments';
 		}
@@ -2411,12 +2336,7 @@ class Object_Sync_Sf_WordPress {
 			} elseif ( count( $comments ) > 1 ) {
 				$status = 'error';
 				// Create log entry for multiple matches.
-				if ( isset( $this->logging ) ) {
-					$logging = $this->logging;
-				} elseif ( class_exists( 'Object_Sync_Sf_Logging' ) ) {
-					$logging = new Object_Sync_Sf_Logging( $this->wpdb, $this->version );
-				}
-				$logging->setup(
+				$this->logging->setup(
 					sprintf(
 						// translators: %1$s is the log status. %2$s is a number. %3$s is a key. %4$s is the value of that key. %5$s is a var_export'd array of comments.
 						esc_html__( '%1$s: Comments: there are %2$s comment matches for the Salesforce key %3$s with the value of %4$s. Here they are: %5$s', 'object-sync-for-salesforce' ),
@@ -2496,20 +2416,13 @@ class Object_Sync_Sf_WordPress {
 		}
 
 		// Create log entry for lack of a comment id.
-		if ( isset( $this->logging ) ) {
-			$logging = $this->logging;
-		} elseif ( class_exists( 'Object_Sync_Sf_Logging' ) ) {
-			$logging = new Object_Sync_Sf_Logging( $this->wpdb, $this->version );
-		}
-
 		$status = 'error';
 		$title  = sprintf(
 			// translators: placeholders are: 1) the log status.
 			esc_html__( '%1$s: Comments: Tried to run comment_upsert, and ended up without a comment id', 'object-sync-for-salesforce' ),
 			ucfirst( esc_attr( $status ) )
 		);
-
-		$logging->setup(
+		$this->logging->setup(
 			$title,
 			'',
 			0,
