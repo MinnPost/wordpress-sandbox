@@ -4,7 +4,7 @@ msgid ""
 msgstr ""
 "Project-Id-Version: _s woocommerce-services\n"
 "Report-Msgid-Bugs-To: \n"
-"POT-Creation-Date: 2022-05-12T08:48:47.112Z\n"
+"POT-Creation-Date: 2022-06-21T10:41:29.862Z\n"
 "MIME-Version: 1.0\n"
 "Content-Type: text/plain; charset=UTF-8\n"
 "Content-Transfer-Encoding: 8bit\n"
@@ -13,8 +13,8 @@ msgstr ""
 "Language-Team: LANGUAGE <LL@li.org>\n"
 
 #: dist/chunks/2b583d220b621842be20.min.js:1
-#: dist/chunks/86c9425fae467a720557.min.js:1
 #: dist/chunks/974236d125990e927f4a.min.js:1
+#: dist/chunks/a61c70f1000d54f51f34.min.js:1
 #: dist/chunks/a923241b6d55f4bd306a.min.js:1
 #: dist/chunks/b30fed1adc892ef66643.min.js:1
 #: dist/chunks/df8d4449be16d374a102.min.js:1
@@ -26,7 +26,7 @@ msgid "No tracking information available at this time"
 msgstr ""
 
 #: dist/chunks/552b1dcf53ceaeafc215.min.js:1
-#: dist/chunks/86c9425fae467a720557.min.js:1
+#: dist/chunks/a61c70f1000d54f51f34.min.js:1
 msgid "Create shipping label"
 msgid_plural "Create shipping labels"
 msgstr[0] ""
@@ -59,664 +59,41 @@ msgid_plural "%(itemCount)d items are ready to be fulfilled"
 msgstr[0] ""
 msgstr[1] ""
 
-#: dist/chunks/86c9425fae467a720557.min.js:1
 #: dist/chunks/974236d125990e927f4a.min.js:1
-msgid "Name"
-msgstr ""
-
-#: dist/chunks/86c9425fae467a720557.min.js:1
-msgid "Company"
-msgstr ""
-
-#: dist/chunks/86c9425fae467a720557.min.js:1
-#: dist/chunks/974236d125990e927f4a.min.js:1
-msgid "Phone"
-msgstr ""
-
-#: dist/chunks/86c9425fae467a720557.min.js:1
-msgid "%(message)s. Please modify the address and try again."
-msgstr ""
-
-#: dist/chunks/86c9425fae467a720557.min.js:1
-#: dist/chunks/974236d125990e927f4a.min.js:1
-msgid "Address"
-msgstr ""
-
-#: dist/chunks/86c9425fae467a720557.min.js:1
-#: dist/chunks/974236d125990e927f4a.min.js:1
-msgid "City"
-msgstr ""
-
-#: dist/chunks/86c9425fae467a720557.min.js:1
-#: dist/chunks/974236d125990e927f4a.min.js:1
-msgid "State"
-msgstr ""
-
-#: dist/chunks/86c9425fae467a720557.min.js:1
-#: dist/chunks/974236d125990e927f4a.min.js:1
-msgid "Select one\\u2026"
-msgstr ""
-
-#: dist/chunks/86c9425fae467a720557.min.js:1
-#: dist/chunks/974236d125990e927f4a.min.js:1
-msgid "ZIP/Postal code"
-msgstr ""
-
-#: dist/chunks/86c9425fae467a720557.min.js:1
-#: dist/chunks/974236d125990e927f4a.min.js:1
-msgid "Country"
-msgstr ""
-
-#: dist/chunks/86c9425fae467a720557.min.js:1
-msgid "Verify address"
-msgstr ""
-
-#: dist/chunks/86c9425fae467a720557.min.js:1
-msgid "Use address as entered"
-msgstr ""
-
-#: dist/chunks/86c9425fae467a720557.min.js:1
-msgid ""
-"We have slightly modified the address entered. If correct, please use the "
-"suggested address to ensure accurate delivery."
-msgstr ""
-
-#: dist/chunks/86c9425fae467a720557.min.js:1
-msgid "Address entered"
-msgstr ""
-
-#: dist/chunks/86c9425fae467a720557.min.js:1
-msgid "Suggested address"
-msgstr ""
-
-#: dist/chunks/86c9425fae467a720557.min.js:1
-msgid "Use selected address"
-msgstr ""
-
-#: dist/chunks/86c9425fae467a720557.min.js:1
-msgid "Edit address"
-msgstr ""
-
-#: dist/chunks/86c9425fae467a720557.min.js:1
-msgid "We were unable to automatically verify the address \\u2014 %(error)s."
-msgstr ""
-
-#: dist/chunks/86c9425fae467a720557.min.js:1
-msgid "We were unable to automatically verify the address."
-msgstr ""
-
-#: dist/chunks/86c9425fae467a720557.min.js:1
-msgid ""
-"Automatic verification failed for this address. It may still be a valid "
-"address \\u2014 use the tools below to manually verify."
-msgstr ""
-
-#: dist/chunks/86c9425fae467a720557.min.js:1
-msgid "Verify with USPS"
-msgstr ""
-
-#: dist/chunks/86c9425fae467a720557.min.js:1
-msgid "View on Google Maps"
-msgstr ""
-
-#: dist/chunks/86c9425fae467a720557.min.js:1
-#: dist/chunks/974236d125990e927f4a.min.js:1
-msgid "Packaging"
-msgstr ""
-
-#: dist/chunks/86c9425fae467a720557.min.js:1
-msgid "No packages selected"
-msgstr ""
-
-#: dist/chunks/86c9425fae467a720557.min.js:1
-msgid "1 item in 1 package: %(weight)s %(unit)s total"
-msgstr ""
-
-#: dist/chunks/86c9425fae467a720557.min.js:1
-msgid "%(itemsCount)d items in 1 package: %(weight)s %(unit)s total"
-msgstr ""
-
-#: dist/chunks/86c9425fae467a720557.min.js:1
-msgid ""
-"%(itemsCount)d items in %(packageCount)d packages: %(weight)s %(unit)s total"
-msgstr ""
-
-#: dist/chunks/86c9425fae467a720557.min.js:1
-msgid "Use these packages"
-msgstr ""
-
-#: dist/chunks/86c9425fae467a720557.min.js:1
-msgid "Packages to be Shipped"
-msgstr ""
-
-#: dist/chunks/86c9425fae467a720557.min.js:1
-msgid "Add items"
-msgstr ""
-
-#: dist/chunks/86c9425fae467a720557.min.js:1
-msgid "Items to fulfill"
-msgstr ""
-
-#: dist/chunks/86c9425fae467a720557.min.js:1
-msgid "Weight"
-msgstr ""
-
-#: dist/chunks/86c9425fae467a720557.min.js:1
-msgid "QTY"
-msgstr ""
-
-#: dist/chunks/86c9425fae467a720557.min.js:1
-msgid "There are no items in this package."
-msgstr ""
-
-#: dist/chunks/86c9425fae467a720557.min.js:1
-msgid "Total Weight (with package)"
-msgstr ""
-
-#: dist/chunks/86c9425fae467a720557.min.js:1
-msgid "0"
-msgstr ""
-
-#: dist/chunks/86c9425fae467a720557.min.js:1
-msgid "Move"
-msgstr ""
-
-#: dist/chunks/86c9425fae467a720557.min.js:1
-msgid "Individually Shipped Item"
-msgstr ""
-
-#: dist/chunks/86c9425fae467a720557.min.js:1
-msgid "Item Dimensions"
-msgstr ""
-
-#: dist/chunks/86c9425fae467a720557.min.js:1
-msgid "Package details"
-msgstr ""
-
-#: dist/chunks/86c9425fae467a720557.min.js:1
-#: dist/chunks/974236d125990e927f4a.min.js:1
-msgid "Add package"
-msgid_plural "Add packages"
-msgstr[0] ""
-msgstr[1] ""
-
-#: dist/chunks/86c9425fae467a720557.min.js:1
-msgid "Select a package type"
-msgstr ""
-
-#: dist/chunks/86c9425fae467a720557.min.js:1
-msgid "Please select a package"
-msgstr ""
-
-#: dist/chunks/86c9425fae467a720557.min.js:1
-msgid "{{itemLink/}} is currently saved for a later shipment."
-msgstr ""
-
-#: dist/chunks/86c9425fae467a720557.min.js:1
-msgid "{{itemLink/}} is currently shipped in its original packaging."
-msgstr ""
-
-#: dist/chunks/86c9425fae467a720557.min.js:1
-msgid "{{itemLink/}} is currently in {{pckg/}}."
-msgstr ""
-
-#: dist/chunks/86c9425fae467a720557.min.js:1
-#: dist/chunks/974236d125990e927f4a.min.js:1
-#: dist/chunks/f42899875f9b32e9101b.min.js:1
-msgid "Cancel"
-msgstr ""
-
-#: dist/chunks/86c9425fae467a720557.min.js:1
-msgid "Submit"
-msgstr ""
-
-#: dist/chunks/86c9425fae467a720557.min.js:1
-msgid "Move item"
-msgstr ""
-
-#: dist/chunks/86c9425fae467a720557.min.js:1
-msgid "Where would you like to move it?"
-msgstr ""
-
-#: dist/chunks/86c9425fae467a720557.min.js:1
-msgid "Add to a New Package"
-msgstr ""
-
-#: dist/chunks/86c9425fae467a720557.min.js:1
-msgid "Ship in original packaging"
-msgstr ""
-
-#: dist/chunks/86c9425fae467a720557.min.js:1
-msgid "%(item)s from {{pckg/}}"
-msgstr ""
-
-#: dist/chunks/86c9425fae467a720557.min.js:1
-#: dist/chunks/f42899875f9b32e9101b.min.js:1
-msgid "Close"
-msgstr ""
-
-#: dist/chunks/86c9425fae467a720557.min.js:1
-msgid "Add"
-msgstr ""
-
-#: dist/chunks/86c9425fae467a720557.min.js:1
-msgid "Add item"
-msgstr ""
-
-#: dist/chunks/86c9425fae467a720557.min.js:1
-msgid "Which items would you like to add to {{pckg/}}?"
-msgstr ""
-
-#: dist/chunks/86c9425fae467a720557.min.js:1
-msgid "Customs information incomplete"
-msgstr ""
-
-#: dist/chunks/86c9425fae467a720557.min.js:1
-msgid "Customs information valid"
-msgstr ""
-
-#: dist/chunks/86c9425fae467a720557.min.js:1
-msgid "Customs"
-msgstr ""
-
-#: dist/chunks/86c9425fae467a720557.min.js:1
-msgid "Save customs form"
-msgstr ""
-
-#: dist/chunks/86c9425fae467a720557.min.js:1
-msgid "Return to sender if package is unable to be delivered"
-msgstr ""
-
-#: dist/chunks/86c9425fae467a720557.min.js:1
-msgid "Contents type"
-msgstr ""
-
-#: dist/chunks/86c9425fae467a720557.min.js:1
-msgid "Merchandise"
-msgstr ""
-
-#: dist/chunks/86c9425fae467a720557.min.js:1
-msgid "Documents"
-msgstr ""
-
-#: dist/chunks/86c9425fae467a720557.min.js:1
-msgid "Gift"
-msgstr ""
-
-#: dist/chunks/86c9425fae467a720557.min.js:1
-msgid "Sample"
-msgstr ""
-
-#: dist/chunks/86c9425fae467a720557.min.js:1
-msgid "Other\\u2026"
-msgstr ""
-
-#: dist/chunks/86c9425fae467a720557.min.js:1
-msgid "Details"
-msgstr ""
-
-#: dist/chunks/86c9425fae467a720557.min.js:1
-msgid "Restriction type"
-msgstr ""
-
-#: dist/chunks/86c9425fae467a720557.min.js:1
-msgid "None"
-msgstr ""
-
-#: dist/chunks/86c9425fae467a720557.min.js:1
-msgid "Quarantine"
-msgstr ""
-
-#: dist/chunks/86c9425fae467a720557.min.js:1
-msgid "Sanitary / Phytosanitary inspection"
-msgstr ""
-
-#: dist/chunks/86c9425fae467a720557.min.js:1
-msgid "ITN"
-msgstr ""
-
-#: dist/chunks/86c9425fae467a720557.min.js:1
-msgid "more info"
-msgstr ""
-
-#: dist/chunks/86c9425fae467a720557.min.js:1
-msgid "Description"
-msgstr ""
-
-#: dist/chunks/86c9425fae467a720557.min.js:1
-#: dist/chunks/974236d125990e927f4a.min.js:1
-#: dist/chunks/a923241b6d55f4bd306a.min.js:1
-#: dist/chunks/b30fed1adc892ef66643.min.js:1
-msgid "Optional"
-msgstr ""
-
-#: dist/chunks/86c9425fae467a720557.min.js:1
-msgid "Weight (per unit)"
-msgstr ""
-
-#: dist/chunks/86c9425fae467a720557.min.js:1
-msgid "Value (per unit)"
-msgstr ""
-
-#: dist/chunks/86c9425fae467a720557.min.js:1
-msgid "Unsaved changes made to packages"
-msgstr ""
-
-#: dist/chunks/86c9425fae467a720557.min.js:1
-msgid "No rates found"
-msgstr ""
-
-#: dist/chunks/86c9425fae467a720557.min.js:1
-msgid "%(serviceName)s: %(rate)s"
-msgstr ""
-
-#: dist/chunks/86c9425fae467a720557.min.js:1
-msgid "Total rate: %(total)s"
-msgstr ""
-
-#: dist/chunks/86c9425fae467a720557.min.js:1
-msgid "Customer paid a {{shippingMethod/}} of {{shippingCost/}} for shipping"
-msgstr ""
-
-#: dist/chunks/86c9425fae467a720557.min.js:1
-msgid "Your customer selected {{shippingMethod/}}"
-msgstr ""
-
-#: dist/chunks/86c9425fae467a720557.min.js:1
-msgid "Shipping rates"
-msgstr ""
-
-#: dist/chunks/86c9425fae467a720557.min.js:1
-msgid ""
-"The service and rate chosen by the customer at checkout is not available. "
-"Please choose another."
-msgstr ""
-
-#: dist/chunks/86c9425fae467a720557.min.js:1
-msgid "Choose rate: %(pckg)s"
-msgstr ""
-
-#: dist/chunks/86c9425fae467a720557.min.js:1
-msgid "Signature required"
-msgstr ""
-
-#: dist/chunks/86c9425fae467a720557.min.js:1
-msgid "Adult signature required"
-msgstr ""
-
-#: dist/chunks/86c9425fae467a720557.min.js:1
-msgid "Shipping summary"
-msgstr ""
-
-#: dist/chunks/86c9425fae467a720557.min.js:1
-#: dist/chunks/974236d125990e927f4a.min.js:1
-#: dist/chunks/f42899875f9b32e9101b.min.js:1
-msgid "Paper size"
-msgstr ""
-
-#: dist/chunks/86c9425fae467a720557.min.js:1
-msgid "Notify the customer with shipment details"
-msgstr ""
-
-#: dist/chunks/86c9425fae467a720557.min.js:1
-msgid "Mark this order as complete and notify the customer"
-msgstr ""
-
-#: dist/chunks/86c9425fae467a720557.min.js:1
-msgid ""
-"WooCommerce Shipping gives you access to USPS Commercial Pricing, which is "
-"discounted over Retail rates."
-msgstr ""
-
-#: dist/chunks/86c9425fae467a720557.min.js:1
-msgid "You save %s with WooCommerce Shipping"
-msgstr ""
-
-#: dist/chunks/86c9425fae467a720557.min.js:1
-msgid "Package %(index)s \\u2013 %(title)s"
-msgstr ""
-
-#: dist/chunks/86c9425fae467a720557.min.js:1
-msgid "Your UPS account will be charged"
-msgstr ""
-
-#: dist/chunks/86c9425fae467a720557.min.js:1
-msgid "Total"
-msgstr ""
-
-#: dist/chunks/86c9425fae467a720557.min.js:1
-msgid "Shipping from"
-msgstr ""
-
-#: dist/chunks/86c9425fae467a720557.min.js:1
-#: dist/chunks/974236d125990e927f4a.min.js:1
-msgid "Edit"
-msgstr ""
-
-#: dist/chunks/86c9425fae467a720557.min.js:1
-msgid "shipping label ready"
-msgid_plural "shipping labels ready"
-msgstr[0] ""
-msgstr[1] ""
-
-#: dist/chunks/86c9425fae467a720557.min.js:1
-msgid "Choose credit card"
-msgstr ""
-
-#: dist/chunks/86c9425fae467a720557.min.js:1
-msgid ""
-"To print this shipping label, {{a}}choose a credit card to add to your "
-"account{{/a}}."
-msgstr ""
-
-#: dist/chunks/86c9425fae467a720557.min.js:1
-msgid "Add credit card"
-msgstr ""
-
-#: dist/chunks/86c9425fae467a720557.min.js:1
-msgid ""
-"To print this shipping label, {{a}}add a credit card to your account{{/a}}."
-msgstr ""
-
-#: dist/chunks/86c9425fae467a720557.min.js:1
-#: dist/chunks/f42899875f9b32e9101b.min.js:1
-msgid "Print"
-msgstr ""
-
-#: dist/chunks/86c9425fae467a720557.min.js:1
-#: dist/chunks/f42899875f9b32e9101b.min.js:1
-msgid "Purchasing\\u2026"
-msgstr ""
-
-#: dist/chunks/86c9425fae467a720557.min.js:1
-msgid "Buy shipping label"
-msgid_plural "Buy shipping labels"
-msgstr[0] ""
-msgstr[1] ""
-
-#: dist/chunks/86c9425fae467a720557.min.js:1
-#: dist/chunks/974236d125990e927f4a.min.js:1
+#: dist/chunks/a61c70f1000d54f51f34.min.js:1
 #: dist/chunks/a923241b6d55f4bd306a.min.js:1
 #: dist/chunks/b30fed1adc892ef66643.min.js:1
 msgid "Required"
 msgstr ""
 
-#: dist/chunks/86c9425fae467a720557.min.js:1
 #: dist/chunks/974236d125990e927f4a.min.js:1
+#: dist/chunks/a61c70f1000d54f51f34.min.js:1
+#: dist/chunks/a923241b6d55f4bd306a.min.js:1
+#: dist/chunks/b30fed1adc892ef66643.min.js:1
+msgid "Optional"
+msgstr ""
+
+#: dist/chunks/974236d125990e927f4a.min.js:1
+#: dist/chunks/a61c70f1000d54f51f34.min.js:1
 #: dist/chunks/df8d4449be16d374a102.min.js:1
 msgid "Saving\\u2026"
 msgstr ""
 
-#: dist/chunks/86c9425fae467a720557.min.js:1
 #: dist/chunks/974236d125990e927f4a.min.js:1
+#: dist/chunks/a61c70f1000d54f51f34.min.js:1
 #: dist/chunks/df8d4449be16d374a102.min.js:1
 msgid "Save Settings"
-msgstr ""
-
-#: dist/chunks/86c9425fae467a720557.min.js:1
-#: dist/chunks/974236d125990e927f4a.min.js:1
-msgid "Untitled"
-msgstr ""
-
-#: dist/chunks/86c9425fae467a720557.min.js:1
-msgid "Expand"
-msgstr ""
-
-#: dist/chunks/86c9425fae467a720557.min.js:1
-#: dist/chunks/974236d125990e927f4a.min.js:1
-msgid "Your shipping packages have been saved."
-msgstr ""
-
-#: dist/chunks/86c9425fae467a720557.min.js:1
-#: dist/chunks/974236d125990e927f4a.min.js:1
-msgid "Unable to save your shipping packages. Please try again."
-msgstr ""
-
-#: dist/chunks/86c9425fae467a720557.min.js:1
-#: dist/chunks/974236d125990e927f4a.min.js:1
-msgid "Done"
-msgstr ""
-
-#: dist/chunks/86c9425fae467a720557.min.js:1
-#: dist/chunks/974236d125990e927f4a.min.js:1
-msgid "{{icon/}} Delete this package"
-msgstr ""
-
-#: dist/chunks/86c9425fae467a720557.min.js:1
-#: dist/chunks/974236d125990e927f4a.min.js:1
-msgid "Invalid value."
-msgstr ""
-
-#: dist/chunks/86c9425fae467a720557.min.js:1
-#: dist/chunks/974236d125990e927f4a.min.js:1
-msgid "This field is required."
-msgstr ""
-
-#: dist/chunks/86c9425fae467a720557.min.js:1
-#: dist/chunks/974236d125990e927f4a.min.js:1
-msgid "Type of package"
-msgstr ""
-
-#: dist/chunks/86c9425fae467a720557.min.js:1
-#: dist/chunks/974236d125990e927f4a.min.js:1
-msgid "Box"
-msgstr ""
-
-#: dist/chunks/86c9425fae467a720557.min.js:1
-#: dist/chunks/974236d125990e927f4a.min.js:1
-msgid "Envelope"
-msgstr ""
-
-#: dist/chunks/86c9425fae467a720557.min.js:1
-#: dist/chunks/974236d125990e927f4a.min.js:1
-msgid "Package name"
-msgstr ""
-
-#: dist/chunks/86c9425fae467a720557.min.js:1
-#: dist/chunks/974236d125990e927f4a.min.js:1
-msgid "Unique package name"
-msgstr ""
-
-#: dist/chunks/86c9425fae467a720557.min.js:1
-#: dist/chunks/974236d125990e927f4a.min.js:1
-msgid "This field must be unique"
-msgstr ""
-
-#: dist/chunks/86c9425fae467a720557.min.js:1
-#: dist/chunks/974236d125990e927f4a.min.js:1
-msgid "Dimensions (L x W x H)"
-msgstr ""
-
-#: dist/chunks/86c9425fae467a720557.min.js:1
-#: dist/chunks/974236d125990e927f4a.min.js:1
-msgid "Weight of empty package"
-msgstr ""
-
-#: dist/chunks/86c9425fae467a720557.min.js:1
-#: dist/chunks/974236d125990e927f4a.min.js:1
-msgid "0.0"
-msgstr ""
-
-#: dist/chunks/86c9425fae467a720557.min.js:1
-#: dist/chunks/974236d125990e927f4a.min.js:1
-#. Length placeholder for dimensions input
-msgid "L"
-msgstr ""
-
-#: dist/chunks/86c9425fae467a720557.min.js:1
-#: dist/chunks/974236d125990e927f4a.min.js:1
-#. Width placeholder for dimensions input
-msgid "W"
-msgstr ""
-
-#: dist/chunks/86c9425fae467a720557.min.js:1
-#: dist/chunks/974236d125990e927f4a.min.js:1
-#. Height placeholder for dimensions input
-msgid "H"
-msgstr ""
-
-#: dist/chunks/86c9425fae467a720557.min.js:1
-#: dist/chunks/974236d125990e927f4a.min.js:1
-msgid "All packages selected"
-msgstr ""
-
-#: dist/chunks/86c9425fae467a720557.min.js:1
-#: dist/chunks/974236d125990e927f4a.min.js:1
-msgid "%(selectedCount)d package selected"
-msgid_plural "%(selectedCount)d packages selected"
-msgstr[0] ""
-msgstr[1] ""
-
-#: dist/chunks/86c9425fae467a720557.min.js:1
-#: dist/chunks/974236d125990e927f4a.min.js:1
-#: dist/chunks/a923241b6d55f4bd306a.min.js:1
-msgid "Expand Services"
-msgstr ""
-
-#: dist/chunks/86c9425fae467a720557.min.js:1
-msgid "HS Tariff number"
-msgstr ""
-
-#: dist/chunks/86c9425fae467a720557.min.js:1
-msgid "Origin country"
-msgstr ""
-
-#: dist/chunks/86c9425fae467a720557.min.js:1
-msgid "Country where the product was manufactured or assembled"
-msgstr ""
-
-#: dist/chunks/86c9425fae467a720557.min.js:1
-msgid "Weight (%s per unit)"
-msgstr ""
-
-#: dist/chunks/86c9425fae467a720557.min.js:1
-msgid "Value ($ per unit)"
-msgstr ""
-
-#: dist/chunks/86c9425fae467a720557.min.js:1
-msgid "Origin address"
-msgstr ""
-
-#: dist/chunks/86c9425fae467a720557.min.js:1
-msgid "Destination address"
-msgstr ""
-
-#: dist/chunks/86c9425fae467a720557.min.js:1
-msgid "Validating address\\u2026"
-msgstr ""
-
-#: dist/chunks/86c9425fae467a720557.min.js:1
-msgid "Invalid address"
-msgstr ""
-
-#: dist/chunks/86c9425fae467a720557.min.js:1
-msgid "You've edited the address, please revalidate it for accurate rates"
 msgstr ""
 
 #: dist/chunks/974236d125990e927f4a.min.js:1
 #: dist/chunks/9b2603ac13d54778cf85.min.js:1
 #: dist/chunks/a923241b6d55f4bd306a.min.js:1
 msgid "More"
+msgstr ""
+
+#: dist/chunks/974236d125990e927f4a.min.js:1
+#: dist/chunks/a61c70f1000d54f51f34.min.js:1
+msgid "Untitled"
 msgstr ""
 
 #: dist/chunks/974236d125990e927f4a.min.js:1
@@ -727,6 +104,130 @@ msgstr ""
 #: dist/chunks/974236d125990e927f4a.min.js:1
 #: dist/chunks/a923241b6d55f4bd306a.min.js:1
 msgid "You have unsaved changes. Are you sure you want to leave this page?"
+msgstr ""
+
+#: dist/chunks/974236d125990e927f4a.min.js:1
+#: dist/chunks/a61c70f1000d54f51f34.min.js:1
+msgid "Your shipping packages have been saved."
+msgstr ""
+
+#: dist/chunks/974236d125990e927f4a.min.js:1
+#: dist/chunks/a61c70f1000d54f51f34.min.js:1
+msgid "Unable to save your shipping packages. Please try again."
+msgstr ""
+
+#: dist/chunks/974236d125990e927f4a.min.js:1
+#: dist/chunks/a61c70f1000d54f51f34.min.js:1
+msgid "Add package"
+msgid_plural "Add packages"
+msgstr[0] ""
+msgstr[1] ""
+
+#: dist/chunks/974236d125990e927f4a.min.js:1
+#: dist/chunks/a61c70f1000d54f51f34.min.js:1
+msgid "Done"
+msgstr ""
+
+#: dist/chunks/974236d125990e927f4a.min.js:1
+#: dist/chunks/a61c70f1000d54f51f34.min.js:1
+#: dist/chunks/f42899875f9b32e9101b.min.js:1
+msgid "Cancel"
+msgstr ""
+
+#: dist/chunks/974236d125990e927f4a.min.js:1
+#: dist/chunks/a61c70f1000d54f51f34.min.js:1
+msgid "{{icon/}} Delete this package"
+msgstr ""
+
+#: dist/chunks/974236d125990e927f4a.min.js:1
+#: dist/chunks/a61c70f1000d54f51f34.min.js:1
+msgid "Invalid value."
+msgstr ""
+
+#: dist/chunks/974236d125990e927f4a.min.js:1
+#: dist/chunks/a61c70f1000d54f51f34.min.js:1
+msgid "This field is required."
+msgstr ""
+
+#: dist/chunks/974236d125990e927f4a.min.js:1
+#: dist/chunks/a61c70f1000d54f51f34.min.js:1
+msgid "Type of package"
+msgstr ""
+
+#: dist/chunks/974236d125990e927f4a.min.js:1
+#: dist/chunks/a61c70f1000d54f51f34.min.js:1
+msgid "Box"
+msgstr ""
+
+#: dist/chunks/974236d125990e927f4a.min.js:1
+#: dist/chunks/a61c70f1000d54f51f34.min.js:1
+msgid "Envelope"
+msgstr ""
+
+#: dist/chunks/974236d125990e927f4a.min.js:1
+#: dist/chunks/a61c70f1000d54f51f34.min.js:1
+msgid "Package name"
+msgstr ""
+
+#: dist/chunks/974236d125990e927f4a.min.js:1
+#: dist/chunks/a61c70f1000d54f51f34.min.js:1
+msgid "Unique package name"
+msgstr ""
+
+#: dist/chunks/974236d125990e927f4a.min.js:1
+#: dist/chunks/a61c70f1000d54f51f34.min.js:1
+msgid "This field must be unique"
+msgstr ""
+
+#: dist/chunks/974236d125990e927f4a.min.js:1
+#: dist/chunks/a61c70f1000d54f51f34.min.js:1
+msgid "Dimensions (L x W x H)"
+msgstr ""
+
+#: dist/chunks/974236d125990e927f4a.min.js:1
+#: dist/chunks/a61c70f1000d54f51f34.min.js:1
+msgid "Weight of empty package"
+msgstr ""
+
+#: dist/chunks/974236d125990e927f4a.min.js:1
+#: dist/chunks/a61c70f1000d54f51f34.min.js:1
+msgid "0.0"
+msgstr ""
+
+#: dist/chunks/974236d125990e927f4a.min.js:1
+#: dist/chunks/a61c70f1000d54f51f34.min.js:1
+#. Length placeholder for dimensions input
+msgid "L"
+msgstr ""
+
+#: dist/chunks/974236d125990e927f4a.min.js:1
+#: dist/chunks/a61c70f1000d54f51f34.min.js:1
+#. Width placeholder for dimensions input
+msgid "W"
+msgstr ""
+
+#: dist/chunks/974236d125990e927f4a.min.js:1
+#: dist/chunks/a61c70f1000d54f51f34.min.js:1
+#. Height placeholder for dimensions input
+msgid "H"
+msgstr ""
+
+#: dist/chunks/974236d125990e927f4a.min.js:1
+#: dist/chunks/a61c70f1000d54f51f34.min.js:1
+msgid "All packages selected"
+msgstr ""
+
+#: dist/chunks/974236d125990e927f4a.min.js:1
+#: dist/chunks/a61c70f1000d54f51f34.min.js:1
+msgid "%(selectedCount)d package selected"
+msgid_plural "%(selectedCount)d packages selected"
+msgstr[0] ""
+msgstr[1] ""
+
+#: dist/chunks/974236d125990e927f4a.min.js:1
+#: dist/chunks/a61c70f1000d54f51f34.min.js:1
+#: dist/chunks/a923241b6d55f4bd306a.min.js:1
+msgid "Expand Services"
 msgstr ""
 
 #: dist/chunks/974236d125990e927f4a.min.js:1
@@ -819,6 +320,12 @@ msgid ""
 msgstr ""
 
 #: dist/chunks/974236d125990e927f4a.min.js:1
+#: dist/chunks/a61c70f1000d54f51f34.min.js:1
+#: dist/chunks/f42899875f9b32e9101b.min.js:1
+msgid "Paper size"
+msgstr ""
+
+#: dist/chunks/974236d125990e927f4a.min.js:1
 msgid "Payment"
 msgstr ""
 
@@ -857,11 +364,26 @@ msgid "WeChat Pay"
 msgstr ""
 
 #: dist/chunks/974236d125990e927f4a.min.js:1
+#: dist/chunks/a61c70f1000d54f51f34.min.js:1
+msgid "Name"
+msgstr ""
+
+#: dist/chunks/974236d125990e927f4a.min.js:1
 msgid "Dimensions"
 msgstr ""
 
 #: dist/chunks/974236d125990e927f4a.min.js:1
+#: dist/chunks/a61c70f1000d54f51f34.min.js:1
+msgid "Edit"
+msgstr ""
+
+#: dist/chunks/974236d125990e927f4a.min.js:1
 msgid "Remove"
+msgstr ""
+
+#: dist/chunks/974236d125990e927f4a.min.js:1
+#: dist/chunks/a61c70f1000d54f51f34.min.js:1
+msgid "Packaging"
 msgstr ""
 
 #: dist/chunks/974236d125990e927f4a.min.js:1
@@ -1039,6 +561,16 @@ msgid "This action will delete any information entered on the form."
 msgstr ""
 
 #: dist/chunks/974236d125990e927f4a.min.js:1
+#: dist/chunks/a61c70f1000d54f51f34.min.js:1
+msgid "Select one\\u2026"
+msgstr ""
+
+#: dist/chunks/974236d125990e927f4a.min.js:1
+#: dist/chunks/a61c70f1000d54f51f34.min.js:1
+msgid "State"
+msgstr ""
+
+#: dist/chunks/974236d125990e927f4a.min.js:1
 msgid "Your carrier account was connected successfully."
 msgstr ""
 
@@ -1079,7 +611,32 @@ msgid "Account number"
 msgstr ""
 
 #: dist/chunks/974236d125990e927f4a.min.js:1
+#: dist/chunks/a61c70f1000d54f51f34.min.js:1
+msgid "Address"
+msgstr ""
+
+#: dist/chunks/974236d125990e927f4a.min.js:1
 msgid "Address 2 (optional)"
+msgstr ""
+
+#: dist/chunks/974236d125990e927f4a.min.js:1
+#: dist/chunks/a61c70f1000d54f51f34.min.js:1
+msgid "City"
+msgstr ""
+
+#: dist/chunks/974236d125990e927f4a.min.js:1
+#: dist/chunks/a61c70f1000d54f51f34.min.js:1
+msgid "Country"
+msgstr ""
+
+#: dist/chunks/974236d125990e927f4a.min.js:1
+#: dist/chunks/a61c70f1000d54f51f34.min.js:1
+msgid "ZIP/Postal code"
+msgstr ""
+
+#: dist/chunks/974236d125990e927f4a.min.js:1
+#: dist/chunks/a61c70f1000d54f51f34.min.js:1
+msgid "Phone"
 msgstr ""
 
 #: dist/chunks/974236d125990e927f4a.min.js:1
@@ -1155,6 +712,455 @@ msgstr ""
 
 #: dist/chunks/974236d125990e927f4a.min.js:1
 msgid "General Information"
+msgstr ""
+
+#: dist/chunks/a61c70f1000d54f51f34.min.js:1
+msgid "Company"
+msgstr ""
+
+#: dist/chunks/a61c70f1000d54f51f34.min.js:1
+msgid "%(message)s. Please modify the address and try again."
+msgstr ""
+
+#: dist/chunks/a61c70f1000d54f51f34.min.js:1
+msgid "Verify address"
+msgstr ""
+
+#: dist/chunks/a61c70f1000d54f51f34.min.js:1
+msgid "Use address as entered"
+msgstr ""
+
+#: dist/chunks/a61c70f1000d54f51f34.min.js:1
+msgid ""
+"We have slightly modified the address entered. If correct, please use the "
+"suggested address to ensure accurate delivery."
+msgstr ""
+
+#: dist/chunks/a61c70f1000d54f51f34.min.js:1
+msgid "Address entered"
+msgstr ""
+
+#: dist/chunks/a61c70f1000d54f51f34.min.js:1
+msgid "Suggested address"
+msgstr ""
+
+#: dist/chunks/a61c70f1000d54f51f34.min.js:1
+msgid "Use selected address"
+msgstr ""
+
+#: dist/chunks/a61c70f1000d54f51f34.min.js:1
+msgid "Edit address"
+msgstr ""
+
+#: dist/chunks/a61c70f1000d54f51f34.min.js:1
+msgid "We were unable to automatically verify the address \\u2014 %(error)s."
+msgstr ""
+
+#: dist/chunks/a61c70f1000d54f51f34.min.js:1
+msgid "We were unable to automatically verify the address."
+msgstr ""
+
+#: dist/chunks/a61c70f1000d54f51f34.min.js:1
+msgid ""
+"Automatic verification failed for this address. It may still be a valid "
+"address \\u2014 use the tools below to manually verify."
+msgstr ""
+
+#: dist/chunks/a61c70f1000d54f51f34.min.js:1
+msgid "Verify with USPS"
+msgstr ""
+
+#: dist/chunks/a61c70f1000d54f51f34.min.js:1
+msgid "View on Google Maps"
+msgstr ""
+
+#: dist/chunks/a61c70f1000d54f51f34.min.js:1
+msgid "No packages selected"
+msgstr ""
+
+#: dist/chunks/a61c70f1000d54f51f34.min.js:1
+msgid "1 item in 1 package: %(weight)s %(unit)s total"
+msgstr ""
+
+#: dist/chunks/a61c70f1000d54f51f34.min.js:1
+msgid "%(itemsCount)d items in 1 package: %(weight)s %(unit)s total"
+msgstr ""
+
+#: dist/chunks/a61c70f1000d54f51f34.min.js:1
+msgid ""
+"%(itemsCount)d items in %(packageCount)d packages: %(weight)s %(unit)s total"
+msgstr ""
+
+#: dist/chunks/a61c70f1000d54f51f34.min.js:1
+msgid "Use these packages"
+msgstr ""
+
+#: dist/chunks/a61c70f1000d54f51f34.min.js:1
+msgid "Packages to be Shipped"
+msgstr ""
+
+#: dist/chunks/a61c70f1000d54f51f34.min.js:1
+msgid "Add items"
+msgstr ""
+
+#: dist/chunks/a61c70f1000d54f51f34.min.js:1
+msgid "Items to fulfill"
+msgstr ""
+
+#: dist/chunks/a61c70f1000d54f51f34.min.js:1
+msgid "Weight"
+msgstr ""
+
+#: dist/chunks/a61c70f1000d54f51f34.min.js:1
+msgid "QTY"
+msgstr ""
+
+#: dist/chunks/a61c70f1000d54f51f34.min.js:1
+msgid "There are no items in this package."
+msgstr ""
+
+#: dist/chunks/a61c70f1000d54f51f34.min.js:1
+msgid "Total Weight (with package)"
+msgstr ""
+
+#: dist/chunks/a61c70f1000d54f51f34.min.js:1
+msgid "0"
+msgstr ""
+
+#: dist/chunks/a61c70f1000d54f51f34.min.js:1
+msgid "Move"
+msgstr ""
+
+#: dist/chunks/a61c70f1000d54f51f34.min.js:1
+msgid "Individually Shipped Item"
+msgstr ""
+
+#: dist/chunks/a61c70f1000d54f51f34.min.js:1
+msgid "Item Dimensions"
+msgstr ""
+
+#: dist/chunks/a61c70f1000d54f51f34.min.js:1
+msgid "Package details"
+msgstr ""
+
+#: dist/chunks/a61c70f1000d54f51f34.min.js:1
+msgid "Select a package type"
+msgstr ""
+
+#: dist/chunks/a61c70f1000d54f51f34.min.js:1
+msgid "Please select a package"
+msgstr ""
+
+#: dist/chunks/a61c70f1000d54f51f34.min.js:1
+msgid "{{itemLink/}} is currently saved for a later shipment."
+msgstr ""
+
+#: dist/chunks/a61c70f1000d54f51f34.min.js:1
+msgid "{{itemLink/}} is currently shipped in its original packaging."
+msgstr ""
+
+#: dist/chunks/a61c70f1000d54f51f34.min.js:1
+msgid "{{itemLink/}} is currently in {{pckg/}}."
+msgstr ""
+
+#: dist/chunks/a61c70f1000d54f51f34.min.js:1
+msgid "Submit"
+msgstr ""
+
+#: dist/chunks/a61c70f1000d54f51f34.min.js:1
+msgid "Move item"
+msgstr ""
+
+#: dist/chunks/a61c70f1000d54f51f34.min.js:1
+msgid "Where would you like to move it?"
+msgstr ""
+
+#: dist/chunks/a61c70f1000d54f51f34.min.js:1
+msgid "Add to a New Package"
+msgstr ""
+
+#: dist/chunks/a61c70f1000d54f51f34.min.js:1
+msgid "Ship in original packaging"
+msgstr ""
+
+#: dist/chunks/a61c70f1000d54f51f34.min.js:1
+msgid "%(item)s from {{pckg/}}"
+msgstr ""
+
+#: dist/chunks/a61c70f1000d54f51f34.min.js:1
+#: dist/chunks/f42899875f9b32e9101b.min.js:1
+msgid "Close"
+msgstr ""
+
+#: dist/chunks/a61c70f1000d54f51f34.min.js:1
+msgid "Add"
+msgstr ""
+
+#: dist/chunks/a61c70f1000d54f51f34.min.js:1
+msgid "Add item"
+msgstr ""
+
+#: dist/chunks/a61c70f1000d54f51f34.min.js:1
+msgid "Which items would you like to add to {{pckg/}}?"
+msgstr ""
+
+#: dist/chunks/a61c70f1000d54f51f34.min.js:1
+msgid "Customs information incomplete"
+msgstr ""
+
+#: dist/chunks/a61c70f1000d54f51f34.min.js:1
+msgid "Customs information valid"
+msgstr ""
+
+#: dist/chunks/a61c70f1000d54f51f34.min.js:1
+msgid "Customs"
+msgstr ""
+
+#: dist/chunks/a61c70f1000d54f51f34.min.js:1
+msgid "Save customs form"
+msgstr ""
+
+#: dist/chunks/a61c70f1000d54f51f34.min.js:1
+msgid "Return to sender if package is unable to be delivered"
+msgstr ""
+
+#: dist/chunks/a61c70f1000d54f51f34.min.js:1
+msgid "Contents type"
+msgstr ""
+
+#: dist/chunks/a61c70f1000d54f51f34.min.js:1
+msgid "Merchandise"
+msgstr ""
+
+#: dist/chunks/a61c70f1000d54f51f34.min.js:1
+msgid "Documents"
+msgstr ""
+
+#: dist/chunks/a61c70f1000d54f51f34.min.js:1
+msgid "Gift"
+msgstr ""
+
+#: dist/chunks/a61c70f1000d54f51f34.min.js:1
+msgid "Sample"
+msgstr ""
+
+#: dist/chunks/a61c70f1000d54f51f34.min.js:1
+msgid "Other\\u2026"
+msgstr ""
+
+#: dist/chunks/a61c70f1000d54f51f34.min.js:1
+msgid "Details"
+msgstr ""
+
+#: dist/chunks/a61c70f1000d54f51f34.min.js:1
+msgid "Restriction type"
+msgstr ""
+
+#: dist/chunks/a61c70f1000d54f51f34.min.js:1
+msgid "None"
+msgstr ""
+
+#: dist/chunks/a61c70f1000d54f51f34.min.js:1
+msgid "Quarantine"
+msgstr ""
+
+#: dist/chunks/a61c70f1000d54f51f34.min.js:1
+msgid "Sanitary / Phytosanitary inspection"
+msgstr ""
+
+#: dist/chunks/a61c70f1000d54f51f34.min.js:1
+msgid "ITN"
+msgstr ""
+
+#: dist/chunks/a61c70f1000d54f51f34.min.js:1
+msgid "more info"
+msgstr ""
+
+#: dist/chunks/a61c70f1000d54f51f34.min.js:1
+msgid "Description"
+msgstr ""
+
+#: dist/chunks/a61c70f1000d54f51f34.min.js:1
+msgid "Weight (per unit)"
+msgstr ""
+
+#: dist/chunks/a61c70f1000d54f51f34.min.js:1
+msgid "Value (per unit)"
+msgstr ""
+
+#: dist/chunks/a61c70f1000d54f51f34.min.js:1
+msgid "Unsaved changes made to packages"
+msgstr ""
+
+#: dist/chunks/a61c70f1000d54f51f34.min.js:1
+msgid "No rates found"
+msgstr ""
+
+#: dist/chunks/a61c70f1000d54f51f34.min.js:1
+msgid "%(serviceName)s: %(rate)s"
+msgstr ""
+
+#: dist/chunks/a61c70f1000d54f51f34.min.js:1
+msgid "Total rate: %(total)s"
+msgstr ""
+
+#: dist/chunks/a61c70f1000d54f51f34.min.js:1
+msgid "Customer paid a {{shippingMethod/}} of {{shippingCost/}} for shipping"
+msgstr ""
+
+#: dist/chunks/a61c70f1000d54f51f34.min.js:1
+msgid "Your customer selected {{shippingMethod/}}"
+msgstr ""
+
+#: dist/chunks/a61c70f1000d54f51f34.min.js:1
+msgid "Shipping rates"
+msgstr ""
+
+#: dist/chunks/a61c70f1000d54f51f34.min.js:1
+msgid ""
+"The service and rate chosen by the customer at checkout is not available. "
+"Please choose another."
+msgstr ""
+
+#: dist/chunks/a61c70f1000d54f51f34.min.js:1
+msgid "Choose rate: %(pckg)s"
+msgstr ""
+
+#: dist/chunks/a61c70f1000d54f51f34.min.js:1
+msgid "Signature required"
+msgstr ""
+
+#: dist/chunks/a61c70f1000d54f51f34.min.js:1
+msgid "Adult signature required"
+msgstr ""
+
+#: dist/chunks/a61c70f1000d54f51f34.min.js:1
+msgid "Shipping summary"
+msgstr ""
+
+#: dist/chunks/a61c70f1000d54f51f34.min.js:1
+msgid "Notify the customer with shipment details"
+msgstr ""
+
+#: dist/chunks/a61c70f1000d54f51f34.min.js:1
+msgid "Mark this order as complete and notify the customer"
+msgstr ""
+
+#: dist/chunks/a61c70f1000d54f51f34.min.js:1
+msgid ""
+"WooCommerce Shipping gives you access to USPS Commercial Pricing, which is "
+"discounted over Retail rates."
+msgstr ""
+
+#: dist/chunks/a61c70f1000d54f51f34.min.js:1
+msgid "You save %s with WooCommerce Shipping"
+msgstr ""
+
+#: dist/chunks/a61c70f1000d54f51f34.min.js:1
+msgid "Package %(index)s \\u2013 %(title)s"
+msgstr ""
+
+#: dist/chunks/a61c70f1000d54f51f34.min.js:1
+msgid "Your UPS account will be charged"
+msgstr ""
+
+#: dist/chunks/a61c70f1000d54f51f34.min.js:1
+msgid "Total"
+msgstr ""
+
+#: dist/chunks/a61c70f1000d54f51f34.min.js:1
+msgid "Shipping from"
+msgstr ""
+
+#: dist/chunks/a61c70f1000d54f51f34.min.js:1
+msgid "shipping label ready"
+msgid_plural "shipping labels ready"
+msgstr[0] ""
+msgstr[1] ""
+
+#: dist/chunks/a61c70f1000d54f51f34.min.js:1
+msgid "Choose credit card"
+msgstr ""
+
+#: dist/chunks/a61c70f1000d54f51f34.min.js:1
+msgid ""
+"To print this shipping label, {{a}}choose a credit card to add to your "
+"account{{/a}}."
+msgstr ""
+
+#: dist/chunks/a61c70f1000d54f51f34.min.js:1
+msgid "Add credit card"
+msgstr ""
+
+#: dist/chunks/a61c70f1000d54f51f34.min.js:1
+msgid ""
+"To print this shipping label, {{a}}add a credit card to your account{{/a}}."
+msgstr ""
+
+#: dist/chunks/a61c70f1000d54f51f34.min.js:1
+#: dist/chunks/f42899875f9b32e9101b.min.js:1
+msgid "Print"
+msgstr ""
+
+#: dist/chunks/a61c70f1000d54f51f34.min.js:1
+#: dist/chunks/f42899875f9b32e9101b.min.js:1
+msgid "Purchasing\\u2026"
+msgstr ""
+
+#: dist/chunks/a61c70f1000d54f51f34.min.js:1
+msgid "Buy shipping label"
+msgid_plural "Buy shipping labels"
+msgstr[0] ""
+msgstr[1] ""
+
+#: dist/chunks/a61c70f1000d54f51f34.min.js:1
+msgid "Expand"
+msgstr ""
+
+#: dist/chunks/a61c70f1000d54f51f34.min.js:1
+msgid "HS Tariff number"
+msgstr ""
+
+#: dist/chunks/a61c70f1000d54f51f34.min.js:1
+msgid "Origin country"
+msgstr ""
+
+#: dist/chunks/a61c70f1000d54f51f34.min.js:1
+msgid "Country where the product was manufactured or assembled"
+msgstr ""
+
+#: dist/chunks/a61c70f1000d54f51f34.min.js:1
+msgid "Weight (%s per unit)"
+msgstr ""
+
+#: dist/chunks/a61c70f1000d54f51f34.min.js:1
+msgid "Value ($ per unit)"
+msgstr ""
+
+#: dist/chunks/a61c70f1000d54f51f34.min.js:1
+msgid "Origin address"
+msgstr ""
+
+#: dist/chunks/a61c70f1000d54f51f34.min.js:1
+msgid "Destination address"
+msgstr ""
+
+#: dist/chunks/a61c70f1000d54f51f34.min.js:1
+msgid "Validating address\\u2026"
+msgstr ""
+
+#: dist/chunks/a61c70f1000d54f51f34.min.js:1
+msgid "Invalid address"
+msgstr ""
+
+#: dist/chunks/a61c70f1000d54f51f34.min.js:1
+msgid "You've edited the address, please revalidate it for accurate rates"
+msgstr ""
+
+#: dist/chunks/a61c70f1000d54f51f34.min.js:1
+msgid ""
+"One of the address data has non-roman character(s) that might not be printed "
+"properly!"
 msgstr ""
 
 #: dist/chunks/a923241b6d55f4bd306a.min.js:1

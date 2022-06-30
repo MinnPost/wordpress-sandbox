@@ -144,6 +144,22 @@ if ( ! class_exists( 'um\core\Fields' ) ) {
 
 			$fields[ $id ] = $args;
 
+			if ( array_key_exists( 'custom_dropdown_options_source', $args ) ) {
+				if ( function_exists( wp_unslash( $args['custom_dropdown_options_source'] ) ) ) {
+					$allowed_callbacks = UM()->options()->get( 'allowed_choice_callbacks' );
+					if ( ! empty( $allowed_callbacks ) ) {
+						$allowed_callbacks = array_map( 'rtrim', explode( "\n", $allowed_callbacks ) );
+						$allowed_callbacks[] = $args['custom_dropdown_options_source'];
+					} else {
+						$allowed_callbacks = array( $args['custom_dropdown_options_source'] );
+					}
+					$allowed_callbacks = array_unique( $allowed_callbacks );
+					$allowed_callbacks = implode( "\r\n", $allowed_callbacks );
+
+					UM()->options()->update( 'allowed_choice_callbacks', $allowed_callbacks );
+				}
+			}
+
 			unset( $fields[ $id ]['in_row'] );
 			unset( $fields[ $id ]['in_sub_row'] );
 			unset( $fields[ $id ]['in_column'] );
@@ -181,6 +197,24 @@ if ( ! class_exists( 'um\core\Fields' ) ) {
 			// custom fields support
 			if ( isset( UM()->builtin()->predefined_fields[ $id ] ) && isset( UM()->builtin()->predefined_fields[ $id ]['custom'] ) ) {
 				$args = array_merge( UM()->builtin()->predefined_fields[ $id ], $args );
+			}
+
+			if ( array_key_exists( 'custom_dropdown_options_source', $args ) ) {
+				if ( function_exists( wp_unslash( $args['custom_dropdown_options_source'] ) ) ) {
+					$allowed_callbacks = UM()->options()->get( 'allowed_choice_callbacks' );
+					if ( ! empty( $allowed_callbacks ) ) {
+						$allowed_callbacks = array_map( 'rtrim', explode( "\n", $allowed_callbacks ) );
+						$allowed_callbacks[] = $args['custom_dropdown_options_source'];
+					} else {
+						$allowed_callbacks = array( $args['custom_dropdown_options_source'] );
+					}
+					$allowed_callbacks = array_unique( $allowed_callbacks );
+					$allowed_callbacks = implode( "\r\n", $allowed_callbacks );
+
+					UM()->options()->update( 'allowed_choice_callbacks', $allowed_callbacks );
+
+					$args['custom_dropdown_options_source'] = wp_unslash( $args['custom_dropdown_options_source'] );
+				}
 			}
 
 			$fields[ $id ] = $args;
