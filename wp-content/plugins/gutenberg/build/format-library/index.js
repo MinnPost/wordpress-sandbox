@@ -268,15 +268,15 @@ function InlineUI(_ref) {
     style
   } = activeObjectAttributes;
   const [width, setWidth] = (0,external_wp_element_namespaceObject.useState)(style === null || style === void 0 ? void 0 : style.replace(/\D/g, ''));
-  const anchorRef = (0,external_wp_richText_namespaceObject.useAnchorRef)({
-    ref: contentRef,
+  const popoverAnchor = (0,external_wp_richText_namespaceObject.useAnchor)({
+    editableContentElement: contentRef.current,
     value,
     settings: image_image
   });
   return (0,external_wp_element_namespaceObject.createElement)(external_wp_components_namespaceObject.Popover, {
     position: "bottom center",
     focusOnMount: false,
-    anchorRef: anchorRef,
+    anchor: popoverAnchor,
     className: "block-editor-format-toolbar__image-popover"
   }, (0,external_wp_element_namespaceObject.createElement)("form", {
     className: "block-editor-format-toolbar__image-container-content",
@@ -921,8 +921,8 @@ function InlineLinkUI(_ref) {
     }
   }
 
-  const anchorRef = (0,external_wp_richText_namespaceObject.useAnchorRef)({
-    ref: contentRef,
+  const popoverAnchor = (0,external_wp_richText_namespaceObject.useAnchor)({
+    editableContentElement: contentRef.current,
     value,
     settings: build_module_link_link
   }); // Generate a string based key that is unique to this anchor reference.
@@ -930,7 +930,7 @@ function InlineLinkUI(_ref) {
   // potential stale state bugs caused by the component not being remounted
   // See https://github.com/WordPress/gutenberg/pull/34742.
 
-  const forceRemountKey = use_link_instance_key(anchorRef); // The focusOnMount prop shouldn't evolve during render of a Popover
+  const forceRemountKey = use_link_instance_key(popoverAnchor); // The focusOnMount prop shouldn't evolve during render of a Popover
   // otherwise it causes a render of the content.
 
   const focusOnMount = (0,external_wp_element_namespaceObject.useRef)(addingLink ? 'firstElement' : false);
@@ -958,11 +958,11 @@ function InlineLinkUI(_ref) {
   }
 
   return (0,external_wp_element_namespaceObject.createElement)(external_wp_components_namespaceObject.Popover, {
-    anchorRef: anchorRef,
+    anchor: popoverAnchor,
     focusOnMount: focusOnMount.current,
     onClose: stopAddingLink,
     position: "bottom center",
-    __unstableShift: true
+    shift: true
   }, (0,external_wp_element_namespaceObject.createElement)(external_wp_blockEditor_namespaceObject.__experimentalLinkControl, {
     key: forceRemountKey,
     value: linkValue,
@@ -1259,8 +1259,6 @@ const underline = {
 
 };
 
-;// CONCATENATED MODULE: external "lodash"
-const external_lodash_namespaceObject = window["lodash"];
 ;// CONCATENATED MODULE: ./packages/icons/build-module/icon/index.js
 /**
  * WordPress dependencies
@@ -1312,13 +1310,8 @@ const textColor = (0,external_wp_element_namespaceObject.createElement)(external
 
 
 /**
- * External dependencies
- */
-
-/**
  * WordPress dependencies
  */
-
 
 
 
@@ -1419,10 +1412,12 @@ function ColorPicker(_ref) {
     onChange
   } = _ref;
   const colors = (0,external_wp_data_namespaceObject.useSelect)(select => {
+    var _getSettings$colors;
+
     const {
       getSettings
     } = select(external_wp_blockEditor_namespaceObject.store);
-    return (0,external_lodash_namespaceObject.get)(getSettings(), ['colors'], []);
+    return (_getSettings$colors = getSettings().colors) !== null && _getSettings$colors !== void 0 ? _getSettings$colors : [];
   }, []);
   const onColorChange = (0,external_wp_element_namespaceObject.useCallback)(color => {
     onChange(setColors(value, name, colors, {
@@ -1445,22 +1440,22 @@ function InlineColorUI(_ref2) {
     contentRef
   } = _ref2;
 
-  /* 
+  /*
    As you change the text color by typing a HEX value into a field,
    the return value of document.getSelection jumps to the field you're editing,
-   not the highlighted text. Given that useAnchorRef uses document.getSelection,
+   not the highlighted text. Given that useAnchor uses document.getSelection,
    it will return null, since it can't find the <mark> element within the HEX input.
    This caches the last truthy value of the selection anchor reference.
    */
-  const anchorRef = (0,external_wp_blockEditor_namespaceObject.useCachedTruthy)((0,external_wp_richText_namespaceObject.useAnchorRef)({
-    ref: contentRef,
+  const popoverAnchor = (0,external_wp_blockEditor_namespaceObject.useCachedTruthy)((0,external_wp_richText_namespaceObject.useAnchor)({
+    editableContentElement: contentRef.current,
     value,
     settings: text_color_textColor
   }));
   return (0,external_wp_element_namespaceObject.createElement)(external_wp_components_namespaceObject.Popover, {
     onClose: onClose,
     className: "components-inline-color-popover",
-    anchorRef: anchorRef
+    anchor: popoverAnchor
   }, (0,external_wp_element_namespaceObject.createElement)(external_wp_components_namespaceObject.TabPanel, {
     tabs: [{
       name: 'color',
@@ -1481,13 +1476,8 @@ function InlineColorUI(_ref2) {
 
 
 /**
- * External dependencies
- */
-
-/**
  * WordPress dependencies
  */
-
 
 
 
@@ -1552,7 +1542,7 @@ function TextColorEdit(_ref2) {
   const enableIsAddingColor = (0,external_wp_element_namespaceObject.useCallback)(() => setIsAddingColor(true), [setIsAddingColor]);
   const disableIsAddingColor = (0,external_wp_element_namespaceObject.useCallback)(() => setIsAddingColor(false), [setIsAddingColor]);
   const colorIndicatorStyle = (0,external_wp_element_namespaceObject.useMemo)(() => fillComputedColors(contentRef.current, getActiveColors(value, text_color_name, colors)), [value, colors]);
-  const hasColorsToChoose = !(0,external_lodash_namespaceObject.isEmpty)(colors) || !allowCustomControl;
+  const hasColorsToChoose = colors.length || !allowCustomControl;
 
   if (!hasColorsToChoose && !isActive) {
     return null;

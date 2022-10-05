@@ -210,6 +210,12 @@ class WP_REST_Block_Editor_Settings_Controller extends WP_REST_Controller {
 					'context'     => array( 'post-editor', 'site-editor', 'widgets-editor' ),
 				),
 
+				'disableLayoutStyles'                    => array(
+					'description' => __( 'Disables output of layout styles.', 'gutenberg' ),
+					'type'        => 'boolean',
+					'context'     => array( 'post-editor', 'site-editor', 'widgets-editor' ),
+				),
+
 				'enableCustomLineHeight'                 => array(
 					'description' => __( 'Enables custom line height.', 'gutenberg' ),
 					'type'        => 'boolean',
@@ -289,6 +295,11 @@ class WP_REST_Block_Editor_Settings_Controller extends WP_REST_Controller {
 				'spacingScale'                           => array(
 					'description' => __( 'Active theme spacing scale.', 'gutenberg' ),
 					'type'        => 'array',
+					'context'     => array( 'post-editor', 'site-editor', 'widgets-editor' ),
+				),
+				'disableCustomSpacingSizes'              => array(
+					'description' => __( 'Disables custom spacing sizes.', 'gutenberg' ),
+					'type'        => 'boolean',
 					'context'     => array( 'post-editor', 'site-editor', 'widgets-editor' ),
 				),
 			),

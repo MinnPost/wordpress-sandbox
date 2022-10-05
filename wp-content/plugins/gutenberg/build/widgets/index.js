@@ -294,16 +294,10 @@ function InspectorCard(_ref) {
 const external_wp_notices_namespaceObject = window["wp"]["notices"];
 ;// CONCATENATED MODULE: external ["wp","compose"]
 const external_wp_compose_namespaceObject = window["wp"]["compose"];
-;// CONCATENATED MODULE: external "lodash"
-const external_lodash_namespaceObject = window["lodash"];
 ;// CONCATENATED MODULE: external ["wp","apiFetch"]
 const external_wp_apiFetch_namespaceObject = window["wp"]["apiFetch"];
 var external_wp_apiFetch_default = /*#__PURE__*/__webpack_require__.n(external_wp_apiFetch_namespaceObject);
 ;// CONCATENATED MODULE: ./packages/widgets/build-module/blocks/legacy-widget/edit/control.js
-/**
- * External dependencies
- */
-
 /**
  * WordPress dependencies
  */
@@ -353,7 +347,7 @@ class Control {
     // a fake but unique number.
 
     this.number = ++lastNumber;
-    this.handleFormChange = (0,external_lodash_namespaceObject.debounce)(this.handleFormChange.bind(this), 200);
+    this.handleFormChange = (0,external_wp_compose_namespaceObject.debounce)(this.handleFormChange.bind(this), 200);
     this.handleFormSubmit = this.handleFormSubmit.bind(this);
     this.initDOM();
     this.bindEvents();
@@ -835,8 +829,11 @@ function Form(_ref) {
       className: "wp-block-legacy-widget__edit-form-title"
     }, title), (0,external_wp_element_namespaceObject.createElement)(external_wp_components_namespaceObject.Popover, {
       focusOnMount: false,
-      position: "middle right",
-      __unstableForcePosition: true
+      placement: "right",
+      offset: 32,
+      resize: false,
+      flip: false,
+      shift: true
     }, (0,external_wp_element_namespaceObject.createElement)("div", {
       ref: ref,
       className: "wp-block-legacy-widget__edit-form",
