@@ -1,36 +1,36 @@
-/******/ (() => { // webpackBootstrap
+/******/ (function() { // webpackBootstrap
 /******/ 	"use strict";
 /******/ 	// The require scope
 /******/ 	var __webpack_require__ = {};
 /******/ 	
 /************************************************************************/
 /******/ 	/* webpack/runtime/define property getters */
-/******/ 	(() => {
+/******/ 	!function() {
 /******/ 		// define getter functions for harmony exports
-/******/ 		__webpack_require__.d = (exports, definition) => {
+/******/ 		__webpack_require__.d = function(exports, definition) {
 /******/ 			for(var key in definition) {
 /******/ 				if(__webpack_require__.o(definition, key) && !__webpack_require__.o(exports, key)) {
 /******/ 					Object.defineProperty(exports, key, { enumerable: true, get: definition[key] });
 /******/ 				}
 /******/ 			}
 /******/ 		};
-/******/ 	})();
+/******/ 	}();
 /******/ 	
 /******/ 	/* webpack/runtime/hasOwnProperty shorthand */
-/******/ 	(() => {
-/******/ 		__webpack_require__.o = (obj, prop) => (Object.prototype.hasOwnProperty.call(obj, prop))
-/******/ 	})();
+/******/ 	!function() {
+/******/ 		__webpack_require__.o = function(obj, prop) { return Object.prototype.hasOwnProperty.call(obj, prop); }
+/******/ 	}();
 /******/ 	
 /******/ 	/* webpack/runtime/make namespace object */
-/******/ 	(() => {
+/******/ 	!function() {
 /******/ 		// define __esModule on exports
-/******/ 		__webpack_require__.r = (exports) => {
+/******/ 		__webpack_require__.r = function(exports) {
 /******/ 			if(typeof Symbol !== 'undefined' && Symbol.toStringTag) {
 /******/ 				Object.defineProperty(exports, Symbol.toStringTag, { value: 'Module' });
 /******/ 			}
 /******/ 			Object.defineProperty(exports, '__esModule', { value: true });
 /******/ 		};
-/******/ 	})();
+/******/ 	}();
 /******/ 	
 /************************************************************************/
 var __webpack_exports__ = {};
@@ -39,33 +39,33 @@ __webpack_require__.r(__webpack_exports__);
 
 // EXPORTS
 __webpack_require__.d(__webpack_exports__, {
-  "ALT": () => (/* binding */ ALT),
-  "BACKSPACE": () => (/* binding */ BACKSPACE),
-  "COMMAND": () => (/* binding */ COMMAND),
-  "CTRL": () => (/* binding */ CTRL),
-  "DELETE": () => (/* binding */ DELETE),
-  "DOWN": () => (/* binding */ DOWN),
-  "END": () => (/* binding */ END),
-  "ENTER": () => (/* binding */ ENTER),
-  "ESCAPE": () => (/* binding */ ESCAPE),
-  "F10": () => (/* binding */ F10),
-  "HOME": () => (/* binding */ HOME),
-  "LEFT": () => (/* binding */ LEFT),
-  "PAGEDOWN": () => (/* binding */ PAGEDOWN),
-  "PAGEUP": () => (/* binding */ PAGEUP),
-  "RIGHT": () => (/* binding */ RIGHT),
-  "SHIFT": () => (/* binding */ SHIFT),
-  "SPACE": () => (/* binding */ SPACE),
-  "TAB": () => (/* binding */ TAB),
-  "UP": () => (/* binding */ UP),
-  "ZERO": () => (/* binding */ ZERO),
-  "displayShortcut": () => (/* binding */ displayShortcut),
-  "displayShortcutList": () => (/* binding */ displayShortcutList),
-  "isAppleOS": () => (/* reexport */ isAppleOS),
-  "isKeyboardEvent": () => (/* binding */ isKeyboardEvent),
-  "modifiers": () => (/* binding */ modifiers),
-  "rawShortcut": () => (/* binding */ rawShortcut),
-  "shortcutAriaLabel": () => (/* binding */ shortcutAriaLabel)
+  "ALT": function() { return /* binding */ ALT; },
+  "BACKSPACE": function() { return /* binding */ BACKSPACE; },
+  "COMMAND": function() { return /* binding */ COMMAND; },
+  "CTRL": function() { return /* binding */ CTRL; },
+  "DELETE": function() { return /* binding */ DELETE; },
+  "DOWN": function() { return /* binding */ DOWN; },
+  "END": function() { return /* binding */ END; },
+  "ENTER": function() { return /* binding */ ENTER; },
+  "ESCAPE": function() { return /* binding */ ESCAPE; },
+  "F10": function() { return /* binding */ F10; },
+  "HOME": function() { return /* binding */ HOME; },
+  "LEFT": function() { return /* binding */ LEFT; },
+  "PAGEDOWN": function() { return /* binding */ PAGEDOWN; },
+  "PAGEUP": function() { return /* binding */ PAGEUP; },
+  "RIGHT": function() { return /* binding */ RIGHT; },
+  "SHIFT": function() { return /* binding */ SHIFT; },
+  "SPACE": function() { return /* binding */ SPACE; },
+  "TAB": function() { return /* binding */ TAB; },
+  "UP": function() { return /* binding */ UP; },
+  "ZERO": function() { return /* binding */ ZERO; },
+  "displayShortcut": function() { return /* binding */ displayShortcut; },
+  "displayShortcutList": function() { return /* binding */ displayShortcutList; },
+  "isAppleOS": function() { return /* reexport */ isAppleOS; },
+  "isKeyboardEvent": function() { return /* binding */ isKeyboardEvent; },
+  "modifiers": function() { return /* binding */ modifiers; },
+  "rawShortcut": function() { return /* binding */ rawShortcut; },
+  "shortcutAriaLabel": function() { return /* binding */ shortcutAriaLabel; }
 });
 
 ;// CONCATENATED MODULE: ./node_modules/tslib/tslib.es6.js
@@ -411,14 +411,10 @@ function capitalCase(input, options) {
 }
 
 ;// CONCATENATED MODULE: external "lodash"
-const external_lodash_namespaceObject = window["lodash"];
+var external_lodash_namespaceObject = window["lodash"];
 ;// CONCATENATED MODULE: external ["wp","i18n"]
-const external_wp_i18n_namespaceObject = window["wp"]["i18n"];
+var external_wp_i18n_namespaceObject = window["wp"]["i18n"];
 ;// CONCATENATED MODULE: ./packages/keycodes/build-module/platform.js
-/**
- * External dependencies
- */
-
 /**
  * Return true if platform is MacOS.
  *
@@ -426,7 +422,6 @@ const external_wp_i18n_namespaceObject = window["wp"]["i18n"];
  *
  * @return {boolean} True if MacOS; false otherwise.
  */
-
 function isAppleOS() {
   let _window = arguments.length > 0 && arguments[0] !== undefined ? arguments[0] : null;
 
@@ -441,7 +436,7 @@ function isAppleOS() {
   const {
     platform
   } = _window.navigator;
-  return platform.indexOf('Mac') !== -1 || (0,external_lodash_namespaceObject.includes)(['iPad', 'iPhone'], platform);
+  return platform.indexOf('Mac') !== -1 || ['iPad', 'iPhone'].includes(platform);
 }
 
 ;// CONCATENATED MODULE: ./packages/keycodes/build-module/index.js
@@ -683,7 +678,7 @@ const displayShortcutList = (0,external_lodash_namespaceObject.mapValues)(modifi
       // see: https://github.com/blakeembrey/change-case#options
 
       const capitalizedCharacter = capitalCase(character, {
-        stripRegexp: /[^A-Z0-9`,\.\\]/gi
+        stripRegexp: /[^A-Z0-9`,\.\\\-]/gi
       });
       return [...modifierKeys, capitalizedCharacter];
     }
@@ -806,7 +801,9 @@ const isKeyboardEvent = (0,external_lodash_namespaceObject.mapValues)(modifiers,
       let key = event.key.toLowerCase();
 
       if (!character) {
-        return (0,external_lodash_namespaceObject.includes)(mods, key);
+        return mods.includes(
+        /** @type {WPModifierPart} */
+        key);
       }
 
       if (event.altKey && character.length === 1) {
