@@ -37,7 +37,7 @@
     "gulp-stylelint": "^13.0.0",
     "gulp-uglify": "^3.0.2",
     "gulp-wp-pot": "^2.4.3",
-    "npm-check-updates": "^8.1.1",
+    "npm-check-updates": "^16.3.8",
     "stylelint": "^13.7.0",
     "stylelint-config-wordpress": "^17.0.0"
   },
